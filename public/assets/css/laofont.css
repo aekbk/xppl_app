@@ -1,0 +1,16 @@
+@font-face {
+  font-family: 'Noto Sans Lao';
+  src: url('../fonts/NotoSansLao-Medium.ttf');
+
+  /* font-family: 'Noto Serif Lao';
+  src: url('../fonts/NotoSerifLao-Medium.ttf') format('truetype'),
+       url('../fonts/NotoSerifLao-SemiBold.ttf') format('truetype'),
+       url('../fonts/NotoSerifLao-Bold.ttf') format('truetype'); */
+
+       /* ../fonts/NotoSerifLao-Regular.ttf */
+       /* ../fonts/NotoSerifLao-Medium.ttf */
+
+  font-weight: normal;
+  font-style: normal;
+
+}

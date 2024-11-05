@@ -1,0 +1,65 @@
+{
+   "login" : "Login",
+   "logout" : "Logout",
+   "signin" : "Sign In",
+   "signup" : "Sign Up",
+   "username" : "username",
+   "password" : "password",
+   "confirm-password" : "Confirm password",
+   "remember-me" : "Remember me",
+   "no-account" : "Don't have an account?",
+   "have-account" : "Already have an account?",
+   "enter" : "Enter ",
+   "help" : "Help",
+   "message" : "Messages",
+   "email" : "email",
+
+
+
+   "menu" : "Menu",
+   "dashboard" : "Dashboards",
+   "dash-production" : "Production",
+   "dash-employee" : "Employee",
+   "dash-safety" : "Safety & Clinic",
+   "adm-task" : "Admin Tasks",
+   "adm-employee" : "Employee",
+   "adm-roster" : "Roster",
+   "adm-fingerscan" : "Fingerscan",
+   "adm-overtime" : "Overtime",
+   "adm-annual-leave" : "Annual Leave",
+   "adm-leaveinfo" : "Leave Info.",
+   "hotel" : "Hotel",
+   "fuel" : "Fuels",
+   "geology" : "Geology",
+   "reservation" : "Reservation",
+   "lookup" : "Lookup",
+   "safety" : "Safety",
+   "incident" : "Incidents",
+   "clinic" : "Clinic",
+   "treatment" : "Treatments",
+   "medicine" : "Medicines",
+   "form" : "Forms",
+   "notice" : "Notices",
+   "rule" : "Rules",
+   "authorization" : "Authorization",
+   "permission" : "Permission",
+   "sales" : "Sales",
+
+
+   "add-customer" : "Add Customer",
+   "add-contract" : "Add Contract",
+   "add-order" : "Add Order",
+   "add-attachment" : "Add Attachment",
+   "delete?" : "Are you sure? You want to delete!",
+   "save-btn" : "Save Changes",
+   "del-btn" : "Delete",
+   "cancel-btn" : "Cancel",
+   "close-btn" : "Close",
+   "upd-btn" : "Update",
+   "add-btn" : "Add",
+
+   "loading" : "Loading..."
+
+
+
+}
