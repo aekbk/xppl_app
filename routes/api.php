@@ -37,10 +37,18 @@ Route::prefix('auth')->middleware(['auth:api'])->group(function () {
 
 // Admin Menu
 Route::prefix('admin')->middleware(['auth:api'])->group(function () {
-    Route::get('/menus', [admin_controller::class, 'menu']);
-    Route::get('/submenus', [admin_controller::class, 'submenu']);
+    Route::get('/menu', [admin_controller::class, 'menu']);
+    Route::get('/menu-sub', [admin_controller::class, 'menusub']);
     Route::post('/add-menu', [admin_controller::class, 'addMenu']);
-    Route::post('/add-submenu', [admin_controller::class, 'addSubmenu']);
+    Route::post('/upd-menu', [admin_controller::class, 'updMenu']);
+    Route::post('/del-menu', [admin_controller::class, 'delMenu']);
+    Route::post('/add-menu-sub', [admin_controller::class, 'addMenusub']);
+    Route::post('/upd-menu-sub', [admin_controller::class, 'updMenusub']);
+    Route::post('/del-menu-sub', [admin_controller::class, 'delMenusub']);
+    Route::get('/emails', [admin_controller::class, 'email']);
+    Route::post('/add-email', [admin_controller::class, 'addEmail']);
+    Route::post('/upd-email', [admin_controller::class, 'updEmail']);
+    Route::post('/del-email', [admin_controller::class, 'delEmail']);
 });
 
 // Sales
@@ -158,6 +166,8 @@ Route::prefix('geology')->middleware(['auth:api'])->group(function () {
 Route::prefix('employee')->middleware(['auth:api'])->group(function () {
     Route::get('/categories', [employee_controller::class, 'category']);
     Route::get('/codes', [employee_controller::class, 'code']);
+    Route::get('/company', [employee_controller::class, 'company']);
+    Route::get('/country', [employee_controller::class, 'country']);
     Route::get('/departments', [employee_controller::class, 'department']);
     Route::get('/provinces', [employee_controller::class, 'province']);
     Route::get('/districts', [employee_controller::class, 'district']);
@@ -167,6 +177,30 @@ Route::prefix('employee')->middleware(['auth:api'])->group(function () {
     Route::post('/add-code', [employee_controller::class, 'addCode']);
     Route::post('/upd-code', [employee_controller::class, 'updCode']);
     Route::post('/del-code', [employee_controller::class, 'delCode']);
+
+    Route::post('/add-company', [employee_controller::class, 'addCompany']);
+    Route::post('/upd-company', [employee_controller::class, 'updCompany']);
+    Route::post('/del-company', [employee_controller::class, 'delCompany']);
+
+    Route::post('/add-country', [employee_controller::class, 'addCountry']);
+    Route::post('/upd-country', [employee_controller::class, 'updCountry']);
+    Route::post('/del-country', [employee_controller::class, 'delCountry']);
+
+    Route::post('/add-department', [employee_controller::class, 'addDepartment']);
+    Route::post('/upd-department', [employee_controller::class, 'updDepartment']);
+    Route::post('/del-department', [employee_controller::class, 'delDepartment']);
+
+    Route::post('/add-province', [employee_controller::class, 'addProvince']);
+    Route::post('/upd-province', [employee_controller::class, 'updProvince']);
+    Route::post('/del-province', [employee_controller::class, 'delProvince']);
+
+    Route::post('/add-district', [employee_controller::class, 'addDistrict']);
+    Route::post('/upd-district', [employee_controller::class, 'updDistrict']);
+    Route::post('/del-district', [employee_controller::class, 'delDistrict']);
+
+    Route::post('/add-village', [employee_controller::class, 'addVillage']);
+    Route::post('/upd-village', [employee_controller::class, 'updVillage']);
+    Route::post('/del-village', [employee_controller::class, 'delVillage']);
 
 });
 

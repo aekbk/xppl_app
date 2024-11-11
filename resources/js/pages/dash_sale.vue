@@ -327,7 +327,7 @@
                 <div class="card-body">
                   <div class="table-responsive table-card">
                     <table class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm">
-                      <thead class="text-muted bg-light-subtle" style="height: 32px;">
+                      <thead class="bg-light-subtle" style="height: 32px;">
                         <tr class="text-end">
                           <th class="text-start">Coal Sale (ton)</th>
                           <th v-for="(col, colInx) in dateColheader" :key="colInx" class="text-end" style="width: 100px; " :style="headDate(col.colId) == cdate ? 'color: red; font-weight: bold;' : ''">{{ col.colName }}</th>
@@ -400,7 +400,7 @@
                 <div class="card-body">
                   <div class="table-responsive table-card">
                     <table class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm">
-                      <thead class="text-muted bg-light-subtle" style="height: 32px;">
+                      <thead class="bg-light-subtle" style="height: 32px;">
                         <tr class="text-end">
                           <th class="text-start">Coal Sale (ton)</th>
                           <th style="width: 250px;">Jan</th>
@@ -527,7 +527,7 @@
                   <div class="card-body">
                     <div class="table-responsive table-card">
                       <table class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm">
-                        <thead class="text-muted bg-light-subtle" style="height: 32px;">
+                        <thead class="bg-light-subtle" style="height: 32px;">
                           <tr class="text-end">
                             <th class="text-start">Market</th>
                             <th style="width: 250px;">2017</th>
@@ -582,7 +582,7 @@
                   <div class="card-body">
                     <div class="table-responsive table-card">
                       <table class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm">
-                        <thead class="text-muted bg-light-subtle" style="height: 32px;">
+                        <thead class="bg-light-subtle" style="height: 32px;">
                           <tr class="text-end">
                             <th class="text-start">Coal Grade</th>
                             <th style="width: 250px;">2017</th>
@@ -639,7 +639,7 @@
                   <div class="card-body">
                     <div class="table-responsive table-card">
                       <table class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm">
-                        <thead class="text-muted bg-light-subtle" style="height: 32px;">
+                        <thead class="bg-light-subtle" style="height: 32px;">
                           <tr class="text-end">
                             <th class="text-start">Market</th>
                             <th>Trip</th>
@@ -673,7 +673,7 @@
                   <div class="card-body">
                     <div class="table-responsive table-card">
                       <table class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm">
-                        <thead class="text-muted bg-light-subtle" style="height: 32px;">
+                        <thead class="bg-light-subtle" style="height: 32px;">
                           <tr class="text-end">
                             <th class="text-start">Coal Grade</th>
                             <th>Trip</th>

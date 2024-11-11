@@ -194,8 +194,8 @@ class sale_controller extends Controller
 
     public function customer() {
         $customer = DB::table('cs_customers')
-                        ->orderBy('customer_name', 'asc')
-                        ->get();
+                    ->orderBy('customer_name', 'asc')
+                    ->get();
         return $customer;
     }
 

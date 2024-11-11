@@ -147,7 +147,7 @@
             </div>
             <div>
               <label class="form-label">Active <span class="text-danger">*</span></label>
-              <multiselect placeholder="Enter phone no." v-model="codeForm.active" :options="lkActive" />
+              <multiselect placeholder="Select" v-model="codeForm.active" :options="lkActive" />
             </div>
           </div>
           <div class="modal-footer" style="display: block;">
@@ -161,8 +161,177 @@
       </div>
     </div>
 
+    <!-- Add Department Modal -->
+    <div class="modal fade zoomIn" id="department-modal" data-bs-keyboard="false" tabindex="-1" aria-modal="true" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header bg-light p-3">
+            <h5 v-if="actMode == 'add'" class="modal-title">Add {{ codeForm.category }}</h5>
+            <h5 v-if="actMode == 'edit'" class="modal-title">Edit {{ codeForm.category }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Company <span class="text-danger">*</span></label>
+              <multiselect :searchable="true" :searchStart="false" placeholder="Select company" v-model="deptForm.company_id" :options="lkCompany" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Department Eng <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Enter department in english" v-model="deptForm.department_eng">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Department Lao <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Enter department in lao" v-model="deptForm.department_lao">
+            </div>
+            <div>
+              <label class="form-label">Active <span class="text-danger">*</span></label>
+              <multiselect placeholder="Select" v-model="deptForm.active" :options="lkActive" />
+            </div>
+          </div>
+          <div class="modal-footer" style="display: block;">
+            <div class="hstack gap-2 justify-content-end">
+              <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+              <button v-if="actMode == 'add'" type="button" class="btn btn-success" :class="deptFormDis" @click="addDepartment">Add Department</button>
+              <button v-if="actMode == 'edit'" type="button" class="btn btn-success" :class="deptFormDis" @click="updDepartment">Save Change</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Province Modal -->
+    <div class="modal fade zoomIn" id="province-modal" data-bs-keyboard="false" tabindex="-1" aria-modal="true" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header bg-light p-3">
+            <h5 v-if="actMode == 'add'" class="modal-title">Add {{ codeForm.category }} s</h5>
+            <h5 v-if="actMode == 'edit'" class="modal-title">Edit {{ codeForm.category }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Country <span class="text-danger">*</span></label>
+              <multiselect :searchable="true" :searchStart="true" placeholder="Select country" v-model="provForm.country_id" :options="lkCountry" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Province Eng <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Enter province in english" v-model="provForm.province_eng">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Province Lao <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Enter province in lao" v-model="provForm.province_lao">
+            </div>
+            <div>
+              <label class="form-label">Active <span class="text-danger">*</span></label>
+              <multiselect placeholder="Select" v-model="provForm.active" :options="lkActive" />
+            </div>
+          </div>
+          <div class="modal-footer" style="display: block;">
+            <div class="hstack gap-2 justify-content-end">
+              <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+              <button v-if="actMode == 'add'" type="button" class="btn btn-success" :class="provFormDis" @click="addProvince">Add Province</button>
+              <button v-if="actMode == 'edit'" type="button" class="btn btn-success" :class="provFormDis" @click="updProvince">Save Change</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <!-- Add District Modal -->
+    <div class="modal fade zoomIn" id="district-modal" data-bs-keyboard="false" tabindex="-1" aria-modal="true" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header bg-light p-3">
+            <h5 v-if="actMode == 'add'" class="modal-title">Add {{ codeForm.category }}</h5>
+            <h5 v-if="actMode == 'edit'" class="modal-title">Edit {{ codeForm.category }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Country <span class="text-danger">*</span></label>
+              <multiselect :searchable="true" :searchStart="true" placeholder="Select country" v-model="distForm.country_id" :options="lkCountry" @select="getLKProvince" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Province <span class="text-danger">*</span></label>
+              <multiselect :searchable="true" :searchStart="false" placeholder="Select province" v-model="distForm.province_id" :options="lkProvince" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">District Eng <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Enter district in english" v-model="distForm.district_eng">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">District Lao <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Enter district in lao" v-model="distForm.district_lao">
+            </div>
+            <div>
+              <label class="form-label">Active <span class="text-danger">*</span></label>
+              <multiselect placeholder="Select" v-model="distForm.active" :options="lkActive" />
+            </div>
+          </div>
+          <div class="modal-footer" style="display: block;">
+            <div class="hstack gap-2 justify-content-end">
+              <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+              <button v-if="actMode == 'add'" type="button" class="btn btn-success" :class="distFormDis" @click="addDistrict">Add District</button>
+              <button v-if="actMode == 'edit'" type="button" class="btn btn-success" :class="distFormDis" @click="updDistrict">Save Change</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Village Modal -->
+    <div class="modal fade zoomIn" id="village-modal" data-bs-keyboard="false" tabindex="-1" aria-modal="true" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header bg-light p-3">
+            <h5 v-if="actMode == 'add'" class="modal-title">Add {{ codeForm.category }}</h5>
+            <h5 v-if="actMode == 'edit'" class="modal-title">Edit {{ codeForm.category }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Country <span class="text-danger">*</span></label>
+              <multiselect :searchable="true" :searchStart="true" placeholder="Select country" v-model="villForm.country_id" :options="lkCountry" @select="getLKProvince" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Province <span class="text-danger">*</span></label>
+              <multiselect :searchable="true" :searchStart="false" placeholder="Select province" v-model="villForm.province_id" :options="lkProvince" @select="getLKDistrict" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">District <span class="text-danger">*</span></label>
+              <multiselect :searchable="true" :searchStart="false" placeholder="Select district" v-model="villForm.district_id" :options="lkDistrict" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Village Eng <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Enter village in english" v-model="villForm.village_eng">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Village Lao <span class="text-danger">*</span></label>
+              <input v-if="actMode == 'add'" type="text" class="form-control" placeholder="Enter village in lao" v-model="villForm.village_lao" @keydown.enter="addVillage">
+              <input v-if="actMode == 'edit'" type="text" class="form-control" placeholder="Enter village in lao" v-model="villForm.village_lao" @keydown.enter="updVillage">
+            </div>
+            <div>
+              <label class="form-label">Active <span class="text-danger">*</span></label>
+              <multiselect placeholder="Select" v-model="villForm.active" :options="lkActive" />
+            </div>
+          </div>
+          <div class="modal-footer" style="display: block;">
+            <div class="hstack gap-2 justify-content-end">
+              <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+              <button v-if="actMode == 'add'" type="button" class="btn btn-success" :class="villFormDis" @click="addVillage">Add Village</button>
+              <button v-if="actMode == 'edit'" type="button" class="btn btn-success" :class="villFormDis" @click="updVillage">Save Change</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
     <!-- Delete Modal -->
-    <div class="modal fade" id="delete-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-modal="true" role="dialog" aria-hidden="true">
+    <div class="modal fade zoomIn" id="delete-modal" data-bs-keyboard="false" tabindex="-1" aria-modal="true" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-body text-center p-5">
@@ -191,7 +360,6 @@ import 'ag-grid-community/styles/ag-theme-material.css';
 import 'ag-grid-enterprise';
 import { useAuthStore } from '../stores/auth.js';
 import { useToastr } from '../toastr.js';
-import { error } from 'toastr';
 const toastr = useToastr();
 
 export default {
@@ -206,6 +374,7 @@ export default {
     return {
 
       columnDefs: [],
+
       columnGene: [
         { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
         { headerName: 'Code ID', field: 'code_id', minWidth: 80, maxWidth: 100, hide: true },
@@ -228,11 +397,57 @@ export default {
         { headerName: 'Updated at', field: 'updated_at', maxWidth: 145, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
         { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
       ],
+
+      columnComp: [
+        { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
+        { headerName: 'Company ID', field: 'company_id', minWidth: 80, maxWidth: 100, hide: true },
+        { headerName: 'Code', field: 'company_code', maxWidth: 100, filter: 'agSetColumnFilter' },
+        { headerName: 'Company', field: 'company_eng', filter: 'agSetColumnFilter' },
+        { headerName: 'ບໍລິສັດ', field: 'company_lao', filter: 'agSetColumnFilter' },
+        {
+          headerName: 'Active', field: 'active', maxWidth: 100, filter: 'agSetColumnFilter',
+          cellRenderer: (p) => {
+            if (p.value == false) {
+              return 'No';
+            } else {
+              return 'Yes';
+            }
+          }
+        },
+        { headerName: 'Created at', field: 'created_at', maxWidth: 145, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
+        { headerName: 'Created by', field: 'created_by', maxWidth: 150, filter: 'agSetColumnFilter' },
+        { headerName: 'Updated at', field: 'updated_at', maxWidth: 145, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
+        { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
+      ],
+
+      columnCont: [
+        { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
+        { headerName: 'Country ID', field: 'country_id', minWidth: 80, maxWidth: 100, hide: true },
+        { headerName: 'Code', field: 'country_code', maxWidth: 100, filter: 'agSetColumnFilter' },
+        { headerName: 'Country', field: 'country_eng', filter: 'agSetColumnFilter' },
+        { headerName: 'ປະເທດ', field: 'country_lao', filter: 'agSetColumnFilter' },
+        {
+          headerName: 'Active', field: 'active', maxWidth: 100, filter: 'agSetColumnFilter',
+          cellRenderer: (p) => {
+            if (p.value == false) {
+              return 'No';
+            } else {
+              return 'Yes';
+            }
+          }
+        },
+        { headerName: 'Created at', field: 'created_at', maxWidth: 145, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
+        { headerName: 'Created by', field: 'created_by', maxWidth: 150, filter: 'agSetColumnFilter' },
+        { headerName: 'Updated at', field: 'updated_at', maxWidth: 145, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
+        { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
+      ],
+
       columnDept: [
         { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
-        { headerName: 'Dept ID', field: 'dept_id', minWidth: 80, maxWidth: 100, hide: true },
-        { headerName: 'Company', field: 'company', maxWidth: 150, filter: 'agSetColumnFilter' },
-        { headerName: 'Department', field: 'department', filter: 'agSetColumnFilter' },
+        { headerName: 'Dept ID', field: 'department_id', minWidth: 80, maxWidth: 100, hide: true },
+        { headerName: 'Company', field: 'company_code', maxWidth: 150, filter: 'agSetColumnFilter' },
+        { headerName: 'Company Eng', field: 'company_eng', hide: true, filter: 'agSetColumnFilter' },
+        { headerName: 'Department', field: 'department_eng', filter: 'agSetColumnFilter' },
         { headerName: 'ພະແນກ', field: 'department_lao', filter: 'agSetColumnFilter' },
         {
           headerName: 'Active', field: 'active', maxWidth: 100, filter: 'agSetColumnFilter',
@@ -249,11 +464,12 @@ export default {
         { headerName: 'Updated at', field: 'updated_at', maxWidth: 145, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
         { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
       ],
+
       columnProv: [
         { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
         { headerName: 'Province ID', field: 'province_id', minWidth: 80, maxWidth: 100, hide: true },
-        { headerName: 'Country', field: 'country', maxWidth: 150, filter: 'agSetColumnFilter' },
-        { headerName: 'Province', field: 'province', filter: 'agSetColumnFilter' },
+        { headerName: 'Country', field: 'country_eng', maxWidth: 150, filter: 'agSetColumnFilter' },
+        { headerName: 'Province', field: 'province_eng', filter: 'agSetColumnFilter' },
         { headerName: 'ແຂວງ', field: 'province_lao', filter: 'agSetColumnFilter' },
         {
           headerName: 'Active', field: 'active', maxWidth: 100, filter: 'agSetColumnFilter',
@@ -270,11 +486,13 @@ export default {
         { headerName: 'Updated at', field: 'updated_at', maxWidth: 145, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
         { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
       ],
+
       columnDist: [
         { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
         { headerName: 'District ID', field: 'district_id', minWidth: 80, maxWidth: 100, hide: true },
-        { headerName: 'Province', field: 'province', maxWidth: 200, filter: 'agSetColumnFilter' },
-        { headerName: 'District', field: 'district', filter: 'agSetColumnFilter' },
+        { headerName: 'Country', field: 'country_eng', maxWidth: 150, filter: 'agSetColumnFilter' },
+        { headerName: 'Province', field: 'province_eng', maxWidth: 200, filter: 'agSetColumnFilter' },
+        { headerName: 'District', field: 'district_eng', filter: 'agSetColumnFilter' },
         { headerName: 'ເມືອງ', field: 'district_lao', filter: 'agSetColumnFilter' },
         {
           headerName: 'Active', field: 'active', maxWidth: 100, filter: 'agSetColumnFilter',
@@ -291,13 +509,15 @@ export default {
         { headerName: 'Updated at', field: 'updated_at', maxWidth: 145, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
         { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
       ],
+
       columnVill: [
-        { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
-        { headerName: 'Code ID', field: 'code_id', minWidth: 80, maxWidth: 100, hide: true },
-        { headerName: 'Category', field: 'category', hide: true },
-        { headerName: 'Code', field: 'code', filter: 'agSetColumnFilter' },
-        { headerName: 'Village', field: 'descr_eng', filter: 'agSetColumnFilter' },
-        { headerName: 'ໍບ້ານ', field: 'descr_lao', filter: 'agSetColumnFilter' },
+        { headerName: '#', maxWidth: 80, valueGetter: (params) => { return params.node.rowIndex + 1 } },
+        { headerName: 'Village ID', field: 'village_id', minWidth: 80, maxWidth: 100, hide: true },
+        { headerName: 'Country', field: 'country_eng', maxWidth: 150, filter: 'agSetColumnFilter' },
+        { headerName: 'Province', field: 'province_eng', maxWidth: 200, filter: 'agSetColumnFilter' },
+        { headerName: 'District', field: 'district_eng', filter: 'agSetColumnFilter' },
+        { headerName: 'Village', field: 'village_eng', filter: 'agSetColumnFilter' },
+        { headerName: 'ໍບ້ານ', field: 'village_lao', filter: 'agSetColumnFilter' },
         {
           headerName: 'Active', field: 'active', maxWidth: 100, filter: 'agSetColumnFilter',
           cellRenderer: (p) => {
@@ -313,6 +533,7 @@ export default {
         { headerName: 'Updated at', field: 'updated_at', maxWidth: 145, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
         { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
       ],
+
       columnZone: [
         { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
         { headerName: 'Code ID', field: 'code_id', minWidth: 80, maxWidth: 100, hide: true },
@@ -335,6 +556,7 @@ export default {
         { headerName: 'Updated at', field: 'updated_at', maxWidth: 145, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
         { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
       ],
+
       columnRoom: [
         { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
         { headerName: 'Code ID', field: 'code_id', minWidth: 80, maxWidth: 100, hide: true },
@@ -371,7 +593,9 @@ export default {
       auth: [],
       category: [],
       code: [],
+      company: [],
       department: [],
+      country: [],
       province: [],
       district: [],
       village: [],
@@ -381,8 +605,23 @@ export default {
       codeFilter: [],
       lkActive: [{ value: 1, label: 'Yes' }, { value: 0, label: 'No' }],
 
-      codeForm: { code_id: '', category: '', code: '', ori_code: '', descr_eng: '', descr_lao: '', active: null, tbl_name: '', col_name: '' },
+      codeForm: { code_id: '', category: '', code: '', code_ori: '', descr_eng: '', descr_lao: '', active: null, tbl_name: '', col_name: '' },
+      deptForm: { department_id: '', company_id: null, department_eng: '', department_lao: '' },
+      provForm: { province_id: '', country_id: null, province_eng: '', province_lao: '' },
+      distForm: { district_id: '', country_id: null, province_id: null, district_eng: '', district_lao: '' },
+      villForm: { village_id: '', country_id: null, province_id: null, district_id: null, village_eng: '', village_lao: '' },
+
+
+
+      lkCompany: [],
+      lkCountry: [],
+      lkProvince: [],
+      lkDistrict: [],
+
+
+
       actMode: '',
+      rowSelect: ''
 
     };
   },
@@ -394,6 +633,38 @@ export default {
   computed: {
     codeFormDis() {
       if (this.codeForm.code == '' || this.codeForm.descr_eng == '' || this.codeForm.descr_lao == '' || this.codeForm.active == null) {
+        return 'disabled';
+      } else {
+        return '';
+      }
+    },
+
+    deptFormDis() {
+      if (this.deptForm.company_id == null || this.deptForm.department_eng == '' || this.deptForm.department_lao == '' || this.deptForm.department_lao == null || this.deptForm.active == null) {
+        return 'disabled';
+      } else {
+        return '';
+      }
+    },
+
+    provFormDis() {
+      if (this.provForm.country_id == null || this.provForm.province_eng == '' || this.provForm.province_lao == '' || this.provForm.province_lao == null || this.provForm.active == null) {
+        return 'disabled';
+      } else {
+        return '';
+      }
+    },
+
+    distFormDis() {
+      if (this.distForm.country_id == null || this.distForm.province_id == null || this.distForm.district_eng == '' || this.distForm.district_lao == '' || this.distForm.district_lao == null || this.distForm.active == null) {
+        return 'disabled';
+      } else {
+        return '';
+      }
+    },
+
+    villFormDis() {
+      if (this.villForm.country_id == null || this.villForm.province_id == null || this.villForm.district_id == null || this.villForm.village_eng == '' || this.villForm.village_lao == '' || this.villForm.village_lao == null || this.villForm.active == null) {
         return 'disabled';
       } else {
         return '';
@@ -413,24 +684,70 @@ export default {
       const code = await this.getCode();
       const select = await this.cateSelected('Account Status', 0);
 
+      const comp = await this.getCompany();
       const dept = await this.getDepartment();
+      const cont = await this.getCountry();
       const prov = await this.getProvince();
       const dist = await this.getDistrict();
       const vill = await this.getVillage();
       // const zone = await this.getRoomZone();
       // const room = await this.getRoomNumber();
 
+      console.log(this.department);
 
     },
 
     async getCode() {
       const result = await axios.get('api/employee/codes', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
       this.code = result.data;
+
+      // const category = [
+      //   { cate: 'Company', lk: 'lkCompany', lb: 'descr_eng' },
+      //   { cate: 'Country', lk: 'lkCountry', lb: 'descr_eng' },
+      // ];
+      // for (let j = 0; j < category.length; j++) {
+      //   let cateName = category[j].cate;
+      //   let lkName = category[j].lk;
+      //   let labelCol = category[j].lb;
+
+      //   let item = this.code.filter((e) => e.category == [cateName] && e.active == 1);
+      //   this[lkName] = [];
+      //   for (let i = 0; i < item.length; i++) {
+      //     this[lkName].push({
+      //       value: item[i].code,
+      //       label: item[i][labelCol]
+      //     });
+      //   };
+      // };
+    },
+
+    async getCompany() {
+      const comp = await axios.get('/api/employee/company', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+      this.company = comp.data;
+      this.lkCompany = [];
+      this.company.forEach(e => {
+        this.lkCompany.push({
+          value: e.company_id,
+          label: e.company_eng
+        })
+      })
     },
 
     async getDepartment() {
       const dept = await axios.get('/api/employee/departments', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
       this.department = dept.data;
+    },
+
+    async getCountry() {
+      const count = await axios.get('/api/employee/country', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+      this.country = count.data;
+      this.lkCountry = [];
+      this.country.forEach(e => {
+        this.lkCountry.push({
+          value: e.country_id,
+          label: e.country_eng
+        })
+      })
     },
 
     async getProvince() {
@@ -459,8 +776,8 @@ export default {
     },
 
     async cateSelected(cate, inx) {
-      this.codeForm.code_id = '';
       this.codeForm.category = cate;
+      this.rowSelect = '';
 
       document.getElementById('code-detail').classList.add('user-chat-show');
       const elements = document.querySelectorAll('[id^="category-"]');
@@ -471,6 +788,14 @@ export default {
       document.getElementById('code-title').textContent = cate;
 
       switch (cate) {
+        case 'Company':
+          this.columnDefs = this.columnComp;
+          this.codeFilter = this.company;
+          break;
+        case 'Country':
+          this.columnDefs = this.columnCont;
+          this.codeFilter = this.country;
+          break;
         case 'Department':
           this.columnDefs = this.columnDept;
           this.codeFilter = this.department;
@@ -511,19 +836,35 @@ export default {
         toastr.warning("You're not authorized to add!");
       } else {
         this.actMode = 'add';
+        this.rowSelect = ''
 
         switch (this.codeForm.category) {
+          case 'Company': case 'Country':
+            this.codeForm.code = '';
+            this.codeForm.descr_eng = '';
+            this.codeForm.descr_lao = '';
+            this.codeForm.active = 1;
+            $('#code-modal').modal('show');
+            break;
           case 'Department':
-
+            this.deptForm = {};
+            this.deptForm.active = 1;
+            $('#department-modal').modal('show');
             break;
           case 'Province':
-
+            this.provForm = {};
+            this.provForm.active = 1;
+            $('#province-modal').modal('show');
             break;
           case 'District':
-
+            this.distForm = {};
+            this.distForm.active = 1;
+            $('#district-modal').modal('show');
             break;
           case 'Village':
-
+            this.villForm = {};
+            this.villForm.active = 1;
+            $('#village-modal').modal('show');
             break;
           case 'Room Zone':
 
@@ -532,7 +873,6 @@ export default {
 
             break;
           default:
-            this.codeForm.code_id = '';
             this.codeForm.code = '';
             this.codeForm.descr_eng = '';
             this.codeForm.descr_lao = '';
@@ -543,52 +883,137 @@ export default {
     },
 
     async addCode() {
-      const response = await axios.post('api/employee/add-code', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-      if (response.data.success) {
-
-        $('#code-modal').modal('hide');
-        toastr.success('Add successfully.');
-        const code = await this.getCode();
-        let item = this.code.filter((e) => e.category == this.codeForm.category);
-        this.codeFilter = item;
-        this.codeForm.code_id = '';
-
-      } else {
-        toastr.error(`${response.data.message}`);
-      }
+      switch (this.codeForm.category) {
+        case 'Company':
+          const companies = await axios.post('api/employee/add-company', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+          if (companies.data.success) {
+            const comp = await this.getCompany();
+            this.codeFilter = this.company;
+            this.rowSelect = '';
+            toastr.success('Add successfully.');
+            $('#code-modal').modal('hide');
+          } else {
+            toastr.error(`${companies.data.message}`);
+          };
+          break;
+        case 'Country':
+          const countries = await axios.post('api/employee/add-country', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+          if (countries.data.success) {
+            const count = await this.getCountry();
+            this.codeFilter = this.country;
+            this.rowSelect = '';
+            toastr.success('Add successfully.');
+            $('#code-modal').modal('hide');
+          } else {
+            toastr.error(`${countries.data.message}`);
+          };
+          break;
+        default:
+          const response = await axios.post('api/employee/add-code', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+          if (response.data.success) {
+            const code = await this.getCode();
+            let item = this.code.filter((e) => e.category == this.codeForm.category);
+            this.codeFilter = item;
+            this.rowSelect = '';
+            toastr.success('Add successfully.');
+            $('#code-modal').modal('hide');
+          } else {
+            toastr.error(`${response.data.message}`);
+          };
+      };
     },
 
     cellCicked(e) {
-      let f = this.codeForm;
-      f.code_id = e.data.code_id;
-      f.category = e.data.category;
-      f.code = e.data.code;
-      f.ori_code = e.data.code;
-      f.descr_eng = e.data.descr_eng;
-      f.descr_lao = e.data.descr_lao;
-      f.active = e.data.active;
+      this.rowSelect = e.rowIndex + 1;
+      switch (this.codeForm.category) {
+        case 'Company':
+          this.codeForm.code_id = e.data.company_id;
+          this.codeForm.code = e.data.company_code;
+          this.codeForm.code_ori = e.data.company_eng;
+          this.codeForm.descr_eng = e.data.company_eng;
+          this.codeForm.descr_lao = e.data.company_lao;
+          this.codeForm.active = e.data.active;
+          break;
+        case 'Country':
+          this.codeForm.code_id = e.data.country_id;
+          this.codeForm.code = e.data.country_code;
+          this.codeForm.code_ori = e.data.country_eng;
+          this.codeForm.descr_eng = e.data.country_eng;
+          this.codeForm.descr_lao = e.data.country_lao;
+          this.codeForm.active = e.data.active;
+          break;
+        case 'Department':
+          this.deptForm.department_id = e.data.department_id;
+          this.deptForm.company_id = e.data.company_id;
+          this.deptForm.department_eng = e.data.department_eng;
+          this.deptForm.department_lao = e.data.department_lao;
+          this.deptForm.active = e.data.active;
+          break;
+        case 'Province':
+          this.provForm.province_id = e.data.province_id;
+          this.provForm.country_id = e.data.country_id;
+          this.provForm.province_eng = e.data.province_eng;
+          this.provForm.province_lao = e.data.province_lao;
+          this.provForm.active = e.data.active;
+          break;
+        case 'District':
+          this.distForm.district_id = e.data.district_id;
+          this.distForm.country_id = e.data.country_id;
+          this.distForm.province_id = e.data.province_id;
+          this.distForm.district_eng = e.data.district_eng;
+          this.distForm.district_lao = e.data.district_lao;
+          this.distForm.active = e.data.active;
+          break; r
+        case 'Village':
+          this.villForm.village_id = e.data.village_id;
+          this.villForm.country_id = e.data.country_id;
+          this.villForm.province_id = e.data.province_id;
+          this.villForm.district_id = e.data.district_id;
+          this.villForm.village_eng = e.data.village_eng;
+          this.villForm.village_lao = e.data.village_lao;
+          this.villForm.active = e.data.active;
+          break;
+        case 'Room Zone':
+
+          break;
+        case 'Room Number':
+
+          break;
+        default:
+          this.rowSelect = e.data.code_id;
+          this.codeForm.code_id = e.data.code_id;
+          this.codeForm.category = e.data.category;
+          this.codeForm.code = e.data.code;
+          this.codeForm.code_ori = e.data.code;
+          this.codeForm.descr_eng = e.data.descr_eng;
+          this.codeForm.descr_lao = e.data.descr_lao;
+          this.codeForm.active = e.data.active;
+      }
     },
 
     editCode() {
       if (this.auth.edit == 0) {
         toastr.warning("You're not authorized to edit!");
-      } else if (!this.codeForm.code_id) {
+      } else if (!this.rowSelect) {
         toastr.info("Select a row to edit.");
       } else {
         this.actMode = 'edit';
 
         switch (this.codeForm.category) {
           case 'Department':
-
+            $('#department-modal').modal('show');
             break;
           case 'Province':
-
+            $('#province-modal').modal('show');
             break;
           case 'District':
-
+            this.getLKProvince();
+            $('#district-modal').modal('show');
             break;
           case 'Village':
-
+            this.getLKProvince();
+            this.getLKDistrict();
+            $('#village-modal').modal('show');
             break;
           case 'Room Zone':
 
@@ -603,25 +1028,50 @@ export default {
     },
 
     async updCode() {
-      try {
-        const response = await axios.post('api/employee/upd-code', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-
-        $('#code-modal').modal('hide');
-        const code = await this.getCode();
-        let item = this.code.filter((e) => e.category == this.codeForm.category);
-        this.codeFilter = item;
-        this.codeForm.code_id = '';
-        toastr.success('Update Successfully.');
-
-      } catch (error) {
-        toastr.error('This code already exists in the database.');
+      switch (this.codeForm.category) {
+        case 'Company':
+          try {
+            const res = await axios.post('api/employee/upd-company', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+            const code = await this.getCompany();
+            this.codeFilter = this.company;
+            this.rowSelect = '';
+            toastr.success('Update Successfully.');
+            $('#code-modal').modal('hide');
+          } catch (error) {
+            toastr.error('This code already exists in the database.');
+          };
+          break;
+        case 'Country':
+          try {
+            const res = await axios.post('api/employee/upd-country', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+            const code = await this.getCountry();
+            this.codeFilter = this.country;
+            this.rowSelect = '';
+            toastr.success('Update Successfully.');
+            $('#code-modal').modal('hide');
+          } catch (error) {
+            toastr.error('This code already exists in the database.');
+          };
+          break;
+        default:
+          try {
+            const res = await axios.post('api/employee/upd-code', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+            const code = await this.getCode();
+            let item = this.code.filter((e) => e.category == this.codeForm.category);
+            this.codeFilter = item;
+            this.rowSelect = '';
+            toastr.success('Update Successfully.');
+            $('#code-modal').modal('hide');
+          } catch (error) {
+            toastr.error('This code already exists in the database.');
+          };
       }
     },
 
     delCode() {
       if (this.auth.del == 0) {
         toastr.warning("You're not authorized to delete!");
-      } else if (!this.codeForm.code_id) {
+      } else if (!this.rowSelect) {
         toastr.info("Select a row to delete.");
       } else {
         $('#delete-modal').modal('show');
@@ -629,25 +1079,254 @@ export default {
     },
 
     async delConfirm() {
-      const response = await axios.post('api/employee/del-code', {
-        code_id: this.codeForm.code_id,
-        code: this.codeForm.code,
-        tbl_name: this.codeForm.tbl_name,
-        col_name: this.codeForm.col_name,
-      }, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+      switch (this.codeForm.category) {
+        case 'Company':
+          try {
+            const comp = await axios.post('api/employee/del-company', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+            const code = await this.getCompany();
+            this.codeFilter = this.company;
+            this.rowSelect = '';
+            toastr.success('Delete Successfully.');
+            $('#delete-modal').modal('hide');
+          } catch (error) {
+            toastr.error('This code has already been used; it cannot be deleted.');
+          };
+          break;
+        case 'Country':
+          try {
+            const count = await axios.post('api/employee/del-country', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+            const code = await this.getCountry();
+            this.codeFilter = this.country;
+            this.rowSelect = '';
+            toastr.success('Delete Successfully.');
+            $('#delete-modal').modal('hide');
+          } catch (error) {
+            toastr.error('This code has already been used; it cannot be deleted.');
+          };
+          break;
+        case 'Department':
+          try {
+            const dept = await axios.post('api/employee/del-department', this.deptForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+            const code = await this.getDepartment();
+            this.codeFilter = this.department;
+            this.rowSelect = '';
+            toastr.success('Delete Successfully.');
+            $('#delete-modal').modal('hide');
+          } catch (error) {
+            toastr.error('This code has already been used; it cannot be deleted.');
+          };
+          break;
+        case 'Province':
+          try {
+            const prov = await axios.post('api/employee/del-province', this.provForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+            // if (prov.data.success) {
+            const code = await this.getProvince();
+            this.codeFilter = this.province;
+            this.rowSelect = '';
+            toastr.success('Delete Successfully.');
+            $('#delete-modal').modal('hide');
+            // } else {
+            //   toastr.error(`${prov.data.message}`);
+            // };
+          } catch (error) {
+            toastr.error('This code has already been used; it cannot be deleted.');
+          };
+          break;
+        case 'District':
+          try {
+            const response = await axios.post('api/employee/del-district', this.distForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+            const code = await this.getDistrict();
+            this.codeFilter = this.district;
+            this.rowSelect = '';
+            const vill = await this.getVillage();
+            toastr.success('Delete Successfully.');
+            $('#delete-modal').modal('hide');
+          } catch (error) {
+            toastr.error('This code has already been used; it cannot be deleted.');
+          };
+          break;
+        case 'Village':
+          try {
+            const response = await axios.post('api/employee/del-village', this.villForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+            const code = await this.getVillage();
+            this.codeFilter = this.village;
+            this.rowSelect = '';
+            toastr.success('Delete Successfully.');
+            $('#delete-modal').modal('hide');
+          } catch (error) {
+            toastr.error('This code has already been used; it cannot be deleted.');
+          };
+          break;
+        case 'Room Zone':
+
+          break;
+        case 'Room Number':
+
+          break;
+        default:
+          const response = await axios.post('api/employee/del-code', {
+            code_id: this.codeForm.code_id,
+            code: this.codeForm.code,
+            tbl_name: this.codeForm.tbl_name,
+            col_name: this.codeForm.col_name,
+          }, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+          if (response.data.success) {
+            const code = await this.getCode();
+            let item = this.code.filter((e) => e.category == this.codeForm.category);
+            this.codeFilter = item;
+            this.codeForm.code_id = '';
+            toastr.success('Delete Successfully.');
+            $('#delete-modal').modal('hide');
+          } else {
+            toastr.error(`${response.data.message}`);
+          };
+      };
+    },
+
+    async addDepartment() {
+      const dept = await axios.post('api/employee/add-department', this.deptForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+      if (dept.data.success) {
+        const code = await this.getDepartment();
+        this.codeFilter = this.department;
+        this.rowSelect = '';
+        toastr.success('Add successfully.');
+        $('#department-modal').modal('hide');
+      } else {
+        toastr.error(`${dept.data.message}`);
+      };
+    },
+
+    async updDepartment() {
+      try {
+        const dept = await axios.post('api/employee/upd-department', this.deptForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+        const code = await this.getDepartment();
+        this.codeFilter = this.department;
+        this.rowSelect = '';
+        toastr.success('Update Successfully.');
+        $('#department-modal').modal('hide');
+      } catch (error) {
+        toastr.error('This code already exists in the database.');
+      };
+    },
+
+    async addProvince() {
+      const prov = await axios.post('api/employee/add-province', this.provForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+      if (prov.data.success) {
+        const code = await this.getProvince();
+        this.codeFilter = this.province;
+        this.rowSelect = '';
+        const dist = await this.getDistrict();
+        const vill = await this.getVillage();
+        toastr.success('Add successfully.');
+        $('#province-modal').modal('hide');
+      } else {
+        toastr.error(`${prov.data.message}`);
+      };
+    },
+
+    async updProvince() {
+      try {
+        const prov = await axios.post('api/employee/upd-province', this.provForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+        const code = await this.getProvince();
+        this.codeFilter = this.province;
+        this.rowSelect = '';
+        const dist = await this.getDistrict();
+        const vill = await this.getVillage();
+        toastr.success('Update Successfully.');
+        $('#province-modal').modal('hide');
+      } catch (error) {
+        toastr.error('This code already exists in the database.');
+      };
+    },
+
+    async addDistrict() {
+      const response = await axios.post('api/employee/add-district', this.distForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
       if (response.data.success) {
-
-        $('#delete-modal').modal('hide');
-        const code = await this.getCode();
-        let item = this.code.filter((e) => e.category == this.codeForm.category);
-        this.codeFilter = item;
-        this.codeForm.code_id = '';
-        toastr.success('Delete Successfully.');
-
+        const dist = await this.getDistrict();
+        this.codeFilter = this.district;
+        this.rowSelect = '';
+        const vill = await this.getVillage();
+        toastr.success('Add successfully.');
+        $('#district-modal').modal('hide');
       } else {
         toastr.error(`${response.data.message}`);
-      }
+      };
     },
+
+    async updDistrict() {
+      try {
+        const response = await axios.post('api/employee/upd-district', this.distForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+        const code = await this.getDistrict();
+        this.codeFilter = this.district;
+        this.rowSelect = '';
+        const vill = await this.getVillage();
+        toastr.success('Update Successfully.');
+        $('#district-modal').modal('hide');
+      } catch (error) {
+        toastr.error('This code already exists in the database.');
+      };
+    },
+
+    async addVillage() {
+      const response = await axios.post('api/employee/add-village', this.villForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+      if (response.data.success) {
+        const code = await this.getVillage();
+        this.codeFilter = this.village;
+        this.rowSelect = '';
+        toastr.success('Add successfully.');
+        $('#village-modal').modal('hide');
+      } else {
+        toastr.error(`${response.data.message}`);
+      };
+    },
+
+    async updVillage() {
+      try {
+        const response = await axios.post('api/employee/upd-village', this.villForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+        const code = await this.getVillage();
+        this.codeFilter = this.village;
+        this.rowSelect = '';
+        toastr.success('Update Successfully.');
+        $('#village-modal').modal('hide');
+      } catch (error) {
+        toastr.error('This code already exists in the database.');
+      };
+    },
+
+    getLKProvince() {
+      if (this.codeForm.category === 'District') {
+        let items = this.province.filter(e => e.country_id === this.distForm.country_id);
+        this.lkProvince = [];
+        items.forEach(e => {
+          this.lkProvince.push({
+            value: e.province_id,
+            label: e.province_eng
+          });
+        });
+      } else {
+        let items = this.province.filter(e => e.country_id === this.villForm.country_id);
+        this.lkProvince = [];
+        items.forEach(e => {
+          this.lkProvince.push({
+            value: e.province_id,
+            label: e.province_eng
+          });
+        });
+      };
+    },
+
+    getLKDistrict() {
+      let items = this.district.filter(e => e.country_id === this.villForm.country_id && e.province_id === this.villForm.province_id);
+      this.lkDistrict = [];
+      items.forEach(e => {
+        this.lkDistrict.push({
+          value: e.district_id,
+          label: e.district_eng
+        });
+      });
+    },
+
+
 
 
     backToMain() {

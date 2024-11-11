@@ -24,22 +24,22 @@ class authorise_controller extends Controller
     }
 
     public function codeMenu() {
-        $menuCode = DB::table('code_menus')->select('menu as value', 'name')->orderBy('menu', 'asc')->get();
+        $menuCode = DB::table('lkp_menu')->select('menu_code as value', 'menu_name as name')->orderBy('menu_code', 'asc')->get();
         return $menuCode;
     }
 
     public function authMenu(Request $request) {
-        $userMenu = DB::select('select b.user_id, a.menu, a.name, b.acc from code_menus a, user_auth_menus b where b.menu = a.menu order by b.user_id, a.menu');
+        $userMenu = DB::select('select b.user_id, a.menu_code as menu, a.menu_name as name, b.acc from lkp_menu a, user_auth_menus b where b.menu = a.menu_code order by b.user_id, a.menu_code');
         return $userMenu;
     }
 
     public function codeSubmenu() {
-        $menuCode = DB::table('code_submenus')->select('menu', 'sub', 'name')->orderBy('menu', 'asc')->orderBy('sub_id', 'asc')->get();
+        $menuCode = DB::table('lkp_menu_sub')->select('menu_code as menu', 'sub_code as sub', 'sub_name as name')->orderBy('menu_code', 'asc')->orderBy('sub_id', 'asc')->get();
         return $menuCode;
     }
 
     public function authSubmenu(Request $request) {
-        $authSub = DB::select('select b.user_id, b.menu, b.sub, a.name, b.acc, b.new, b.edit, b.del from code_submenus a, user_auth_submenus b where b.menu = a.menu and b.sub = a.sub order by user_id, menu, sub_id');
+        $authSub = DB::select('select b.user_id, b.menu, b.sub, a.sub_name as name, b.acc, b.new, b.edit, b.del from lkp_menu_sub a, user_auth_submenus b where b.menu = a.menu_code and b.sub = a.sub_code order by user_id, menu_code, sub_id');
         return $authSub;
     }
 
@@ -75,7 +75,7 @@ class authorise_controller extends Controller
                 ->insert([
                     'user_id' => $request->user_id,
                     'menu' => $sub['menu'],
-                    'sub' => $sub['sub'],
+                    'sub' => $sub['sub'], 
                     'acc' => $sub['acc'],
                     'new' => $sub['new'],
                     'edit' => $sub['edit'],

@@ -10,7 +10,9 @@ const routes = [
     { path: '/register', name: 'registerPage', component: () => import('../pages/register.vue') },
     { path: '/maintenance', name: 'maintenancePage', component: () => import('../pages/maintenance.vue') },
     { path: '/authorise', name: 'authorisePage', component: () => import('../pages/authorise.vue'), meta: { requiresAuth: true } },
+
     { path: '/admin-menu', name: 'adminPage', component: () => import('../pages/admin_menu.vue'), meta: { requiresAuth: true } },
+    { path: '/admin-email-register', name: 'adminEmailPage', component: () => import('../pages/admin_email_register.vue'), meta: { requiresAuth: true } },
 
     { path: '/dashboard-sale', name: 'saleDashboardPage', component: () => import('../pages/dash_sale.vue'), meta: { requiresAuth: true } },
     { path: '/dashboard-production', name: 'prodDashboardPage', component: () => import('../pages/dash_production.vue'), meta: { requiresAuth: true } },

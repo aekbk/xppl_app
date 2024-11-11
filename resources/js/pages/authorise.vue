@@ -29,7 +29,7 @@
           <div class="card-body">
             <div class="table-responsive table-card">
               <table class="table align-middle table-nowrap mb-0">
-                <thead class="table-light text-muted">
+                <thead class="table-light">
                   <tr>
                     <th>Username</th>
                     <th>Name</th>

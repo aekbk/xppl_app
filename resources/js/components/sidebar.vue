@@ -288,13 +288,13 @@
             <!-- Admin Menu -->
             <li v-if="auth.M11" class="nav-item">
               <a class="nav-link menu-link" id="m-menu-12" href="#admin-menu" data-bs-toggle="collapse" role="button" aria-expanded="false" @click="onMenuClick()">
-                <i class="ri-macbook-line"></i><span>Admin Menu</span>
+                <i class="ri-macbook-line"></i><span>Administrator</span>
               </a>
               <div class="collapse menu-dropdown" id="admin-menu">
                 <ul class="nav nav-sm flex-column">
                   <li v-if="auth.M11S01" class="nav-item" @click="mobileMode('m-menu-12')"><router-link class="nav-link" to="/admin-menu">Menu</router-link></li>
                   <li v-if="auth.M11S02" class="nav-item" @click="mobileMode('m-menu-12')"><router-link class="nav-link" to="/">Code</router-link></li>
-                  <li v-if="auth.M11S03" class="nav-item" @click="mobileMode('m-menu-12')"><router-link class="nav-link" to="/">Others</router-link></li>
+                  <li v-if="auth.M11S03" class="nav-item" @click="mobileMode('m-menu-12')"><router-link class="nav-link" to="/admin-email-register">Emails</router-link></li>
                 </ul>
               </div>
             </li>
