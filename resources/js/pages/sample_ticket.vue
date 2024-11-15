@@ -356,9 +356,18 @@ export default {
     return {
       columnDefs: [
 
-        { headerName: 'Item ID', field: 'item', minWidth: 80, maxWidth: 100, filter: 'agSetColumnFilter', },
+        { headerName: 'Item ID', field: 'item', minWidth: 80, maxWidth: 100, hide: true, filter: 'agSetColumnFilter', },
         { headerName: 'Sample ID', field: 'sample_id', minWidth: 120, maxWidth: 150, filter: 'agNumberColumnFilter', valueGetter: p => Number(p.data.sample_id) },
-        { headerName: 'Print Status', field: 'status', minWidth: 100, filter: 'agSetColumnFilter' },
+        {
+          headerName: 'Print Status', field: 'status', maxWidth: 120, filter: 'agSetColumnFilter',
+          cellRenderer: (p) => {
+            if (p.value == false) {
+              return 'No';
+            } else {
+              return 'Yes';
+            }
+          }
+        },
         { headerName: 'Created at', field: 'created_at', valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
         { headerName: 'Created by', field: 'created_by', filter: 'agSetColumnFilter' },
         { headerName: 'Printed at', field: 'printed1_at', valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
@@ -372,7 +381,7 @@ export default {
         filterParams: { buttons: ['reset'] },
         minWidth: 80,
         cellClassRules: { 'pointer': 'true' },
-        menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
+        // menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
       },
 
       int: {
@@ -437,6 +446,7 @@ export default {
 
       const datas = await axios.get(`api/salesdata?from=${from}&to=${to}`);
 
+      console.log(this.sampleTickets);
 
     },
 

@@ -250,8 +250,8 @@
               </a>
               <div class="collapse menu-dropdown" id="safety">
                 <ul class="nav nav-sm flex-column">
-                  <li v-if="auth.M08S01" class="nav-item" @click="mobileMode('m-menu-9')"><router-link class="nav-link" to="">Incidents</router-link></li>
-                  <li v-if="auth.M08S02" class="nav-item" @click="mobileMode('m-menu-9')"><router-link class="nav-link" to="">Code</router-link></li>
+                  <li v-if="auth.M08S01" class="nav-item" @click="mobileMode('m-menu-9')"><router-link class="nav-link" to="/safety-incident">Incidents</router-link></li>
+                  <li v-if="auth.M08S02" class="nav-item" @click="mobileMode('m-menu-9')"><router-link class="nav-link" to="/safety-code">Code</router-link></li>
                 </ul>
               </div>
             </li>

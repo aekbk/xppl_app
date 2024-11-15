@@ -24,6 +24,9 @@ const routes = [
     { path: '/sale-code', name: 'saleCodePage', component: () => import('../pages/sale_code.vue'), meta: { requiresAuth: true } },
     { path: '/sale-filemanager', name: 'saleFilePage', component: () => import('../pages/sale_filemanager.vue'), meta: { requiresAuth: true } },
 
+    { path: '/safety-code', name: 'stCodePage', component: () => import('../pages/safety_code.vue'), meta: { requiresAuth: true } },
+    { path: '/safety-incident', name: 'stIncidentPage', component: () => import('../pages/safety_incident.vue'), meta: { requiresAuth: true } },
+
     { path: '/clinic-treatment', name: 'clinicTreatmentPage', component: () => import('../pages/clinic_treatment.vue'), meta: { requiresAuth: true } },
     { path: '/clinic-medicine', name: 'clinicPatienPage', component: () => import('../pages/clinic_medicine.vue'), meta: { requiresAuth: true } },
     { path: '/clinic-store', name: 'clinicStorePage', component: () => import('../pages/clinic_store.vue'), meta: { requiresAuth: true } },

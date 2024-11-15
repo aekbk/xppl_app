@@ -83,7 +83,7 @@ export default {
       columnDefs: [
         { headerName: '#', minWidth: 50, maxWidth: 60, valueGetter: (params) => { return params.node.rowIndex + 1 } },
         { headerName: 'Data ID', field: 'data_id', hide: true },
-        { headerName: 'Company', field: 'company', filter: 'agSetColumnFilter' },
+        { headerName: 'Company', field: 'company', filter: 'agSetColumnFilter', hide: true },
         {
           headerName: "Date", minWidth: 100, maxWidth: 120, valueGetter: p => {
             if (p.data.mined_date) {
@@ -151,6 +151,7 @@ export default {
           valueFormatter: p => p.value ? p.value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : ''
         },
         { headerName: 'Weight Type', field: 'weight_type', filter: 'agSetColumnFilter' },
+        { headerName: 'Grade Range', field: 'grade_range', minWidth: 120, filter: 'agSetColumnFilter' },
         { headerName: 'Notes', field: 'notes', filter: 'agSetColumnFilter' },
         { headerName: 'Mining ID', field: 'mining_id', hide: true },
       ],

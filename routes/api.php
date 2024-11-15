@@ -9,6 +9,7 @@ use App\Http\Controllers\authorise_controller;
 use App\Http\Controllers\production_controller;
 use App\Http\Controllers\dash_sale_controller;
 use App\Http\Controllers\dash_production_controller;
+use App\Http\Controllers\safety_controller;
 use App\Http\Controllers\clinic_controller;
 use App\Http\Controllers\geology_controller;
 use App\Http\Controllers\employee_controller;
@@ -139,21 +140,6 @@ Route::prefix('production')->middleware(['auth:api'])->group(function () {
     Route::get('/report1', [production_controller::class, 'report1']);
 });
 
-
-// Clinic
-Route::prefix('clinic')->middleware(['auth:api'])->group(function () {
-    Route::get('/codes', [clinic_controller::class, 'codes']);
-    Route::get('/medicines', [clinic_controller::class, 'medicines']);
-    Route::post('/add-code', [clinic_controller::class, 'addCode']);
-    Route::post('/upd-code', [clinic_controller::class, 'updCode']);
-    Route::post('/del-code', [clinic_controller::class, 'delCode']);
-
-    Route::post('/add-patient', [clinic_controller::class, 'addPatient']);
-
-
-    // Route::get('/mine-year', [production_controller::class, 'mineYear']);
-});
-
 // Geology
 Route::prefix('geology')->middleware(['auth:api'])->group(function () {
     Route::get('/sampletickets', [geology_controller::class, 'sampleTicket']);
@@ -172,36 +158,75 @@ Route::prefix('employee')->middleware(['auth:api'])->group(function () {
     Route::get('/provinces', [employee_controller::class, 'province']);
     Route::get('/districts', [employee_controller::class, 'district']);
     Route::get('/villages', [employee_controller::class, 'village']);
-    // Route::get('/room-zone', [employee_controller::class, 'roomZone']);
-    // Route::get('/room-number', [employee_controller::class, 'roomNumber']);
+    Route::get('/camps', [employee_controller::class, 'camp']);
+    Route::get('/rooms', [employee_controller::class, 'room']);
+
     Route::post('/add-code', [employee_controller::class, 'addCode']);
     Route::post('/upd-code', [employee_controller::class, 'updCode']);
     Route::post('/del-code', [employee_controller::class, 'delCode']);
-
     Route::post('/add-company', [employee_controller::class, 'addCompany']);
     Route::post('/upd-company', [employee_controller::class, 'updCompany']);
     Route::post('/del-company', [employee_controller::class, 'delCompany']);
-
     Route::post('/add-country', [employee_controller::class, 'addCountry']);
     Route::post('/upd-country', [employee_controller::class, 'updCountry']);
     Route::post('/del-country', [employee_controller::class, 'delCountry']);
-
     Route::post('/add-department', [employee_controller::class, 'addDepartment']);
     Route::post('/upd-department', [employee_controller::class, 'updDepartment']);
     Route::post('/del-department', [employee_controller::class, 'delDepartment']);
-
     Route::post('/add-province', [employee_controller::class, 'addProvince']);
     Route::post('/upd-province', [employee_controller::class, 'updProvince']);
     Route::post('/del-province', [employee_controller::class, 'delProvince']);
-
     Route::post('/add-district', [employee_controller::class, 'addDistrict']);
     Route::post('/upd-district', [employee_controller::class, 'updDistrict']);
     Route::post('/del-district', [employee_controller::class, 'delDistrict']);
-
     Route::post('/add-village', [employee_controller::class, 'addVillage']);
     Route::post('/upd-village', [employee_controller::class, 'updVillage']);
     Route::post('/del-village', [employee_controller::class, 'delVillage']);
+    Route::post('/add-camp', [employee_controller::class, 'addCamp']);
+    Route::post('/upd-camp', [employee_controller::class, 'updCamp']);
+    Route::post('/del-camp', [employee_controller::class, 'delCamp']);
 
+});
+
+
+// Safety
+Route::prefix('safety')->middleware(['auth:api'])->group(function () {
+    Route::get('/categories', [safety_controller::class, 'category']);
+    Route::get('/codes', [safety_controller::class, 'code']);
+    Route::post('/add-code', [safety_controller::class, 'addCode']);
+    Route::post('/upd-code', [safety_controller::class, 'updCode']);
+    Route::post('/del-code', [safety_controller::class, 'delCode']);
+    Route::get('/years', [safety_controller::class, 'year']);
+    Route::get('/incidents', [safety_controller::class, 'incident']);
+    Route::get('/incident-files', [safety_controller::class, 'incidentfile']);
+    Route::get('/incident-nextno', [safety_controller::class, 'incidentNextNo']);
+
+    Route::post('/add-incident', [safety_controller::class, 'addIncident']);
+    Route::post('/upd-incident', [safety_controller::class, 'updIncident']);
+    Route::post('/del-incident', [safety_controller::class, 'delIncident']);
+    Route::post('/del-file', [safety_controller::class, 'delFile']);
+});
+
+Route::prefix('safety')->controller(safety_controller::class)->group(function(){
+    Route::get('/download-incident-file/{file}', 'downloadIncidentFile');
+});
+
+
+
+
+
+// Clinic
+Route::prefix('clinic')->middleware(['auth:api'])->group(function () {
+    Route::get('/codes', [clinic_controller::class, 'codes']);
+    Route::get('/medicines', [clinic_controller::class, 'medicines']);
+    Route::post('/add-code', [clinic_controller::class, 'addCode']);
+    Route::post('/upd-code', [clinic_controller::class, 'updCode']);
+    Route::post('/del-code', [clinic_controller::class, 'delCode']);
+
+    Route::post('/add-patient', [clinic_controller::class, 'addPatient']);
+
+
+    // Route::get('/mine-year', [production_controller::class, 'mineYear']);
 });
 
   

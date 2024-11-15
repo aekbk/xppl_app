@@ -534,13 +534,12 @@ export default {
         { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
       ],
 
-      columnZone: [
+      columnCamp: [
         { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
-        { headerName: 'Code ID', field: 'code_id', minWidth: 80, maxWidth: 100, hide: true },
-        { headerName: 'Category', field: 'category', hide: true },
-        { headerName: 'Code', field: 'code', filter: 'agSetColumnFilter' },
-        { headerName: 'Description Eng', field: 'descr_eng', filter: 'agSetColumnFilter' },
-        { headerName: 'Description Lao', field: 'descr_lao', filter: 'agSetColumnFilter' },
+        { headerName: 'Code ID', field: 'camp_id', minWidth: 80, maxWidth: 100, hide: true },
+        { headerName: 'Code', field: 'camp_code', filter: 'agSetColumnFilter' },
+        { headerName: 'Camp', field: 'camp_eng', filter: 'agSetColumnFilter' },
+        { headerName: 'ແຄ້ມ', field: 'camp_lao', filter: 'agSetColumnFilter' },
         {
           headerName: 'Active', field: 'active', maxWidth: 100, filter: 'agSetColumnFilter',
           cellRenderer: (p) => {
@@ -559,9 +558,14 @@ export default {
 
       columnRoom: [
         { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
-        { headerName: 'Code ID', field: 'code_id', minWidth: 80, maxWidth: 100, hide: true },
-        { headerName: 'Category', field: 'category', hide: true },
-        { headerName: 'Code', field: 'code', filter: 'agSetColumnFilter' },
+        { headerName: 'Room ID', field: 'room_id', minWidth: 80, maxWidth: 100, hide: true },
+        { headerName: 'Camp Code', field: 'camp_code', filter: 'agSetColumnFilter' },
+        { headerName: 'Room No.', field: 'room_no', filter: 'agSetColumnFilter' },
+        { headerName: 'Room Type', field: 'type', filter: 'agSetColumnFilter' },
+        { headerName: 'Capacity', field: 'capacity', filter: 'agSetColumnFilter' },
+        { headerName: 'No of Bed', field: 'no_bed', filter: 'agSetColumnFilter' },
+        { headerName: 'Room Condition', field: 'condition', filter: 'agSetColumnFilter' },
+        { headerName: 'Remark', field: 'remark', filter: 'agSetColumnFilter' },
         { headerName: 'Description Eng', field: 'descr_eng', filter: 'agSetColumnFilter' },
         { headerName: 'Description Lao', field: 'descr_lao', filter: 'agSetColumnFilter' },
         {
@@ -599,8 +603,8 @@ export default {
       province: [],
       district: [],
       village: [],
-      roomZone: [],
-      roomNumber: [],
+      camps: [],
+      rooms: [],
 
       codeFilter: [],
       lkActive: [{ value: 1, label: 'Yes' }, { value: 0, label: 'No' }],
@@ -690,10 +694,10 @@ export default {
       const prov = await this.getProvince();
       const dist = await this.getDistrict();
       const vill = await this.getVillage();
-      // const zone = await this.getRoomZone();
-      // const room = await this.getRoomNumber();
+      const camp = await this.getCamp();
+      const room = await this.getRoom();
 
-      console.log(this.department);
+      // console.log(this.department);
 
     },
 
@@ -765,14 +769,14 @@ export default {
       this.village = vill.data;
     },
 
-    async getRoomZone() {
-      const zone = await axios.get('/api/employee/room-zone', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-      this.roomZone = zone.data;
+    async getCamp() {
+      const camp = await axios.get('/api/employee/camps', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+      this.camps = camp.data;
     },
 
-    async getRoomNumber() {
-      const number = await axios.get('/api/employee/room-number', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-      this.roomNumber = number.data;
+    async getRoom() {
+      const room = await axios.get('/api/employee/rooms', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+      this.rooms = room.data;
     },
 
     async cateSelected(cate, inx) {
@@ -812,13 +816,13 @@ export default {
           this.columnDefs = this.columnVill;
           this.codeFilter = this.village;
           break;
-        case 'Room Zone':
-          this.columnDefs = this.columnZone;
-          this.codeFilter = this.roomZone;
+        case 'Camp':
+          this.columnDefs = this.columnCamp;
+          this.codeFilter = this.camps;
           break;
         case 'Room Number':
           this.columnDefs = this.columnRoom;
-          this.codeFilter = this.roomNumber;
+          this.codeFilter = this.rooms;
           break;
         default:
           this.columnDefs = this.columnGene;
@@ -839,7 +843,7 @@ export default {
         this.rowSelect = ''
 
         switch (this.codeForm.category) {
-          case 'Company': case 'Country':
+          case 'Company': case 'Country': case 'Camp':
             this.codeForm.code = '';
             this.codeForm.descr_eng = '';
             this.codeForm.descr_lao = '';
@@ -908,6 +912,18 @@ export default {
             toastr.error(`${countries.data.message}`);
           };
           break;
+        case 'Camp':
+          const camp = await axios.post('api/employee/add-camp', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+          if (camp.data.success) {
+            const count = await this.getCamp();
+            this.codeFilter = this.camps;
+            this.rowSelect = '';
+            toastr.success('Add successfully.');
+            $('#code-modal').modal('hide');
+          } else {
+            toastr.error(`${camp.data.message}`);
+          };
+          break;
         default:
           const response = await axios.post('api/employee/add-code', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
           if (response.data.success) {
@@ -963,7 +979,7 @@ export default {
           this.distForm.district_eng = e.data.district_eng;
           this.distForm.district_lao = e.data.district_lao;
           this.distForm.active = e.data.active;
-          break; r
+          break;
         case 'Village':
           this.villForm.village_id = e.data.village_id;
           this.villForm.country_id = e.data.country_id;
@@ -973,8 +989,13 @@ export default {
           this.villForm.village_lao = e.data.village_lao;
           this.villForm.active = e.data.active;
           break;
-        case 'Room Zone':
-
+        case 'Camp':
+          this.codeForm.code_id = e.data.camp_id;
+          this.codeForm.code = e.data.camp_code;
+          this.codeForm.code_ori = e.data.camp_code;
+          this.codeForm.descr_eng = e.data.camp_eng;
+          this.codeForm.descr_lao = e.data.camp_lao;
+          this.codeForm.active = e.data.active;
           break;
         case 'Room Number':
 
@@ -1015,9 +1036,6 @@ export default {
             this.getLKDistrict();
             $('#village-modal').modal('show');
             break;
-          case 'Room Zone':
-
-            break;
           case 'Room Number':
 
             break;
@@ -1046,6 +1064,18 @@ export default {
             const res = await axios.post('api/employee/upd-country', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
             const code = await this.getCountry();
             this.codeFilter = this.country;
+            this.rowSelect = '';
+            toastr.success('Update Successfully.');
+            $('#code-modal').modal('hide');
+          } catch (error) {
+            toastr.error('This code already exists in the database.');
+          };
+          break;
+        case 'Camp':
+          try {
+            const response = await axios.post('api/employee/upd-camp', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+            const code = await this.getCamp();
+            this.codeFilter = this.camps;
             this.rowSelect = '';
             toastr.success('Update Successfully.');
             $('#code-modal').modal('hide');

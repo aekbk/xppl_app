@@ -6,9 +6,10 @@
           <div class="card-header align-items-center d-flex">
             <h4 class="card-title mb-0 flex-grow-1">Menu</h4>
             <div>
-              <button type="button" class="btn btn-soft-secondary btn-sm btn-icon material-shadow-none btn-link" @click="newMenu">
+              <!-- <button type="button" class="btn btn-soft-secondary btn-sm btn-icon material-shadow-none btn-link" @click="newMenu">
                 <i class="ri-add-line align-bottom"></i>
-              </button>
+              </button> -->
+              <button class="btn btn-sm btn-soft-info" id="btn-new" @click="newMenu"><i class="ri-add-fill me-1 align-bottom"></i>Add Menu</button>
             </div>
           </div>
           <div class="accordion accordion-flush filter-accordion">
@@ -53,9 +54,10 @@
           <div class="card-header align-items-center d-flex">
             <h4 class="card-title mb-0 flex-grow-1">{{ menuName }}</h4>
             <div style="height: 27.063px;">
-              <button v-if="subForm.menu_code" type="button" class="btn btn-soft-secondary btn-sm btn-icon material-shadow-none" @click="newMenusub">
+              <button v-if="subForm.menu_code" class="btn btn-sm btn-soft-info" id="btn-new" @click="newMenusub"><i class="ri-add-fill me-1 align-bottom"></i>Add Submenu</button>
+              <!-- <button v-if="subForm.menu_code" type="button" class="btn btn-soft-secondary btn-sm btn-icon material-shadow-none" @click="newMenusub">
                 <i class="ri-add-line align-bottom"></i>
-              </button>
+              </button> -->
             </div>
           </div>
           <div class="card-body">
@@ -199,7 +201,7 @@ export default {
       subForm: { sub_id: '', menu_code: '', sub_code: '', sub_name: '', descr: '' },
       menuName: '',
       actMode: '',
-      delCate: ''
+      delMode: ''
     };
   },
 
@@ -295,12 +297,12 @@ export default {
 
     delMenu(menu) {
       this.menuForm.menu_code = menu;
-      this.delCate = 'menu';
+      this.delMode = 'menu';
       $('#delete-modal').modal('show');
     },
 
     async delConfirm() {
-      if (this.delCate == 'menu') {
+      if (this.delMode == 'menu') {
         const response = await axios.post('api/admin/del-menu', this.menuForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
         if (response.data.success) {
           const code = await this.getMenu();
@@ -382,7 +384,7 @@ export default {
 
     delMenusub(sub) {
       this.subForm.sub_code = sub;
-      this.delCate = 'sub';
+      this.delMode = 'sub';
       $('#delete-modal').modal('show');
     },
 

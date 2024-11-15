@@ -193,9 +193,7 @@ class sale_controller extends Controller
     }
 
     public function customer() {
-        $customer = DB::table('cs_customers')
-                    ->orderBy('customer_name', 'asc')
-                    ->get();
+        $customer = DB::table('cs_customers')->orderBy('customer_name', 'asc')->get();
         return $customer;
     }
 
@@ -234,8 +232,8 @@ class sale_controller extends Controller
             if ($request->hasFile('files')) {
                 foreach ($request->file('files') as $file) {
                     $fileName = $newId.'-'.$file->getClientOriginalName();
-                    $file->move(public_path('assets/images/customers/'), $fileName);
-                    $fileSize = (round(filesize(public_path('assets/images/customers/'.$fileName))/1024,0)).' KB';
+                    $file->move('assets/images/customers/', $fileName);
+                    $fileSize = (round(filesize('assets/images/customers/'.$fileName)/1024,0)).' KB';
 
                     DB::table('cs_customer_files')
                     ->insert([
@@ -293,8 +291,8 @@ class sale_controller extends Controller
             DB::table('cs_customer_files')->where('customer_id', $request->id)->delete();
 
             foreach($request->listFile as $list) {
-                if(file_exists(public_path('assets/images/customers/'.$list['new_name']))){
-                    unlink(public_path('assets/images/customers/'.$list['new_name']));
+                if(file_exists('assets/images/customers/'.$list['new_name'])){
+                    unlink('assets/images/customers/'.$list['new_name']);
                 }
             }
             
@@ -321,8 +319,8 @@ class sale_controller extends Controller
             foreach ($request->file('files') as $file) {
 
                 $fileName = $request->customer_id.'-'.$file->getClientOriginalName();
-                $file->move(public_path('assets/images/customers/'), $fileName);
-                $fileSize = (round(filesize(public_path('assets/images/customers/'.$fileName))/1024,0)).' KB';
+                $file->move('assets/images/customers/', $fileName);
+                $fileSize = (round(filesize('assets/images/customers/'.$fileName)/1024,0)).' KB';
 
                 DB::table('cs_customer_files')
                 ->insert([
@@ -339,13 +337,13 @@ class sale_controller extends Controller
     public function delCustomerFile(Request $request){
         DB::table('cs_customer_files')->where('file_id', $request->id)->delete();
 
-        if(file_exists(public_path('assets/images/customers/'.$request->file))){
-            unlink(public_path('assets/images/customers/'.$request->file));
+        if(file_exists('assets/images/customers/'.$request->file)){
+            unlink('assets/images/customers/'.$request->file);
         }
     }
 
     public function downloadCustomerFile($file){
-        return response()->download(public_path('assets/images/customers/'.$file));
+        return response()->download('assets/images/customers/'.$file);
     }
 
     public function contract() {
@@ -414,8 +412,8 @@ class sale_controller extends Controller
             if ($request->hasFile('files')) {
                 foreach ($request->file('files') as $file) {
                     $fileName = $newId.'-'.$file->getClientOriginalName();
-                    $file->move(public_path('assets/images/contracts/'), $fileName);
-                    $fileSize = (round(filesize(public_path('assets/images/contracts/'.$fileName))/1024,0)).' KB';
+                    $file->move('assets/images/contracts/', $fileName);
+                    $fileSize = (round(filesize('assets/images/contracts/'.$fileName)/1024,0)).' KB';
 
                     DB::table('cs_contract_files')
                     ->insert([
@@ -467,8 +465,8 @@ class sale_controller extends Controller
         DB::table('cs_contract_files')->where('contract_id', $request->contract_id)->delete();
 
         foreach($request->fileList as $list) {
-            if(file_exists(public_path('assets/images/contracts/'.$list['new_name']))){
-                unlink(public_path('assets/images/contracts/'.$list['new_name']));
+            if(file_exists('assets/images/contracts/'.$list['new_name'])){
+                unlink('assets/images/contracts/'.$list['new_name']);
             };
         };   
     }
@@ -567,8 +565,8 @@ class sale_controller extends Controller
             foreach ($request->file('files') as $file) {
 
                 $fileName = $request->contract_id.'-'.$file->getClientOriginalName();
-                $file->move(public_path('assets/images/contracts/'), $fileName);
-                $fileSize = (round(filesize(public_path('assets/images/contracts/'.$fileName))/1024,0)).' KB';
+                $file->move('assets/images/contracts/', $fileName);
+                $fileSize = (round(filesize('assets/images/contracts/'.$fileName)/1024,0)).' KB';
 
                 DB::table('cs_contract_files')
                 ->insert([
@@ -585,13 +583,13 @@ class sale_controller extends Controller
     public function delContractFile(Request $request){
         DB::table('cs_contract_files')->where('file_id', $request->id)->delete();
 
-        if(file_exists(public_path('assets/images/contracts/'.$request->file))){
-            unlink(public_path('assets/images/contracts/'.$request->file));
+        if(file_exists('assets/images/contracts/'.$request->file)){
+            unlink('assets/images/contracts/'.$request->file);
         }
     }
 
     public function downloadContractFile($file){
-        return response()->download(public_path('assets/images/contracts/'.$file));
+        return response()->download('assets/images/contracts/'.$file);
     }
 
     public function saleYear() {

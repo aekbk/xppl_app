@@ -55,8 +55,9 @@
         <loading />
       </div>
       <div v-else>
-        <ag-grid-vue style="height: calc(100vh - 15.65rem);" id="ag-sales-data" class="ag-theme-material" :columnDefs="columnDefs" :rowData="salesList" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :popupParent="popupParent" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewContract"></ag-grid-vue>
+        <ag-grid-vue style="height: calc(100vh - 15.80rem);" id="ag-sales-data" class="ag-theme-material" :columnDefs="columnDefs" :rowData="salesList" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :popupParent="popupParent" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewContract"></ag-grid-vue>
       </div>
+      <div class="pb-1"></div>
     </div>
 
     <!-- View -->
@@ -500,7 +501,7 @@ export default {
 
     cellCicked(e) {
       // this.enableDropdown();
-      // let f = this.contractForm;
+      // let f = this.contractForm; 
       // console.log(e.data);
 
       this.selectedData = e.data;

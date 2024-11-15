@@ -33,7 +33,8 @@
             </div>
           </div>
         </div>
-        <ag-grid-vue style="height: calc(100vh - 15.65rem);" class="ag-theme-material" :columnDefs="columnDefs" :rowData="customerList" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :popupParent="popupParent" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewMode = 'view'"></ag-grid-vue>
+        <ag-grid-vue style="height: calc(100vh - 15.80rem);" class="ag-theme-material" :columnDefs="columnDefs" :rowData="customerList" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :popupParent="popupParent" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewMode = 'view'"></ag-grid-vue>
+        <div class="pb-1"></div>
       </div>
 
       <!-- View Customer -->

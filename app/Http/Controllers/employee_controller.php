@@ -48,15 +48,15 @@ class employee_controller extends Controller
         return $village;        
     }
 
-    // public function roomZone() {
-    //     $zone = DB::select('select * from lkp_room_zone order by camp, room_zone');
-    //     return $zone;        
-    // }
+    public function camp() {
+        $camp = DB::select('select * from emp_lkp_camps order by camp_code');
+        return $camp;        
+    }
 
-    // public function roomNumber() {
-    //     $room = DB::select('select * from lkp_room_number order by room_zone, room_number');
-    //     return $room;        
-    // }
+    public function room() {
+        $room = DB::select('select a.camp_id, a.camp_code, b.* from emp_lkp_camps a, emp_lkp_rooms b where a.camp_id = b.camp_id order by a.camp_code, b.room_no');
+        return $room;        
+    }
 
     // =========== GENERAL CODE =============================================================
     public function addCode(Request $request){
@@ -555,5 +555,55 @@ class employee_controller extends Controller
     }
     public function delVillage(Request $request){
         DB::table('lkp_villages')->where('village_id', $request->village_id)->delete();
+    }
+
+    // =========== CAMP CODE =============================================================
+    public function addCamp(Request $request){
+        $check = DB::table('emp_lkp_camps')->where('camp_code', $request->code);
+        if ($check->count()){
+            $success = false;
+            $message = 'This code already exists in the database.';
+        } else {
+
+            $datetime = now('Asia/Bangkok')->toDateTimeString();
+            $username = Str::lower(auth()->user()->username);
+
+            DB::table('emp_lkp_camps')
+            ->insert([
+                'camp_code' => $request->code,
+                'camp_eng' => $request->descr_eng,
+                'camp_lao' => $request->descr_lao,
+                'active' => $request->active,
+                'created_at' => $datetime,
+                'created_by' => $username
+            ]);
+
+            $success = true;
+            $message = "Insert completed!";
+        }
+
+        $response = [
+            'success' => $success,
+            'message' => $message
+        ];
+        return response()->json($response);
+    }
+    public function updCamp(Request $request){
+        $datetime = now('Asia/Bangkok')->toDateTimeString();
+        $username = Str::lower(auth()->user()->username);
+        
+        DB::table('emp_lkp_camps')
+        ->where('camp_id', $request->code_id)
+        ->update([
+            'camp_code' => $request->code,
+            'camp_eng' => $request->descr_eng,
+            'camp_lao' => $request->descr_lao,
+            'active' => $request->active,
+            'updated_at' => $datetime,
+            'updated_by' => $username
+        ]);
+    }
+    public function delCamp(Request $request){
+        DB::table('emp_lkp_camps')->where('camp_id', $request->code_id)->delete();
     }
 }
