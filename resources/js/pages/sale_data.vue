@@ -193,7 +193,7 @@ export default {
   data() {
     return {
       columnDefs: [
-        { headerName: '#', maxWidth: 60, valueGetter: (params) => { return params.node.rowIndex + 1 } },
+        { headerName: '#', maxWidth: 60, sortable: false, resizable: false, suppressMovable: true, suppressMenu: true, valueGetter: (params) => { return params.node.rowIndex + 1 } },
         { headerName: 'WID', field: 'WId', minWidth: 70, filter: 'agSetColumnFilter' },
         { headerName: 'Ticket ID', field: 'TicketId', minWidth: 100, filter: 'agSetColumnFilter' },
         { headerName: 'Dest Port', field: 'DestPort', filter: 'agSetColumnFilter' },

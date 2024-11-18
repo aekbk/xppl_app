@@ -823,7 +823,7 @@ export default {
   data() {
     return {
       columnDefs: [
-        { headerName: '#', maxWidth: 47, valueGetter: (params) => { return params.node.rowIndex + 1 } },
+        { headerName: '#', maxWidth: 47, sortable: false, resizable: false, suppressMovable: true, suppressMenu: true, valueGetter: (params) => { return params.node.rowIndex + 1 } },
         { headerName: 'Destination', field: 'destination', filter: 'agSetColumnFilter' },
         { headerName: 'Customer Name', field: 'customer_name', minWidth: 180, filter: 'agSetColumnFilter' },
         { headerName: 'Contract Number', field: 'contract_no', minWidth: 210, filter: 'agSetColumnFilter' },

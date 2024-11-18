@@ -263,7 +263,7 @@ export default {
   data() {
     return {
       columnDefs: [
-        { headerName: 'Code ID', field: 'code_id', minWidth: 80, maxWidth: 100, hide: true },
+        { headerName: '#', maxWidth: 50, sortable: false, resizable: false, suppressMovable: true, suppressMenu: true, valueGetter: (params) => { return params.node.rowIndex + 1 } },
         { headerName: 'Category', field: 'category', hide: true },
         { headerName: 'Code', field: 'code', filter: 'agSetColumnFilter' },
         { headerName: 'Description', field: 'descr', filter: 'agSetColumnFilter' },
@@ -284,6 +284,7 @@ export default {
       ],
 
       columnDefs2: [
+        { headerName: '#', maxWidth: 50, sortable: false, resizable: false, suppressMovable: true, suppressMenu: true, valueGetter: (params) => { return params.node.rowIndex + 1 } },
         { headerName: 'Grade ID', field: 'grade_id', minWidth: 80, maxWidth: 100, hide: true },
         { headerName: 'Grade', field: 'grade', hide: true, filter: 'agSetColumnFilter' },
         { headerName: 'Grade Name', field: 'grade_name', filter: 'agSetColumnFilter' },

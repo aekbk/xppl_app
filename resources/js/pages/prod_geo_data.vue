@@ -81,7 +81,7 @@ export default {
   data() {
     return {
       columnDefs: [
-        { headerName: '#', minWidth: 50, maxWidth: 60, valueGetter: (params) => { return params.node.rowIndex + 1 } },
+        { headerName: '#', maxWidth: 50, sortable: false, resizable: false, suppressMovable: true, suppressMenu: true, valueGetter: (params) => { return params.node.rowIndex + 1 } },
         { headerName: 'Data ID', field: 'data_id', hide: true },
         { headerName: 'Company', field: 'company', filter: 'agSetColumnFilter', hide: true },
         {

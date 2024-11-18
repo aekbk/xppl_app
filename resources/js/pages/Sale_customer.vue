@@ -462,7 +462,7 @@ export default {
   data() {
     return {
       columnDefs: [
-        { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
+        { headerName: '#', maxWidth: 50, sortable: false, resizable: false, suppressMovable: true, suppressMenu: true, valueGetter: (params) => { return params.node.rowIndex + 1 } },
         { headerName: "ID", field: 'customer_id', hide: true },
         { headerName: 'Customer Name', field: 'customer_name', minWidth: 250, filter: 'agSetColumnFilter' },
         { headerName: 'Full Address', field: 'full_address', filter: 'agSetColumnFilter' },

@@ -119,7 +119,7 @@
           <div class="col-xl-2">
             <div class="mb-3">
               <label class="form-label">Education Level <span class="text-danger">*</span></label>
-              <multiselect :searchable="false" :searchStart="true" placeholder="Select" :options="lkCustomer" />
+              <multiselect :searchable="true" :searchStart="true" placeholder="Select" :options="lkCustomer" />
             </div>
           </div>
           <div class="col-xl-4">
@@ -359,36 +359,6 @@
                   Employee Details
                 </a>
               </li>
-              <li class="nav-item" role="presentation">
-                <a class="nav-link" id="add-probation-tab" data-bs-toggle="tab" href="#add-probation" role="tab" aria-selected="false">
-                  Probation
-                </a>
-              </li>
-              <li class="nav-item" role="presentation">
-                <a class="nav-link" id="add-accommodation-tab" data-bs-toggle="tab" href="#add-accommodation" role="tab" aria-selected="false">
-                  Accommodation
-                </a>
-              </li>
-              <li class="nav-item" role="presentation">
-                <a class="nav-link" id="add-bank-tab" data-bs-toggle="tab" href="#add-bank" role="tab" aria-selected="false">
-                  Bank Account
-                </a>
-              </li>
-              <li class="nav-item" role="presentation">
-                <a class="nav-link" id="add-contact-tab" data-bs-toggle="tab" href="#add-contact" role="tab" aria-selected="false">
-                  Contact Person
-                </a>
-              </li>
-              <li class="nav-item" role="presentation">
-                <a class="nav-link" id="add-card-tab" data-bs-toggle="tab" href="#add-card" role="tab" aria-selected="false">
-                  Cards
-                </a>
-              </li>
-              <li class="nav-item" role="presentation">
-                <a class="nav-link" id="add-document-tab" data-bs-toggle="tab" href="#add-document" role="tab" aria-selected="false">
-                  Documents
-                </a>
-              </li>
             </ul>
           </div>
           <div class="modal-body">
@@ -470,7 +440,7 @@
                   <div class="col-xl-3 col-lg-4">
                     <div class="mb-3">
                       <label class="form-label">Education Level <span class="text-danger">*</span></label>
-                      <multiselect :searchable="false" :searchStart="true" placeholder="Select education lavel" :options="lkEduLevel" v-model="personalForm.education_level" />
+                      <multiselect :searchable="true" :searchStart="true" placeholder="Select education lavel" :options="lkEduLevel" v-model="personalForm.education_level" />
                     </div>
                   </div>
                   <div class="col-xl-7 col-lg-8">
@@ -558,7 +528,7 @@
                   <div class="col-xl-4 col-lg-8">
                     <div class="mb-3">
                       <label class="form-label">Department <span class="text-danger">*</span></label>
-                      <multiselect :searchable="true" :searchStart="false" placeholder="Select department" :options="lkDept" v-model="detailForm.department" />
+                      <multiselect :searchable="true" :searchStart="false" placeholder="Select department" :options="lkDepartment" v-model="detailForm.department" />
                     </div>
                   </div>
                   <div class="col-xl-4 col-lg-4">
@@ -628,281 +598,6 @@
                 </div>
               </div>
 
-              <!-- Probation Tab -->
-              <div class="tab-pane" id="add-probation" role="tabpanel">
-                <div class="row">
-                  <div class="col-xl-5 col-lg-6">
-                    <div class="mb-3">
-                      <label class="form-label">Probation Period <span class="text-danger">*</span></label>
-                      <input type="text" id="probation-range" class="form-control flatpickr-input flatpickr-range cursor-pointer" placeholder="Emter date range" v-model="probationForm.period">
-                    </div>
-                  </div>
-                  <div class="col-xl-3 col-lg-6">
-                    <div class="mb-3">
-                      <label class="form-label">Days </label>
-                      <input type="text" class="form-control" placeholder="Auto fill" readonly>
-                    </div>
-                  </div>
-                  <div class="col-xl-4 col-lg-6">
-                    <div class="mb-3">
-                      <label class="form-label">Probation Status <span class="text-danger">*</span></label>
-                      <multiselect :searchable="false" :searchStart="true" placeholder="Select grade" :options="lkProbStatus" />
-                    </div>
-                  </div>
-                  <div class="col-xl-8 order-lg-last order-xl-0">
-                    <div class="mb-3 mb-lg-0">
-                      <label class="form-label">Remarks </label>
-                      <textarea class="form-control" rows="1" placeholder="Enter remarks" v-model="probationForm.remark"></textarea>
-                    </div>
-                  </div>
-                  <div class="col-xl-4 col-lg-6">
-                    <div class="mb-0">
-                      <label class="form-label">File-Docs</label>
-                      <input type="file" class="form-control">
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Accommodation Tab -->
-              <div class="tab-pane" id="add-accommodation" role="tabpanel">
-                <div class="row">
-                  <div class="col-xl-4 col-lg-6">
-                    <div class="mb-3">
-                      <label class="form-label">Room Zone <span class="text-danger">*</span></label>
-                      <multiselect :searchable="true" :searchStart="true" placeholder="Select room zone" :options="lkRoomZone" v-model="accomForm.room_zone" />
-                    </div>
-                  </div>
-                  <div class="col-xl-3 col-lg-6">
-                    <div class="mb-3">
-                      <label class="form-label">Room Number <span class="text-danger">*</span></label>
-                      <multiselect :searchable="true" :searchStart="true" placeholder="Select room number" :options="lkRoomNo" v-model="accomForm.room_number" />
-                    </div>
-                  </div>
-
-                  <div class="col-xl-3">
-                    <div class="mb-3">
-                      <label class="form-label">Probation Period</label>
-                      <input type="text" id="selectMode-3" class="form-control flatpickr-input flatpickr-range rounded-start-2 cursor-pointer" placeholder="Select date range" aria-label="Text input with dropdown button" @input="getRangeData('r')">
-                    </div>
-                  </div>
-                  <div class="col-xl-2">
-                    <div class="mb-3">
-                      <label class="form-label">Days </label>
-                      <input type="text" class="form-control" placeholder="Enter loading place">
-                    </div>
-                  </div>
-
-                  <div class="col-12">
-                    <label class="form-label">Remarks </label>
-                    <textarea class="form-control" rows="1" placeholder="Enter remarks" v-model="accomForm.remark"></textarea>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Bank Account Tab -->
-              <div class="tab-pane" id="add-bank" role="tabpanel">
-                <div class="row">
-                  <div class="col-xl-5 col-lg-6">
-                    <div class="mb-3">
-                      <label class="form-label">Bank Name <span class="text-danger">*</span></label>
-                      <multiselect :searchable="false" :searchStart="true" placeholder="Select bank name" :options="lkBankName" v-model="bankForm.bank_name" />
-                    </div>
-                  </div>
-                  <div class="col-xl-7 col-lg-6">
-                    <div class="mb-3">
-                      <label class="form-label">Account Number <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" placeholder="Enter account number" v-model="bankForm.account_number">
-                    </div>
-                  </div>
-                  <div class="col-xl-5 col-lg-6">
-                    <div class="mb-3">
-                      <label class="form-label">Account Name <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" placeholder="Enter account name" v-model="bankForm.account_name">
-                    </div>
-                  </div>
-                  <div class="col-xl-3 col-lg-6">
-                    <div class="mb-3">
-                      <label class="form-label">Account Type <span class="text-danger">*</span></label>
-                      <multiselect :searchable="false" :searchStart="true" placeholder="Select account type" :options="lkAccType" v-model="bankForm.acount_type" />
-                    </div>
-                  </div>
-                  <div class="col-xl-4 col-lg-6">
-                    <div class="mb-3">
-                      <label class="form-label"> Account Status <span class="text-danger">*</span></label>
-                      <multiselect :searchable="false" :searchStart="true" placeholder="Select account status" :options="lkAccStatus" v-model="bankForm.status" />
-                    </div>
-                  </div>
-
-                  <div class="col-xl-8 order-lg-last order-xl-0">
-                    <div class="mb-3 mb-lg-0">
-                      <label class="form-label">Remarks</label>
-                      <textarea class="form-control" rows="1" placeholder="Enter remarks" v-model="cardForm.remark"></textarea>
-                    </div>
-                  </div>
-                  <div class="col-xl-4 col-lg-6">
-                    <div class="mb-0">
-                      <label class="form-label">File-Docs</label>
-                      <input type="file" class="form-control">
-                    </div>
-                  </div>
-
-                  <!-- <div class="col-xl-5 col-lg-6 order-last order-lg-0">
-                    <div class="mb-0 mb-lg-3">
-                      <label class="form-label">File-Docs</label>
-                      <input type="file" class="form-control">
-                    </div>
-                  </div> -->
-                  <!-- <div class="col-12">
-                    <div class="mb-3 mb-lg-0">
-                      <label class="form-label">Remarks</label>
-                      <textarea class="form-control" rows="1" placeholder="Enter notes"></textarea>
-                    </div>
-                  </div> -->
-                </div>
-              </div>
-
-              <!-- Contact Person Tab -->
-              <div class="tab-pane" id="add-contact" role="tabpanel">
-                <div class="row">
-                  <div class="col-xl-4">
-                    <div class="mb-3">
-                      <label class="form-label">Contact Person <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" placeholder="Enter contact person name" v-model="contactForm.contact_person">
-                    </div>
-                  </div>
-                  <div class="col-xl-4 col-lg-6">
-                    <div class="mb-3">
-                      <label class="form-label">Phone Number <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" placeholder="Enter contact phone number" v-model="contactForm.phone_number">
-                    </div>
-                  </div>
-                  <div class="col-xl-4 col-lg-6">
-                    <div class="mb-3">
-                      <label class="form-label">Relationship <span class="text-danger">*</span></label>
-                      <multiselect :searchable="true" :searchStart="true" placeholder="Select relationship" :options="lkRelate" v-model="contactForm.relationship" />
-                    </div>
-                  </div>
-                  <div class="col-xl-4 col-lg-6">
-                    <div class="mb-3">
-                      <label class="form-label">Country </label>
-                      <multiselect :searchable="true" :searchStart="true" placeholder="Select country" :options="lkCountry" v-model="contactForm.country" />
-                    </div>
-                  </div>
-                  <div class="col-xl-4 col-lg-6">
-                    <div class="mb-3">
-                      <label class="form-label">Province </label>
-                      <multiselect :searchable="true" :searchStart="true" placeholder="Select province" :options="lkProvince" v-model="contactForm.province" />
-                    </div>
-                  </div>
-                  <div class="col-xl-4 col-lg-6">
-                    <div class="mb-3">
-                      <label class="form-label">District </label>
-                      <multiselect :searchable="true" :searchStart="true" placeholder="Select district" :options="lkDistrict" v-model="contactForm.district" />
-                    </div>
-                  </div>
-                  <div class="col-xl-4 col-lg-6">
-                    <div class="mb-3">
-                      <label class="form-label">Village </label>
-                      <multiselect :searchable="true" :searchStart="true" placeholder="Select village" :options="lkVillage" v-model="contactForm.village" />
-                    </div>
-                  </div>
-                  <div class="col-xl-8">
-                    <label class="form-label">Remarks </label>
-                    <textarea class="form-control" rows="1" placeholder="Enter remarks" v-model="contactForm.remark"></textarea>
-                  </div>
-
-                </div>
-              </div>
-
-              <!-- Personal Cards Tab -->
-              <div class="tab-pane" id="add-card" role="tabpanel">
-                <div class="row">
-                  <div class="col-xl-4 col-lg-6">
-                    <div class="mb-3">
-                      <label class="form-label">Card Type <span class="text-danger">*</span></label>
-                      <multiselect :searchable="false" :searchStart="true" placeholder="Select card type" :options="lkCardType" v-model="cardForm.card_type" />
-                    </div>
-                  </div>
-                  <div class="col-xl-4 col-lg-6">
-                    <div class="mb-3">
-                      <label class="form-label">Card ID <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" placeholder="Enter card id" v-model="cardForm.card_id">
-                    </div>
-                  </div>
-                  <div class="col-xl-4 col-lg-6">
-                    <div class="mb-3">
-                      <label class="form-label">Expiry Date </label>
-                      <input type="text" id="expiry-date" class="form-control flatpickr-input flatpickr-single cursor-pointer" placeholder="Eenter expiry date" v-model="cardForm.expiry_date">
-                    </div>
-                  </div>
-                  <div class="col-xl-8 order-lg-last order-xl-0">
-                    <div class="mb-3 mb-lg-0">
-                      <label class="form-label">Remarks</label>
-                      <textarea class="form-control" rows="1" placeholder="Enter remarks" v-model="cardForm.remark"></textarea>
-                    </div>
-                  </div>
-                  <div class="col-xl-4 col-lg-6">
-                    <div class="mb-0">
-                      <label class="form-label">File-Docs</label>
-                      <input type="file" class="form-control">
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Documents Tab -->
-              <div class="tab-pane" id="add-document" role="tabpanel">
-                <div class="card-header align-items-center d-flex border-0">
-                  <div class="flex-shrink-0">
-                    <button type="button" class="btn btn-soft-info btn-sm" @click="newAttached()"><i class="ri-upload-2-fill me-1 align-bottom"></i> Choose File</button>
-                    <input class="d-none" ref="fileInput" type="file" multiple @change="addAttachedTemp()">
-                  </div>
-                </div>
-                <div class="vstack gap-2">
-                  <div class="border rounded border-dashed p-2" v-for="(item, index) in fileFilter" :key="index">
-                    <div class="d-flex align-items-center">
-                      <div class="flex-shrink-0 me-3">
-                        <div class="avatar-sm">
-                          <div class="avatar-title bg-light text-secondary rounded fs-24">
-                            <i v-if="store.fileType(item.file_name) == 'txt'" class="ri-file-text-fill text-info"></i>
-                            <i v-else-if="store.fileType(item.file_name) == 'docx'" class="ri-file-word-fill"></i>
-                            <i v-else-if="store.fileType(item.file_name) == 'xlsx'" class="ri-file-excel-fill text-success"></i>
-                            <i v-else-if="store.fileType(item.file_name) == 'pptx'" class="ri-file-ppt-fill text-danger"></i>
-                            <i v-else-if="store.fileType(item.file_name) == 'pdf'" class="ri-file-pdf-fill text-danger"></i>
-                            <i v-else-if="store.fileType(item.file_name) == 'jpg'" class="ri-image-2-fill text-success"></i>
-                            <i v-else-if="store.fileType(item.file_name) == 'jpeg'" class="ri-image-2-fill text-success"></i>
-                            <i v-else-if="store.fileType(item.file_name) == 'png'" class="ri-image-2-fill text-success"></i>
-                            <i v-else-if="store.fileType(item.file_name) == 'zip'" class="ri-folder-zip-line"></i>
-                            <i v-else class="ri-file-unknow-fill text-warning"></i>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="flex-grow-1 overflow-hidden">
-                        <h5 class="fs-13 mb-1"><a href="#" class="text-body text-truncate d-block">{{ item.file_name }}</a></h5>
-                        <div>Size: {{ item.size }} KB</div>
-                      </div>
-                      <div class="flex-shrink-0 ms-2">
-                        <div class="d-flex gap-1">
-                          <div v-if="item.note == 'new'">
-                            <button type="button" class="btn btn-icon text-muted btn-sm fs-18 material-shadow-none" @click="removeFile(index)"><i class="ri-delete-bin-line text-danger"></i></button>
-                          </div>
-                          <div v-else>
-                            <a href="javascript:void(0);" class="btn btn-soft-success btn-sm btn-icon dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                              <i class="ri-more-fill"></i>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end dropdownmenu-secondary" style=''>
-                              <li v-if="item.file_type == 'jpg' || item.file_type == 'txt' || item.file_type == 'pdf' || item.file_type == 'jpeg' || item.file_type == 'png'"><a class="dropdown-item" href="javascript:void(0);" @click="viewFile(item.new_name)"><i class="ri-eye-fill me-2 align-bottom text-muted"></i>View</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);" @click="downloadFile(item.new_name)"><i class="ri-download-2-fill me-2 align-bottom text-muted"></i>Download</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);" @click="delFile(item.file_id, item.new_name, index)"><i class="ri-delete-bin-5-fill me-2 align-bottom text-muted"></i>Delete</a></li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
 
             </div>
           </div>
@@ -1418,7 +1113,7 @@ export default {
   data() {
     return {
       columnDefs: [
-        { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
+        { headerName: '#', maxWidth: 50, sortable: false, resizable: false, suppressMovable: true, suppressMenu: true, valueGetter: (params) => { return params.node.rowIndex + 1 } },
         { headerName: "ID", field: 'customer_id', hide: true },
         { headerName: 'Customer Name', field: 'customer_name', minWidth: 250, filter: 'agSetColumnFilter' },
         { headerName: 'Full Address', field: 'full_address', filter: 'agSetColumnFilter' },
@@ -1463,9 +1158,12 @@ export default {
       code: [],
       department: [],
 
-      lkCountry: [],
       lkCompany: [],
-      lkDept: [],
+      lkDepartment: [],
+      lkCountry: [],
+      lkProvince: [],
+      lkDistrict: [],
+      lkVillage: [],
       lkAccStatus: [],
       lkAccType: [],
       lkBankName: [],
@@ -1536,9 +1234,13 @@ export default {
         { cate: 'Title Lao', lk: 'lkTitleLao', lb: 'code' },
         { cate: 'Working Hours', lk: 'lkWorkHrs', lb: 'descr_eng' },
         { cate: 'Working Site', lk: 'lkWorkSite', lb: 'descr_eng' },
-        { cate: 'Company', lk: 'lkCompany', lb: 'descr_eng' },
         { cate: 'Division', lk: 'lkDivision', lb: 'code' },
+        { cate: 'Company', lk: 'lkCompany', lb: 'descr_eng' },
+        { cate: 'Department', lk: 'lkDepartment', lb: 'code' },
         { cate: 'Country', lk: 'lkCountry', lb: 'code' },
+        { cate: 'Province', lk: 'lkProvince', lb: 'descr_lao' },
+        { cate: 'District', lk: 'lkDistrict', lb: 'descr_lao' },
+        { cate: 'Village', lk: 'lkVillage', lb: 'descr_lao' },
       ];
 
       for (let j = 0; j < category.length; j++) {
@@ -1561,17 +1263,17 @@ export default {
 
     },
 
-    getDept() {
-      this.lkDept = [];
-      this.detailForm.department = null;
-      const depts = this.department.filter((e) => e.company_code == this.detailForm.company);
-      depts.forEach((e) => {
-        this.lkDept.push({
-          value: e.dept_eng,
-          label: e.dept_eng
-        });
-      });
-    },
+    // async getCountry() {
+    //   const count = await axios.get('/api/employee/country', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+    //   this.country = count.data;
+    //   this.lkCountry = [];
+    //   this.country.forEach(e => {
+    //     this.lkCountry.push({
+    //       value: e.country_id,
+    //       label: e.country_eng
+    //     })
+    //   })
+    // },
 
     newEmployee() {
       if (this.auth.new == 0) {

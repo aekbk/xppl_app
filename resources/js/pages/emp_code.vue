@@ -170,173 +170,6 @@
       </div>
     </div>
 
-    <!-- Add Department Modal -->
-    <div class="modal fade zoomIn" id="department-modal" data-bs-keyboard="false" tabindex="-1" aria-modal="true" role="dialog" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header bg-light p-3">
-            <h5 v-if="actMode == 'add'" class="modal-title">Add {{ codeForm.category }}</h5>
-            <h5 v-if="actMode == 'edit'" class="modal-title">Edit {{ codeForm.category }}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label">Company <span class="text-danger">*</span></label>
-              <multiselect :searchable="true" :searchStart="false" placeholder="Select company" v-model="deptForm.company_id" :options="lkCompany" />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Department Eng <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" placeholder="Enter department in english" v-model="deptForm.department_eng">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Department Lao <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" placeholder="Enter department in lao" v-model="deptForm.department_lao">
-            </div>
-            <div>
-              <label class="form-label">Active <span class="text-danger">*</span></label>
-              <multiselect placeholder="Select" v-model="deptForm.active" :options="lkActive" />
-            </div>
-          </div>
-          <div class="modal-footer" style="display: block;">
-            <div class="hstack gap-2 justify-content-end">
-              <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-              <button v-if="actMode == 'add'" type="button" class="btn btn-success" :class="deptFormDis" @click="addDepartment">Add Department</button>
-              <button v-if="actMode == 'edit'" type="button" class="btn btn-success" :class="deptFormDis" @click="updDepartment">Save Change</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Add Province Modal -->
-    <div class="modal fade zoomIn" id="province-modal" data-bs-keyboard="false" tabindex="-1" aria-modal="true" role="dialog" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header bg-light p-3">
-            <h5 v-if="actMode == 'add'" class="modal-title">Add {{ codeForm.category }} s</h5>
-            <h5 v-if="actMode == 'edit'" class="modal-title">Edit {{ codeForm.category }}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label">Country <span class="text-danger">*</span></label>
-              <multiselect :searchable="true" :searchStart="true" placeholder="Select country" v-model="provForm.country_id" :options="lkCountry" />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Province Eng <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" placeholder="Enter province in english" v-model="provForm.province_eng">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Province Lao <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" placeholder="Enter province in lao" v-model="provForm.province_lao">
-            </div>
-            <div>
-              <label class="form-label">Active <span class="text-danger">*</span></label>
-              <multiselect placeholder="Select" v-model="provForm.active" :options="lkActive" />
-            </div>
-          </div>
-          <div class="modal-footer" style="display: block;">
-            <div class="hstack gap-2 justify-content-end">
-              <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-              <button v-if="actMode == 'add'" type="button" class="btn btn-success" :class="provFormDis" @click="addProvince">Add Province</button>
-              <button v-if="actMode == 'edit'" type="button" class="btn btn-success" :class="provFormDis" @click="updProvince">Save Change</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-    </div>
-
-    <!-- Add District Modal -->
-    <div class="modal fade zoomIn" id="district-modal" data-bs-keyboard="false" tabindex="-1" aria-modal="true" role="dialog" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header bg-light p-3">
-            <h5 v-if="actMode == 'add'" class="modal-title">Add {{ codeForm.category }}</h5>
-            <h5 v-if="actMode == 'edit'" class="modal-title">Edit {{ codeForm.category }}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label">Country <span class="text-danger">*</span></label>
-              <multiselect :searchable="true" :searchStart="true" placeholder="Select country" v-model="distForm.country_id" :options="lkCountry" @select="getLKProvince" />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Province <span class="text-danger">*</span></label>
-              <multiselect :searchable="true" :searchStart="false" placeholder="Select province" v-model="distForm.province_id" :options="lkProvince" />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">District Eng <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" placeholder="Enter district in english" v-model="distForm.district_eng">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">District Lao <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" placeholder="Enter district in lao" v-model="distForm.district_lao">
-            </div>
-            <div>
-              <label class="form-label">Active <span class="text-danger">*</span></label>
-              <multiselect placeholder="Select" v-model="distForm.active" :options="lkActive" />
-            </div>
-          </div>
-          <div class="modal-footer" style="display: block;">
-            <div class="hstack gap-2 justify-content-end">
-              <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-              <button v-if="actMode == 'add'" type="button" class="btn btn-success" :class="distFormDis" @click="addDistrict">Add District</button>
-              <button v-if="actMode == 'edit'" type="button" class="btn btn-success" :class="distFormDis" @click="updDistrict">Save Change</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Add Village Modal -->
-    <div class="modal fade zoomIn" id="village-modal" data-bs-keyboard="false" tabindex="-1" aria-modal="true" role="dialog" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header bg-light p-3">
-            <h5 v-if="actMode == 'add'" class="modal-title">Add {{ codeForm.category }}</h5>
-            <h5 v-if="actMode == 'edit'" class="modal-title">Edit {{ codeForm.category }}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label">Country <span class="text-danger">*</span></label>
-              <multiselect :searchable="true" :searchStart="true" placeholder="Select country" v-model="villForm.country_id" :options="lkCountry" @select="getLKProvince" />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Province <span class="text-danger">*</span></label>
-              <multiselect :searchable="true" :searchStart="false" placeholder="Select province" v-model="villForm.province_id" :options="lkProvince" @select="getLKDistrict" />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">District <span class="text-danger">*</span></label>
-              <multiselect :searchable="true" :searchStart="false" placeholder="Select district" v-model="villForm.district_id" :options="lkDistrict" />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Village Eng <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" placeholder="Enter village in english" v-model="villForm.village_eng">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Village Lao <span class="text-danger">*</span></label>
-              <input v-if="actMode == 'add'" type="text" class="form-control" placeholder="Enter village in lao" v-model="villForm.village_lao" @keydown.enter="addVillage">
-              <input v-if="actMode == 'edit'" type="text" class="form-control" placeholder="Enter village in lao" v-model="villForm.village_lao" @keydown.enter="updVillage">
-            </div>
-            <div>
-              <label class="form-label">Active <span class="text-danger">*</span></label>
-              <multiselect placeholder="Select" v-model="villForm.active" :options="lkActive" />
-            </div>
-          </div>
-          <div class="modal-footer" style="display: block;">
-            <div class="hstack gap-2 justify-content-end">
-              <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-              <button v-if="actMode == 'add'" type="button" class="btn btn-success" :class="villFormDis" @click="addVillage">Add Village</button>
-              <button v-if="actMode == 'edit'" type="button" class="btn btn-success" :class="villFormDis" @click="updVillage">Save Change</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Room Number Modal -->
     <div class="modal fade zoomIn" id="room-modal" data-bs-keyboard="false" tabindex="-1" aria-modal="true" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
@@ -371,7 +204,7 @@
             </div>
             <div class="mb-3">
               <label class="form-label">Room Condition <span class="text-danger">*</span></label>
-              <multiselect :searchable="true" :searchStart="false" placeholder="Select room type" v-model="roomForm.room_condition" :options="lkRoomCondition" />
+              <multiselect :searchable="true" :searchStart="false" placeholder="Select room type" v-model="roomForm.room_condition" :options="lkRoomCond" />
             </div>
             <div>
               <label class="form-label">Remarks </label>
@@ -433,11 +266,10 @@ export default {
 
   data() {
     return {
-
       columnDefs: [],
 
-      columnGene: [
-        { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
+      columnGeneral: [
+        { headerName: '#', maxWidth: 50, sortable: false, resizable: false, suppressMovable: true, suppressMenu: true, valueGetter: (params) => { return params.node.rowIndex + 1 } },
         { headerName: 'Code ID', field: 'code_id', minWidth: 80, maxWidth: 100, hide: true },
         { headerName: 'Category', field: 'category', hide: true },
         { headerName: 'Code', field: 'code', filter: 'agSetColumnFilter' },
@@ -459,166 +291,8 @@ export default {
         { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
       ],
 
-      columnComp: [
-        { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
-        { headerName: 'Company ID', field: 'company_id', minWidth: 80, maxWidth: 100, hide: true },
-        { headerName: 'Code', field: 'company_code', maxWidth: 100, filter: 'agSetColumnFilter' },
-        { headerName: 'Company', field: 'company_eng', filter: 'agSetColumnFilter' },
-        { headerName: 'ບໍລິສັດ', field: 'company_lao', filter: 'agSetColumnFilter' },
-        {
-          headerName: 'Active', field: 'active', maxWidth: 100, filter: 'agSetColumnFilter',
-          cellRenderer: (p) => {
-            if (p.value == false) {
-              return 'No';
-            } else {
-              return 'Yes';
-            }
-          }
-        },
-        { headerName: 'Created at', field: 'created_at', maxWidth: 145, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
-        { headerName: 'Created by', field: 'created_by', maxWidth: 150, filter: 'agSetColumnFilter' },
-        { headerName: 'Updated at', field: 'updated_at', maxWidth: 145, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
-        { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
-      ],
-
-      columnCont: [
-        { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
-        { headerName: 'Country ID', field: 'country_id', minWidth: 80, maxWidth: 100, hide: true },
-        { headerName: 'Code', field: 'country_code', maxWidth: 100, filter: 'agSetColumnFilter' },
-        { headerName: 'Country', field: 'country_eng', filter: 'agSetColumnFilter' },
-        { headerName: 'ປະເທດ', field: 'country_lao', filter: 'agSetColumnFilter' },
-        {
-          headerName: 'Active', field: 'active', maxWidth: 100, filter: 'agSetColumnFilter',
-          cellRenderer: (p) => {
-            if (p.value == false) {
-              return 'No';
-            } else {
-              return 'Yes';
-            }
-          }
-        },
-        { headerName: 'Created at', field: 'created_at', maxWidth: 145, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
-        { headerName: 'Created by', field: 'created_by', maxWidth: 150, filter: 'agSetColumnFilter' },
-        { headerName: 'Updated at', field: 'updated_at', maxWidth: 145, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
-        { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
-      ],
-
-      columnDept: [
-        { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
-        { headerName: 'Dept ID', field: 'department_id', minWidth: 80, maxWidth: 100, hide: true },
-        { headerName: 'Company', field: 'company_code', maxWidth: 150, filter: 'agSetColumnFilter' },
-        { headerName: 'Company Eng', field: 'company_eng', hide: true, filter: 'agSetColumnFilter' },
-        { headerName: 'Department', field: 'department_eng', filter: 'agSetColumnFilter' },
-        { headerName: 'ພະແນກ', field: 'department_lao', filter: 'agSetColumnFilter' },
-        {
-          headerName: 'Active', field: 'active', maxWidth: 100, filter: 'agSetColumnFilter',
-          cellRenderer: (p) => {
-            if (p.value == false) {
-              return 'No';
-            } else {
-              return 'Yes';
-            }
-          }
-        },
-        { headerName: 'Created at', field: 'created_at', maxWidth: 145, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
-        { headerName: 'Created by', field: 'created_by', maxWidth: 150, filter: 'agSetColumnFilter' },
-        { headerName: 'Updated at', field: 'updated_at', maxWidth: 145, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
-        { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
-      ],
-
-      columnProv: [
-        { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
-        { headerName: 'Province ID', field: 'province_id', minWidth: 80, maxWidth: 100, hide: true },
-        { headerName: 'Country', field: 'country_eng', maxWidth: 150, filter: 'agSetColumnFilter' },
-        { headerName: 'Province', field: 'province_eng', filter: 'agSetColumnFilter' },
-        { headerName: 'ແຂວງ', field: 'province_lao', filter: 'agSetColumnFilter' },
-        {
-          headerName: 'Active', field: 'active', maxWidth: 100, filter: 'agSetColumnFilter',
-          cellRenderer: (p) => {
-            if (p.value == false) {
-              return 'No';
-            } else {
-              return 'Yes';
-            }
-          }
-        },
-        { headerName: 'Created at', field: 'created_at', maxWidth: 145, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
-        { headerName: 'Created by', field: 'created_by', maxWidth: 150, filter: 'agSetColumnFilter' },
-        { headerName: 'Updated at', field: 'updated_at', maxWidth: 145, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
-        { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
-      ],
-
-      columnDist: [
-        { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
-        { headerName: 'District ID', field: 'district_id', minWidth: 80, maxWidth: 100, hide: true },
-        { headerName: 'Country', field: 'country_eng', maxWidth: 150, filter: 'agSetColumnFilter' },
-        { headerName: 'Province', field: 'province_eng', maxWidth: 200, filter: 'agSetColumnFilter' },
-        { headerName: 'District', field: 'district_eng', filter: 'agSetColumnFilter' },
-        { headerName: 'ເມືອງ', field: 'district_lao', filter: 'agSetColumnFilter' },
-        {
-          headerName: 'Active', field: 'active', maxWidth: 100, filter: 'agSetColumnFilter',
-          cellRenderer: (p) => {
-            if (p.value == false) {
-              return 'No';
-            } else {
-              return 'Yes';
-            }
-          }
-        },
-        { headerName: 'Created at', field: 'created_at', maxWidth: 145, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
-        { headerName: 'Created by', field: 'created_by', maxWidth: 150, filter: 'agSetColumnFilter' },
-        { headerName: 'Updated at', field: 'updated_at', maxWidth: 145, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
-        { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
-      ],
-
-      columnVill: [
-        { headerName: '#', maxWidth: 80, valueGetter: (params) => { return params.node.rowIndex + 1 } },
-        { headerName: 'Village ID', field: 'village_id', minWidth: 80, maxWidth: 100, hide: true },
-        { headerName: 'Country', field: 'country_eng', maxWidth: 150, filter: 'agSetColumnFilter' },
-        { headerName: 'Province', field: 'province_eng', maxWidth: 200, filter: 'agSetColumnFilter' },
-        { headerName: 'District', field: 'district_eng', filter: 'agSetColumnFilter' },
-        { headerName: 'Village', field: 'village_eng', filter: 'agSetColumnFilter' },
-        { headerName: 'ໍບ້ານ', field: 'village_lao', filter: 'agSetColumnFilter' },
-        {
-          headerName: 'Active', field: 'active', maxWidth: 100, filter: 'agSetColumnFilter',
-          cellRenderer: (p) => {
-            if (p.value == false) {
-              return 'No';
-            } else {
-              return 'Yes';
-            }
-          }
-        },
-        { headerName: 'Created at', field: 'created_at', maxWidth: 145, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
-        { headerName: 'Created by', field: 'created_by', maxWidth: 150, filter: 'agSetColumnFilter' },
-        { headerName: 'Updated at', field: 'updated_at', maxWidth: 145, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
-        { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
-      ],
-
-      columnCamp: [
-        { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
-        { headerName: 'Code ID', field: 'camp_id', minWidth: 80, maxWidth: 100, hide: true },
-        { headerName: 'Code', field: 'camp_code', filter: 'agSetColumnFilter' },
-        { headerName: 'Camp', field: 'camp_eng', filter: 'agSetColumnFilter' },
-        { headerName: 'ແຄ້ມ', field: 'camp_lao', filter: 'agSetColumnFilter' },
-        {
-          headerName: 'Active', field: 'active', maxWidth: 100, filter: 'agSetColumnFilter',
-          cellRenderer: (p) => {
-            if (p.value == false) {
-              return 'No';
-            } else {
-              return 'Yes';
-            }
-          }
-        },
-        { headerName: 'Created at', field: 'created_at', maxWidth: 145, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
-        { headerName: 'Created by', field: 'created_by', maxWidth: 150, filter: 'agSetColumnFilter' },
-        { headerName: 'Updated at', field: 'updated_at', maxWidth: 145, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
-        { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
-      ],
-
       columnRoom: [
-        { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
+        { headerName: '#', maxWidth: 50, sortable: false, resizable: false, suppressMovable: true, suppressMenu: true, valueGetter: (params) => { return params.node.rowIndex + 1 } },
         { headerName: 'Room ID', field: 'room_id', minWidth: 80, maxWidth: 100, hide: true },
         { headerName: 'Camp Code', field: 'camp_code', filter: 'agSetColumnFilter' },
         { headerName: 'Room No.', field: 'room_no', filter: 'agSetColumnFilter' },
@@ -644,35 +318,16 @@ export default {
 
       auth: [],
       category: [],
-      code: [],
-      company: [],
-      department: [],
-      country: [],
-      province: [],
-      district: [],
-      village: [],
-      camps: [],
+      codes: [],
       rooms: [],
-
       codeFilter: [],
       lkActive: [{ value: 1, label: 'Yes' }, { value: 0, label: 'No' }],
-
       codeForm: { code_id: '', category: '', code: '', code_ori: '', descr_eng: '', descr_lao: '', active: null, tbl_name: '', col_name: '' },
-      deptForm: { department_id: '', company_id: null, department_eng: '', department_lao: '', active: null },
-      provForm: { province_id: '', country_id: null, province_eng: '', province_lao: '', active: null },
-      distForm: { district_id: '', country_id: null, province_id: null, district_eng: '', district_lao: '', active: null },
-      villForm: { village_id: '', country_id: null, province_id: null, district_id: null, village_eng: '', village_lao: '', active: null },
       roomForm: { room_id: '', camp_id: '', room_no: '', room_type: null, capacity: '', no_bed: '', remark: '', room_condition: null },
 
-
-
-      lkCompany: [],
-      lkCountry: [],
-      lkProvince: [],
-      lkDistrict: [],
-      lkCamp: [],
       lkRoomType: [],
-      lkRoomCondition: [],
+      lkRoomCond: [],
+      lkCamp: [],
 
       search: '',
 
@@ -689,38 +344,6 @@ export default {
   computed: {
     codeFormDis() {
       if (this.codeForm.code == '' || this.codeForm.descr_eng == '' || this.codeForm.descr_lao == '' || this.codeForm.active == null) {
-        return 'disabled';
-      } else {
-        return '';
-      }
-    },
-
-    deptFormDis() {
-      if (this.deptForm.company_id == null || this.deptForm.department_eng == '' || this.deptForm.department_lao == '' || this.deptForm.department_lao == null || this.deptForm.active == null) {
-        return 'disabled';
-      } else {
-        return '';
-      }
-    },
-
-    provFormDis() {
-      if (this.provForm.country_id == null || this.provForm.province_eng == '' || this.provForm.province_lao == '' || this.provForm.province_lao == null || this.provForm.active == null) {
-        return 'disabled';
-      } else {
-        return '';
-      }
-    },
-
-    distFormDis() {
-      if (this.distForm.country_id == null || this.distForm.province_id == null || this.distForm.district_eng == '' || this.distForm.district_lao == '' || this.distForm.district_lao == null || this.distForm.active == null) {
-        return 'disabled';
-      } else {
-        return '';
-      }
-    },
-
-    villFormDis() {
-      if (this.villForm.country_id == null || this.villForm.province_id == null || this.villForm.district_id == null || this.villForm.village_eng == '' || this.villForm.village_lao == '' || this.villForm.village_lao == null || this.villForm.active == null) {
         return 'disabled';
       } else {
         return '';
@@ -756,34 +379,27 @@ export default {
 
       const code = await this.getCode();
       const select = await this.cateSelected('Account Status', 0);
-
-      const comp = await this.getCompany();
-      const dept = await this.getDepartment();
-      const cont = await this.getCountry();
-      const prov = await this.getProvince();
-      const dist = await this.getDistrict();
-      const vill = await this.getVillage();
-      const camp = await this.getCamp();
       const room = await this.getRoom();
 
-      // console.log(this.department);
+
 
     },
 
     async getCode() {
       const result = await axios.get('api/employee/codes', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-      this.code = result.data;
+      this.codes = result.data;
 
       const category = [
+        { cate: 'Camp', lk: 'lkCamp', lb: 'descr_eng' },
         { cate: 'Room Type', lk: 'lkRoomType', lb: 'descr_eng' },
-        { cate: 'Room Condition', lk: 'lkRoomCondition', lb: 'descr_eng' },
+        { cate: 'Room Condition', lk: 'lkRoomCond', lb: 'descr_eng' },
       ];
       for (let j = 0; j < category.length; j++) {
         let cateName = category[j].cate;
         let lkName = category[j].lk;
         let labelCol = category[j].lb;
 
-        let item = this.code.filter((e) => e.category == [cateName] && e.active == 1);
+        let item = this.codes.filter(e => e.category == [cateName] && e.active == 1);
         this[lkName] = [];
         for (let i = 0; i < item.length; i++) {
           this[lkName].push({
@@ -792,62 +408,6 @@ export default {
           });
         };
       };
-    },
-
-    async getCompany() {
-      const comp = await axios.get('/api/employee/company', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-      this.company = comp.data;
-      this.lkCompany = [];
-      this.company.forEach(e => {
-        this.lkCompany.push({
-          value: e.company_id,
-          label: e.company_eng
-        })
-      })
-    },
-
-    async getDepartment() {
-      const dept = await axios.get('/api/employee/departments', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-      this.department = dept.data;
-    },
-
-    async getCountry() {
-      const count = await axios.get('/api/employee/country', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-      this.country = count.data;
-      this.lkCountry = [];
-      this.country.forEach(e => {
-        this.lkCountry.push({
-          value: e.country_id,
-          label: e.country_eng
-        })
-      })
-    },
-
-    async getProvince() {
-      const prov = await axios.get('/api/employee/provinces', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-      this.province = prov.data;
-    },
-
-    async getDistrict() {
-      const dist = await axios.get('/api/employee/districts', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-      this.district = dist.data;
-    },
-
-    async getVillage() {
-      const vill = await axios.get('/api/employee/villages', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-      this.village = vill.data;
-    },
-
-    async getCamp() {
-      const camp = await axios.get('/api/employee/camps', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-      this.camps = camp.data;
-
-      this.camps.forEach(e => {
-        this.lkCamp.push({
-          value: e.camp_id,
-          label: e.camp_code
-        });
-      });
     },
 
     async getRoom() {
@@ -867,44 +427,14 @@ export default {
       document.getElementById(indx).classList.add('active')
       document.getElementById('code-title').textContent = cate;
 
-      switch (cate) {
-        case 'Company':
-          this.columnDefs = this.columnComp;
-          this.codeFilter = this.company;
-          break;
-        case 'Country':
-          this.columnDefs = this.columnCont;
-          this.codeFilter = this.country;
-          break;
-        case 'Department':
-          this.columnDefs = this.columnDept;
-          this.codeFilter = this.department;
-          break;
-        case 'Province':
-          this.columnDefs = this.columnProv;
-          this.codeFilter = this.province;
-          break;
-        case 'District':
-          this.columnDefs = this.columnDist;
-          this.codeFilter = this.district;
-          break;
-        case 'Village':
-          this.columnDefs = this.columnVill;
-          this.codeFilter = this.village;
-          break;
-        case 'Camp':
-          this.columnDefs = this.columnCamp;
-          this.codeFilter = this.camps;
-          break;
-        case 'Room Number':
-          this.columnDefs = this.columnRoom;
-          this.codeFilter = this.rooms;
-          break;
-        default:
-          this.columnDefs = this.columnGene;
-          let items = this.code.filter((e) => e.category == cate);
-          this.codeFilter = items;
-      }
+      if (cate == 'Room Number') {
+        this.columnDefs = this.columnRoom;
+        this.codeFilter = this.rooms;
+      } else {
+        this.columnDefs = this.columnGeneral;
+        let items = this.codes.filter(e => e.category == cate);
+        this.codeFilter = items;
+      };
 
       let c = this.category.find((e) => e.category == cate);
       this.codeForm.tbl_name = c.tbl_name;
@@ -918,179 +448,54 @@ export default {
         this.actMode = 'add';
         this.rowSelect = ''
 
-        switch (this.codeForm.category) {
-          case 'Company': case 'Country': case 'Camp':
-            this.codeForm.code = '';
-            this.codeForm.descr_eng = '';
-            this.codeForm.descr_lao = '';
-            this.codeForm.active = 1;
-            $('#code-modal').modal('show');
-            break;
-          case 'Department':
-            this.deptForm = {};
-            this.deptForm.active = 1;
-            $('#department-modal').modal('show');
-            break;
-          case 'Province':
-            this.provForm = {};
-            this.provForm.active = 1;
-            $('#province-modal').modal('show');
-            break;
-          case 'District':
-            this.distForm = {};
-            this.distForm.active = 1;
-            $('#district-modal').modal('show');
-            break;
-          case 'Village':
-            this.villForm = {};
-            this.villForm.active = 1;
-            $('#village-modal').modal('show');
-            break;
-          case 'Room Number':
-            this.roomForm = {};
-            $('#room-modal').modal('show');
-            break;
-          default:
-            this.codeForm.code = '';
-            this.codeForm.descr_eng = '';
-            this.codeForm.descr_lao = '';
-            this.codeForm.active = 1;
-            $('#code-modal').modal('show');
-        }
-      }
+        if (this.codeForm.category == 'Room Number') {
+          this.roomForm = {};
+          $('#room-modal').modal('show');
+        } else {
+          this.codeForm.code = '';
+          this.codeForm.descr_eng = '';
+          this.codeForm.descr_lao = '';
+          this.codeForm.active = 1;
+          $('#code-modal').modal('show');
+        };
+      };
     },
 
     async addCode() {
-      switch (this.codeForm.category) {
-        case 'Company':
-          const companies = await axios.post('api/employee/add-company', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-          if (companies.data.success) {
-            const code = await this.getCompany();
-            this.codeFilter = this.company;
-            this.rowSelect = '';
-            toastr.success('Add successfully.');
-            $('#code-modal').modal('hide');
-          } else {
-            toastr.error(`${companies.data.message}`);
-          };
-          break;
-        case 'Country':
-          const countries = await axios.post('api/employee/add-country', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-          if (countries.data.success) {
-            const code = await this.getCountry();
-            this.codeFilter = this.country;
-            this.rowSelect = '';
-            toastr.success('Add successfully.');
-            $('#code-modal').modal('hide');
-          } else {
-            toastr.error(`${countries.data.message}`);
-          };
-          break;
-        case 'Camp':
-          const camp = await axios.post('api/employee/add-camp', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-          if (camp.data.success) {
-            const code = await this.getCamp();
-            this.codeFilter = this.camps;
-            this.rowSelect = '';
-            toastr.success('Add successfully.');
-            $('#code-modal').modal('hide');
-          } else {
-            toastr.error(`${camp.data.message}`);
-          };
-          break;
-        default:
-          const response = await axios.post('api/employee/add-code', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-          if (response.data.success) {
-            const code = await this.getCode();
-            let item = this.code.filter((e) => e.category == this.codeForm.category);
-            this.codeFilter = item;
-            this.rowSelect = '';
-            toastr.success('Add successfully.');
-            $('#code-modal').modal('hide');
-          } else {
-            toastr.error(`${response.data.message}`);
-          };
+      const response = await axios.post('api/employee/add-code', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+      if (response.data.success) {
+        const code = await this.getCode();
+        let item = this.codes.filter(e => e.category == this.codeForm.category);
+        this.codeFilter = item;
+        this.rowSelect = '';
+        toastr.success('Add successfully.');
+        $('#code-modal').modal('hide');
+      } else {
+        toastr.error(`${response.data.message}`);
       };
     },
 
     cellCicked(e) {
       this.rowSelect = e.rowIndex + 1;
-      switch (this.codeForm.category) {
-        case 'Company':
-          this.codeForm.code_id = e.data.company_id;
-          this.codeForm.code = e.data.company_code;
-          this.codeForm.code_ori = e.data.company_eng;
-          this.codeForm.descr_eng = e.data.company_eng;
-          this.codeForm.descr_lao = e.data.company_lao;
-          this.codeForm.active = e.data.active;
-          break;
-        case 'Country':
-          this.codeForm.code_id = e.data.country_id;
-          this.codeForm.code = e.data.country_code;
-          this.codeForm.code_ori = e.data.country_eng;
-          this.codeForm.descr_eng = e.data.country_eng;
-          this.codeForm.descr_lao = e.data.country_lao;
-          this.codeForm.active = e.data.active;
-          break;
-        case 'Department':
-          this.deptForm.department_id = e.data.department_id;
-          this.deptForm.company_id = e.data.company_id;
-          this.deptForm.department_eng = e.data.department_eng;
-          this.deptForm.department_lao = e.data.department_lao;
-          this.deptForm.active = e.data.active;
-          break;
-        case 'Province':
-          this.provForm.province_id = e.data.province_id;
-          this.provForm.country_id = e.data.country_id;
-          this.provForm.province_eng = e.data.province_eng;
-          this.provForm.province_lao = e.data.province_lao;
-          this.provForm.active = e.data.active;
-          break;
-        case 'District':
-          this.distForm.district_id = e.data.district_id;
-          this.distForm.country_id = e.data.country_id;
-          this.distForm.province_id = e.data.province_id;
-          this.distForm.district_eng = e.data.district_eng;
-          this.distForm.district_lao = e.data.district_lao;
-          this.distForm.active = e.data.active;
-          break;
-        case 'Village':
-          this.villForm.village_id = e.data.village_id;
-          this.villForm.country_id = e.data.country_id;
-          this.villForm.province_id = e.data.province_id;
-          this.villForm.district_id = e.data.district_id;
-          this.villForm.village_eng = e.data.village_eng;
-          this.villForm.village_lao = e.data.village_lao;
-          this.villForm.active = e.data.active;
-          break;
-        case 'Camp':
-          this.codeForm.code_id = e.data.camp_id;
-          this.codeForm.code = e.data.camp_code;
-          this.codeForm.code_ori = e.data.camp_code;
-          this.codeForm.descr_eng = e.data.camp_eng;
-          this.codeForm.descr_lao = e.data.camp_lao;
-          this.codeForm.active = e.data.active;
-          break;
-        case 'Room Number':
-          this.roomForm.room_id = e.data.room_id;
-          this.roomForm.camp_id = e.data.camp_id;
-          this.roomForm.room_no = e.data.room_no;
-          this.roomForm.room_type = e.data.room_type;
-          this.roomForm.capacity = e.data.capacity;
-          this.roomForm.no_bed = e.data.no_bed;
-          this.roomForm.room_condition = e.data.room_condition;
-          this.roomForm.remark = e.data.remark;
-          break;
-        default:
-          this.rowSelect = e.data.code_id;
-          this.codeForm.code_id = e.data.code_id;
-          this.codeForm.category = e.data.category;
-          this.codeForm.code = e.data.code;
-          this.codeForm.code_ori = e.data.code;
-          this.codeForm.descr_eng = e.data.descr_eng;
-          this.codeForm.descr_lao = e.data.descr_lao;
-          this.codeForm.active = e.data.active;
-      }
+      if (this.codeForm.category == 'Room Number') {
+        this.roomForm.room_id = e.data.room_id;
+        this.roomForm.camp_id = e.data.camp_id;
+        this.roomForm.room_no = e.data.room_no;
+        this.roomForm.room_type = e.data.room_type;
+        this.roomForm.capacity = e.data.capacity;
+        this.roomForm.no_bed = e.data.no_bed;
+        this.roomForm.room_condition = e.data.room_condition;
+        this.roomForm.remark = e.data.remark;
+      } else {
+        this.rowSelect = e.data.code_id;
+        this.codeForm.code_id = e.data.code_id;
+        this.codeForm.category = e.data.category;
+        this.codeForm.code = e.data.code;
+        this.codeForm.code_ori = e.data.code;
+        this.codeForm.descr_eng = e.data.descr_eng;
+        this.codeForm.descr_lao = e.data.descr_lao;
+        this.codeForm.active = e.data.active;
+      };
     },
 
     editCode() {
@@ -1100,82 +505,35 @@ export default {
         toastr.info("Select a row to edit.");
       } else {
         this.actMode = 'edit';
-        switch (this.codeForm.category) {
-          case 'Department':
-            $('#department-modal').modal('show');
-            break;
-          case 'Province':
-            $('#province-modal').modal('show');
-            break;
-          case 'District':
-            this.getLKProvince();
-            $('#district-modal').modal('show');
-            break;
-          case 'Village':
-            this.getLKProvince();
-            this.getLKDistrict();
-            $('#village-modal').modal('show');
-            break;
-          case 'Room Number':
-            $('#room-modal').modal('show');
-            break;
-          default:
-            $('#code-modal').modal('show');
+        if (this.codeForm.category == 'Room Number') {
+          $('#room-modal').modal('show');
+        } else {
+          $('#code-modal').modal('show');
         };
       };
     },
 
     async updCode() {
-      switch (this.codeForm.category) {
-        case 'Company':
-          try {
-            const res = await axios.post('api/employee/upd-company', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-            const code = await this.getCompany();
-            this.codeFilter = this.company;
-            this.rowSelect = '';
-            toastr.success('Update Successfully.');
-            $('#code-modal').modal('hide');
-          } catch (error) {
-            toastr.error('This code already exists in the database.');
-          };
-          break;
-        case 'Country':
-          try {
-            const res = await axios.post('api/employee/upd-country', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-            const code = await this.getCountry();
-            this.codeFilter = this.country;
-            this.rowSelect = '';
-            toastr.success('Update Successfully.');
-            $('#code-modal').modal('hide');
-          } catch (error) {
-            toastr.error('This code already exists in the database.');
-          };
-          break;
-        case 'Camp':
-          try {
-            const response = await axios.post('api/employee/upd-camp', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-            const code = await this.getCamp();
-            this.codeFilter = this.camps;
-            this.rowSelect = '';
-            toastr.success('Update Successfully.');
-            $('#code-modal').modal('hide');
-          } catch (error) {
-            toastr.error('This code already exists in the database.');
-          };
-          break;
-        default:
-          try {
-            const res = await axios.post('api/employee/upd-code', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-            const code = await this.getCode();
-            let item = this.code.filter((e) => e.category == this.codeForm.category);
-            this.codeFilter = item;
-            this.rowSelect = '';
-            toastr.success('Update Successfully.');
-            $('#code-modal').modal('hide');
-          } catch (error) {
-            toastr.error('This code already exists in the database.');
-          };
-      }
+      try {
+        const res = await axios.post('api/employee/upd-code', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+
+        let item = this.codeFilter.find(e => e.code_id == this.codeForm.code_id);
+        item.code = this.codeForm.code;
+        item.descr_eng = this.codeForm.descr_eng;
+        item.descr_lao = this.codeForm.descr_lao;
+        item.active = this.codeForm.active;
+
+        let code = this.codes.filter(e => e.category == this.codeForm.category);
+        this.codeFilter = code;
+        this.rowSelect = '';
+
+        toastr.success('Update Successfully.');
+        $('#code-modal').modal('hide');
+
+        // const code = await this.getCode();
+      } catch (error) {
+        toastr.error('This code already exists in the database.');
+      };
     },
 
     delCode() {
@@ -1189,231 +547,34 @@ export default {
     },
 
     async delConfirm() {
-      switch (this.codeForm.category) {
-        case 'Company':
-          try {
-            const comp = await axios.post('api/employee/del-company', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-            const code = await this.getCompany();
-            this.codeFilter = this.company;
-            this.rowSelect = '';
-            toastr.success('Delete Successfully.');
-            $('#delete-modal').modal('hide');
-          } catch (error) {
-            toastr.error('This code has already been used; it cannot be deleted.');
-          };
-          break;
-        case 'Country':
-          try {
-            const count = await axios.post('api/employee/del-country', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-            const code = await this.getCountry();
-            this.codeFilter = this.country;
-            this.rowSelect = '';
-            toastr.success('Delete Successfully.');
-            $('#delete-modal').modal('hide');
-          } catch (error) {
-            toastr.error('This code has already been used; it cannot be deleted.');
-          };
-          break;
-        case 'Department':
-          try {
-            const dept = await axios.post('api/employee/del-department', this.deptForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-            const code = await this.getDepartment();
-            this.codeFilter = this.department;
-            this.rowSelect = '';
-            toastr.success('Delete Successfully.');
-            $('#delete-modal').modal('hide');
-          } catch (error) {
-            toastr.error('This code has already been used; it cannot be deleted.');
-          };
-          break;
-        case 'Province':
-          try {
-            const prov = await axios.post('api/employee/del-province', this.provForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-            const code = await this.getProvince();
-            this.codeFilter = this.province;
-            this.rowSelect = '';
-            toastr.success('Delete Successfully.');
-            $('#delete-modal').modal('hide');
-          } catch (error) {
-            toastr.error('This code has already been used; it cannot be deleted.');
-          };
-          break;
-        case 'District':
-          try {
-            const response = await axios.post('api/employee/del-district', this.distForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-            const code = await this.getDistrict();
-            this.codeFilter = this.district;
-            this.rowSelect = '';
-            const vill = await this.getVillage();
-            toastr.success('Delete Successfully.');
-            $('#delete-modal').modal('hide');
-          } catch (error) {
-            toastr.error('This code has already been used; it cannot be deleted.');
-          };
-          break;
-        case 'Village':
-          try {
-            const response = await axios.post('api/employee/del-village', this.villForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-            const code = await this.getVillage();
-            this.codeFilter = this.village;
-            this.rowSelect = '';
-            toastr.success('Delete Successfully.');
-            $('#delete-modal').modal('hide');
-          } catch (error) {
-            toastr.error('This code has already been used; it cannot be deleted.');
-          };
-          break;
-        case 'Camp':
-          try {
-            const response = await axios.post('api/employee/del-camp', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-            const code = await this.getCamp();
-            this.codeFilter = this.camps;
-            this.rowSelect = '';
-            toastr.success('Delete Successfully.');
-            $('#delete-modal').modal('hide');
-          } catch (error) {
-            toastr.error('This code has already been used; it cannot be deleted.');
-          };
-          break;
-        case 'Room Number':
-          try {
-            const response = await axios.post('api/employee/del-room', this.roomForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-            const code = await this.getRoom();
-            this.codeFilter = this.rooms;
-            this.rowSelect = '';
-            toastr.success('Delete Successfully.');
-            $('#delete-modal').modal('hide');
-          } catch (error) {
-            toastr.error('This code has already been used; it cannot be deleted.');
-          };
-          break;
-        default:
-          const response = await axios.post('api/employee/del-code', {
-            code_id: this.codeForm.code_id,
-            code: this.codeForm.code,
-            tbl_name: this.codeForm.tbl_name,
-            col_name: this.codeForm.col_name,
-          }, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-          if (response.data.success) {
-            const code = await this.getCode();
-            let item = this.code.filter((e) => e.category == this.codeForm.category);
-            this.codeFilter = item;
-            this.codeForm.code_id = '';
-            toastr.success('Delete Successfully.');
-            $('#delete-modal').modal('hide');
-          } else {
-            toastr.error(`${response.data.message}`);
-          };
-      };
-    },
-
-    async addDepartment() {
-      const dept = await axios.post('api/employee/add-department', this.deptForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-      if (dept.data.success) {
-        const code = await this.getDepartment();
-        this.codeFilter = this.department;
-        this.rowSelect = '';
-        toastr.success('Add successfully.');
-        $('#department-modal').modal('hide');
+      if (this.codeForm.category == 'Room Number') {
+        try {
+          const response = await axios.post('api/employee/del-room', this.roomForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+          const code = await this.getRoom();
+          this.codeFilter = this.rooms;
+          this.rowSelect = '';
+          toastr.success('Delete Successfully.');
+          $('#delete-modal').modal('hide');
+        } catch (error) {
+          toastr.error('This code has already been used; it cannot be deleted.');
+        };
       } else {
-        toastr.error(`${dept.data.message}`);
-      };
-    },
-
-    async updDepartment() {
-      try {
-        const dept = await axios.post('api/employee/upd-department', this.deptForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-        const code = await this.getDepartment();
-        this.codeFilter = this.department;
-        this.rowSelect = '';
-        toastr.success('Update Successfully.');
-        $('#department-modal').modal('hide');
-      } catch (error) {
-        toastr.error('This code already exists in the database.');
-      };
-    },
-
-    async addProvince() {
-      const prov = await axios.post('api/employee/add-province', this.provForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-      if (prov.data.success) {
-        const code = await this.getProvince();
-        this.codeFilter = this.province;
-        this.rowSelect = '';
-        const dist = await this.getDistrict();
-        const vill = await this.getVillage();
-        toastr.success('Add successfully.');
-        $('#province-modal').modal('hide');
-      } else {
-        toastr.error(`${prov.data.message}`);
-      };
-    },
-
-    async updProvince() {
-      try {
-        const prov = await axios.post('api/employee/upd-province', this.provForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-        const code = await this.getProvince();
-        this.codeFilter = this.province;
-        this.rowSelect = '';
-        const dist = await this.getDistrict();
-        const vill = await this.getVillage();
-        toastr.success('Update Successfully.');
-        $('#province-modal').modal('hide');
-      } catch (error) {
-        toastr.error('This code already exists in the database.');
-      };
-    },
-
-    async addDistrict() {
-      const response = await axios.post('api/employee/add-district', this.distForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-      if (response.data.success) {
-        const dist = await this.getDistrict();
-        this.codeFilter = this.district;
-        this.rowSelect = '';
-        const vill = await this.getVillage();
-        toastr.success('Add successfully.');
-        $('#district-modal').modal('hide');
-      } else {
-        toastr.error(`${response.data.message}`);
-      };
-    },
-
-    async updDistrict() {
-      try {
-        const response = await axios.post('api/employee/upd-district', this.distForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-        const code = await this.getDistrict();
-        this.codeFilter = this.district;
-        this.rowSelect = '';
-        const vill = await this.getVillage();
-        toastr.success('Update Successfully.');
-        $('#district-modal').modal('hide');
-      } catch (error) {
-        toastr.error('This code already exists in the database.');
-      };
-    },
-
-    async addVillage() {
-      const response = await axios.post('api/employee/add-village', this.villForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-      if (response.data.success) {
-        const code = await this.getVillage();
-        this.codeFilter = this.village;
-        this.rowSelect = '';
-        toastr.success('Add successfully.');
-        $('#village-modal').modal('hide');
-      } else {
-        toastr.error(`${response.data.message}`);
-      };
-    },
-
-    async updVillage() {
-      try {
-        const response = await axios.post('api/employee/upd-village', this.villForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-        const code = await this.getVillage();
-        this.codeFilter = this.village;
-        this.rowSelect = '';
-        toastr.success('Update Successfully.');
-        $('#village-modal').modal('hide');
-      } catch (error) {
-        toastr.error('This code already exists in the database.');
+        const response = await axios.post('api/employee/del-code', {
+          code_id: this.codeForm.code_id,
+          code: this.codeForm.code,
+          tbl_name: this.codeForm.tbl_name,
+          col_name: this.codeForm.col_name,
+        }, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+        if (response.data.success) {
+          const code = await this.getCode();
+          let item = this.codes.filter(e => e.category == this.codeForm.category);
+          this.codeFilter = item;
+          this.codeForm.code_id = '';
+          toastr.success('Delete Successfully.');
+          $('#delete-modal').modal('hide');
+        } else {
+          toastr.error(`${response.data.message}`);
+        };
       };
     },
 
@@ -1443,45 +604,12 @@ export default {
       };
     },
 
-    getLKProvince() {
-      if (this.codeForm.category === 'District') {
-        let items = this.province.filter(e => e.country_id === this.distForm.country_id);
-        this.lkProvince = [];
-        items.forEach(e => {
-          this.lkProvince.push({
-            value: e.province_id,
-            label: e.province_eng
-          });
-        });
-      } else {
-        let items = this.province.filter(e => e.country_id === this.villForm.country_id);
-        this.lkProvince = [];
-        items.forEach(e => {
-          this.lkProvince.push({
-            value: e.province_id,
-            label: e.province_eng
-          });
-        });
-      };
-    },
-
-    getLKDistrict() {
-      let items = this.district.filter(e => e.country_id === this.villForm.country_id && e.province_id === this.villForm.province_id);
-      this.lkDistrict = [];
-      items.forEach(e => {
-        this.lkDistrict.push({
-          value: e.district_id,
-          label: e.district_eng
-        });
-      });
-    },
-
     async onSearch() {
       if (this.search.length > 0) {
         document.getElementById('search-close').classList.remove('d-none');
       } else {
         document.getElementById('search-close').classList.add('d-none');
-      }
+      };
     },
 
     async searchClear() {

@@ -202,7 +202,7 @@ export default {
   data() {
     return {
       columnDefs: [
-        { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
+        { headerName: '#', maxWidth: 50, sortable: false, resizable: false, suppressMovable: true, suppressMenu: true, valueGetter: (params) => { return params.node.rowIndex + 1 } },
         { headerName: 'Code ID', field: 'code_id', minWidth: 80, maxWidth: 100, hide: true },
         { headerName: 'Category', field: 'category', hide: true },
         { headerName: 'Code', field: 'code', filter: 'agSetColumnFilter' },

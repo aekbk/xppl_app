@@ -1163,7 +1163,7 @@ export default {
       loading: false,
 
       columnDefs: [{
-        headerName: '#', maxWidth: 47, valueGetter: (params) => { return params.node.rowIndex + 1 },
+        headerName: '#', maxWidth: 47, sortable: false, resizable: false, suppressMovable: true, suppressMenu: true, valueGetter: (params) => { return params.node.rowIndex + 1 },
         cellStyle: (params) => {
           if (params.data.contract_status == 'Active') {
             return { backgroundColor: 'lightblue' };
