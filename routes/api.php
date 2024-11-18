@@ -185,6 +185,9 @@ Route::prefix('employee')->middleware(['auth:api'])->group(function () {
     Route::post('/add-camp', [employee_controller::class, 'addCamp']);
     Route::post('/upd-camp', [employee_controller::class, 'updCamp']);
     Route::post('/del-camp', [employee_controller::class, 'delCamp']);
+    Route::post('/add-room', [employee_controller::class, 'addRoom']);
+    Route::post('/upd-room', [employee_controller::class, 'updRoom']);
+    Route::post('/del-room', [employee_controller::class, 'delRoom']);
 
 });
 

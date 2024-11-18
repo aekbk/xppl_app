@@ -606,4 +606,77 @@ class employee_controller extends Controller
     public function delCamp(Request $request){
         DB::table('emp_lkp_camps')->where('camp_id', $request->code_id)->delete();
     }
+
+    // =========== ROOM CODE =============================================================
+    public function addRoom(Request $request){
+        $check = DB::table('emp_lkp_rooms')
+                ->where('camp_id', $request->camp_id)
+                ->where('room_no', $request->room_no);
+        if ($check->count()){
+            $success = false;
+            $message = 'This code already exists in the database.';
+        } else {
+
+            $datetime = now('Asia/Bangkok')->toDateTimeString();
+            $username = Str::lower(auth()->user()->username);
+
+            DB::table('emp_lkp_rooms')
+            ->insert([
+                'camp_id' => $request->camp_id,
+                'room_no' => $request->room_no,
+                'room_type' => $request->room_type,
+                'capacity' => $request->capacity,
+                'no_bed' => $request->no_bed,
+                'remark' => $request->remark,
+                'room_condition' => $request->room_condition,
+                'created_at' => $datetime,
+                'created_by' => $username
+            ]);
+
+            $success = true;
+            $message = "Insert completed!";
+        }
+
+        $response = [
+            'success' => $success,
+            'message' => $message
+        ];
+        return response()->json($response);
+    }
+    public function updRoom(Request $request){
+        $datetime = now('Asia/Bangkok')->toDateTimeString();
+        $username = Str::lower(auth()->user()->username);
+        
+        DB::table('emp_lkp_rooms')
+        ->where('room_id', $request->room_id)
+        ->update([
+            'camp_id' => $request->camp_id,
+            'room_no' => $request->room_no,
+            'room_type' => $request->room_type,
+            'capacity' => $request->capacity,
+            'no_bed' => $request->no_bed,
+            'remark' => $request->remark,
+            'room_condition' => $request->room_condition,
+            'updated_at' => $datetime,
+            'updated_by' => $username
+        ]);
+    }
+    public function delRoom(Request $request){
+        DB::table('emp_lkp_rooms')->where('room_id', $request->room_id)->delete();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

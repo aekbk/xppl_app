@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="card">
+    <div class="card" v-if="viewMode == 'main'">
       <div class="card-header">
         <div class="row g-2 align-items-center">
           <div class="col-sm-3">
@@ -48,10 +48,171 @@
         <loading />
       </div>
       <div v-else>
-        <ag-grid-vue style="height: calc(100vh - 15.80rem);" id="ag-sales-data" class="ag-theme-material" :columnDefs="columnDefs" :rowData="incidentList" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewContract"></ag-grid-vue>
+        <ag-grid-vue style="height: calc(100vh - 15.80rem);" id="ag-sales-data" class="ag-theme-material" :columnDefs="columnDefs" :rowData="incidentList" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewIncident"></ag-grid-vue>
       </div>
       <div class="pb-1"></div>
     </div>
+
+    <!-- View Details -->
+    <div class="row justify-content-center" v-if="viewMode == 'view'">
+      <div class="col-xxl-8 col-lg-9">
+        <div class="card" id="demo">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card-header border-bottom-dashed p-4">
+                <div class="d-xl-flex">
+                  <div class="flex-grow-1">
+                    <h6 class="text-muted text-uppercase fw-semibold">Incident Title</h6>
+                    <h5 class="fw-semibold">{{ incForm.incident_title }}</h5>
+                    <div class="mt-xl-4 mt-4">
+                      <h6 class="text-muted text-uppercase fw-semibold">Incident Infomation</h6>
+                      <p class="mb-1"><span class="text-muted">Date Time: </span>{{ store.dateTime2(incForm.date_time) }}</p>
+                      <p class="mb-1"><span class="text-muted">Location: </span>{{ incForm.location }}</p>
+                      <p class="mb-1"><span class="text-muted">Company: </span>{{ incForm.company }}</p>
+                      <p v-if="incForm.company == 'XPPL'" class="mb-1"><span class="text-muted">Department: </span>{{ incForm.department }}</p>
+                      <p v-if="incForm.company != 'XPPL'" class="mb-1"><span class="text-muted">Subcontractor: </span>{{ incForm.department }}</p>
+                    </div>
+                  </div>
+                  <div class="flex-shrink-0 mt-xl-0 mt-3">
+                    <h4><span class="text-muted text-uppercase fw-semibold">Incident No: {{ incForm.incident_no }}</span></h4>
+                    <h6><span class="text-muted fw-normal">Incident ID: </span><span>{{ incForm.incident_id }}</span></h6>
+                    <h6><span class="text-muted fw-normal">Significant: </span><span>{{ incForm.significant }}</span></h6>
+                    <h6><span class="text-muted fw-normal">Flash Alert: </span><span> {{ incForm.flash_alert }}</span></h6>
+                    <h6><span class="text-muted fw-normal">Actaul Severity: </span><span>{{ store.severity(incForm.actual_severity) }}</span></h6>
+                    <h6><span class="text-muted fw-normal">Potential Severity: </span><span> {{ store.severity(incForm.potential_severity) }}</span></h6>
+                    <h6><span class="text-muted fw-normal">Risk Rating: </span>
+                      <span v-if="Number(incForm.risk_rating) <= 3" class="badge text-white fs-12" style="background-color: #3AB249"> {{ incForm.risk_rating }} (Low)</span>
+                      <span v-if="Number(incForm.actual_severity) == 2 && Number(incForm.potential_severity) == 2" class="badge text-white fs-12" style="background-color: #3AB249"> {{ incForm.risk_rating }} (Low)</span>
+                      <span v-if="Number(incForm.actual_severity) !== Number(incForm.potential_severity) && Number(incForm.risk_rating) == 4" class="badge text-white fs-12" style="background-color: #F7EC0F"> {{ incForm.risk_rating }} (Medium)</span>
+                      <span v-if="Number(incForm.risk_rating) >= 5 && Number(incForm.risk_rating) <= 9" class="badge text-primary fs-12" style="background-color: #F7EC0F"> {{ incForm.risk_rating }} (Medium)</span>
+                      <span v-if="Number(incForm.risk_rating) >= 10 && Number(incForm.risk_rating) <= 12" class="badge text-white fs-12" style="background-color: #F89122"> {{ incForm.risk_rating }} (High)</span>
+                      <span v-if="Number(incForm.risk_rating) > 12" class="badge text-white fs-12" style="background-color: #E52125"> {{ incForm.risk_rating }} (Very High)</span>
+                    </h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-12">
+              <div class="card-header p-4 border-0">
+                <div class="d-xl-flex">
+                  <div class="flex-grow-1">
+                    <h6 class="text-muted text-uppercase fw-semibold">Incident & Injury Details</h6>
+                    <p class="mb-1"><span class="text-muted">Incident Group: </span>{{ incForm.incident_group }}</p>
+                    <p class="mb-1"><span class="text-muted">Incident Type: </span>{{ incForm.incident_type }}</p>
+                    <p class="mb-1"><span class="text-muted">Injury Type: </span>{{ incForm.incident_type }}</p>
+                    <p class="mb-1"><span class="text-muted">Injury Group: </span>{{ incForm.injury_group }}</p>
+                    <p class="mb-1"><span class="text-muted">Injury Body Paart: </span>{{ incForm.injury_part }}</p>
+                  </div>
+                  <div class="flex-shrink-0 mt-xl-0 mt-3">
+                    <h6 class="text-muted text-uppercase fw-semibold">Incident Status</h6>
+                    <p class="mb-1"><span class="text-muted">Investigate Status: </span>{{ incForm.invest_status }}</p>
+                    <p class="mb-1"><span class="text-muted">Investigate Lead By: </span>{{ incForm.invest_lead }}</p>
+                    <p class="mb-1"><span class="text-muted">Action Status: </span>{{ incForm.action_status }}</p>
+                    <p class="mb-1"><span class="text-muted">Action Due Date: </span>{{ store.ddmmyyyy(incForm.action_duedate) }}</p>
+                    <p class="mb-1"><span class="text-muted">Incident Manager: </span>{{ incForm.incident_manager }}</p>
+                    <p class="mb-1"><span class="text-muted">Follow Up By: </span>{{ incForm.followup_by }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-12" v-if="incForm.incident_descr">
+              <div class="card-body p-4 pt-0">
+                <h6 class="text-muted text-uppercase fw-semibold">Incident Description</h6>
+                <div class="alert p-0">
+                  <p class="mb-0">
+                    <span>
+                      {{ incForm.incident_descr }}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-12" v-if="incForm.corrective_action">
+              <div class="card-body p-4 pt-0">
+                <h6 class="text-muted text-uppercase fw-semibold">Corrective Actions</h6>
+                <div class="alert p-0">
+                  <p class="mb-0">
+                    <span>
+                      {{ incForm.corrective_action }}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+
+
+            <div class="col-lg-12">
+
+              <div class="card-body p-4 border-top border-top-dashed d-print-none" v-if="fileFilter.length > 0">
+                <h6 class="text-muted text-uppercase fw-semibold">Attachments</h6>
+                <div class="table-responsive border">
+                  <table class="table align-middle table-borderless table-nowrap mb-0 table-sm">
+                    <thead class="table-active">
+                      <tr>
+                        <th class="ps-3" style="width: 40px">#</th>
+                        <th>File Name</th>
+                        <th>File Type</th>
+                        <th>File Size</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(item, index) in fileFilter" :key="index">
+                        <td class="ps-3">{{ index + 1 }}</td>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0 fs-17 me-2 filelist-icon text-secondary">
+                              <i v-if="item.file_type == 'txt'" class="ri-file-text-fill text-info"></i>
+                              <i v-else-if="item.file_type == 'docx'" class="ri-file-word-fill"></i>
+                              <i v-else-if="item.file_type == 'xlsx'" class="ri-file-excel-fill text-success"></i>
+                              <i v-else-if="item.file_type == 'pptx'" class="ri-file-ppt-fill text-danger"></i>
+                              <i v-else-if="item.file_type == 'pdf'" class="ri-file-pdf-fill text-danger"></i>
+                              <i v-else-if="item.file_type == 'jpg'" class="ri-image-2-fill text-success"></i>
+                              <i v-else-if="item.file_type == 'jpeg'" class="ri-image-2-fill text-success"></i>
+                              <i v-else-if="item.file_type == 'png'" class="ri-image-2-fill text-success"></i>
+                              <i v-else-if="item.file_type == 'zip'" class="ri-folder-zip-line"></i>
+                              <i v-else class="ri-file-unknow-fill text-warning"></i>
+                            </div>
+                            <div class="flex-grow-1 filelist-name">{{ item.file_name }}</div>
+                          </div>
+                        </td>
+                        <td>{{ item.file_type }}</td>
+                        <td>{{ item.size }}</td>
+                        <td>
+                          <div class="d-flex gap-2 justify-content-start">
+                            <div v-if="item.note == 'new'">
+                              <a href="#" class="link-success text-decoration-none fs-16" @click="removeFile(index)"><i class="ri-delete-bin-5-line text-danger"></i></a>
+                            </div>
+                            <a v-if="item.note !== 'new' && (item.file_type == 'jpg' || item.file_type == 'txt' || item.file_type == 'pdf' || item.file_type == 'jpeg' || item.file_type == 'png')" href="#" class="link-success text-decoration-none fs-14 pt-1" @click="viewFile(item.new_name)" title="View"><i class="ri-eye-line"></i></a>
+                            <a v-if="item.note !== 'new'" href="#" class="link-success text-decoration-none fs-16" @click="downloadFile(item.new_name)" title="Download"><i class="ri-download-2-line"></i></a>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="col-lg-12">
+                <div class="card-body p-4 pt-0">
+                  <div class="hstack gap-2 justify-content-end d-print-none">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" @click="viewMode = 'main'"> Close</button>
+                    <a href="javascript:window.print()" class="btn btn-success"><i class="ri-printer-line align-bottom me-1"></i> Print</a>
+                    <a href="javascript:void(0);" class="btn btn-info" @click="viewMode = 'main', editIncident()"><i class="ri-pencil-fill align-bottom me-1"></i> Edit</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
 
     <!-- Incident Modal -->
     <div class="modal fade" id="incident-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-modal="true" role="dialog">
@@ -89,14 +250,11 @@
           <div class="modal-body">
             <div class="tab-content">
               <div class="tab-pane active show" id="incident" role="tabpanel">
-
                 <div class="row">
-
-
                   <div class="col-xl-2 col-lg-3">
                     <div class="mb-3">
                       <label class="form-label">Incident No. <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" placeholder="Incident number" v-model="incForm.incident_no">
+                      <input type="text" class="form-control" placeholder="Incident number" v-model="incForm.incident_no" readonly>
                     </div>
                   </div>
                   <div class="col-xl-2 col-lg-3">
@@ -191,7 +349,7 @@
                   <div class="col-xl-2 col-lg-3">
                     <div class="mb-3">
                       <label class="form-label">Risk Rating </label>
-                      <input type="text" class="form-control" placeholder="Auto fill" v-model="incForm.risk_rating">
+                      <input type="text" class="form-control" placeholder="Auto filled" v-model="incForm.risk_rating" readonly>
                     </div>
                   </div>
                   <div class="col-lg-3">
@@ -231,8 +389,7 @@
                     </div>
                   </div>
                 </div>
-
-
+                {{ riskRatingCalc }}
               </div>
 
               <div class="tab-pane" id="description" role="tabpanel">
@@ -251,15 +408,12 @@
 
               <!-- Attachments Tab -->
               <div class="tab-pane" id="attachment" role="tabpanel">
-
-
                 <div class="card-header align-items-center d-flex border-0">
                   <div class="flex-shrink-0">
                     <button type="button" class="btn btn-soft-info btn-sm" @click="newFile()"><i class="ri-upload-2-fill me-1 align-bottom"></i> Upload</button>
                     <input class="d-none" ref="fileInput" type="file" multiple @change="addNewFile()">
                   </div>
                 </div>
-
                 <div class="table-responsive border">
                   <table class="table align-middle table-borderless table-nowrap mb-0 table-sm">
                     <thead class="table-active">
@@ -307,54 +461,7 @@
                     </tbody>
                   </table>
                 </div>
-
-                <!-- <div class="vstack gap-2 overflow-auto" style="max-height: 443px;">
-                  <div class="border rounded border-dashed p-1" v-for="(item, index) in fileFilter" :key="index">
-                    <div class="d-flex align-items-center">
-                      <div class="flex-shrink-0 me-3">
-                        <div class="avatar-sm">
-                          <div class="avatar-title bg-light text-secondary rounded fs-24">
-                            <i v-if="store.fileType(item.file_name) == 'txt'" class="ri-file-text-fill text-info"></i>
-                            <i v-else-if="store.fileType(item.file_name) == 'docx'" class="ri-file-word-fill"></i>
-                            <i v-else-if="store.fileType(item.file_name) == 'xlsx'" class="ri-file-excel-fill text-success"></i>
-                            <i v-else-if="store.fileType(item.file_name) == 'pptx'" class="ri-file-ppt-fill text-danger"></i>
-                            <i v-else-if="store.fileType(item.file_name) == 'pdf'" class="ri-file-pdf-fill text-danger"></i>
-                            <i v-else-if="store.fileType(item.file_name) == 'jpg'" class="ri-image-2-fill text-success"></i>
-                            <i v-else-if="store.fileType(item.file_name) == 'jpeg'" class="ri-image-2-fill text-success"></i>
-                            <i v-else-if="store.fileType(item.file_name) == 'png'" class="ri-image-2-fill text-success"></i>
-                            <i v-else-if="store.fileType(item.file_name) == 'zip'" class="ri-folder-zip-line"></i>
-                            <i v-else class="ri-file-unknow-fill text-warning"></i>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="flex-grow-1 overflow-hidden">
-                        <h5 class="fs-13 mb-1"><a href="#" class="text-body text-truncate d-block">{{ item.file_name }}</a></h5>
-                        <div>Size: {{ item.size }}</div>
-                      </div>
-                      <div class="flex-shrink-0 ms-2">
-                        <div class="d-flex gap-1">
-                          <div v-if="item.note == 'new'">
-                            <button type="button" class="btn btn-icon text-muted btn-sm fs-18 material-shadow-none" @click="removeFile(index)"><i class="ri-delete-bin-line text-danger"></i></button>
-                          </div>
-                          <div v-else>
-                            <a href="javascript:void(0);" class="btn btn-soft-success btn-sm btn-icon dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                              <i class="ri-more-fill"></i>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end dropdownmenu-secondary" style="">
-                              <li v-if="item.file_type == 'jpg' || item.file_type == 'txt' || item.file_type == 'pdf' || item.file_type == 'jpeg' || item.file_type == 'png'"><a class="dropdown-item" href="javascript:void(0);" @click="viewFile(item.new_name)"><i class="ri-eye-fill me-2 align-bottom text-muted"></i>View</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);" @click="downloadFile(item.new_name)"><i class="ri-download-2-fill me-2 align-bottom text-muted"></i>Download</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);" @click="delFile(item.file_id, item.new_name, index)"><i class="ri-delete-bin-5-fill me-2 align-bottom text-muted"></i>Delete</a></li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div> -->
               </div>
-
-
-
             </div>
           </div>
           <div class="modal-footer" style="display: block;">
@@ -369,17 +476,18 @@
     </div>
 
     <!-- Delete Modal -->
-    <div class="modal fade" id="file-delete-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-modal="true" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="delete-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-modal="true" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-body text-center p-5">
             <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#405189,secondary:#f06548" style="width:90px;height:90px"></lord-icon>
             <div class="text-center">
-              <h4 class="fs-semibold">You are about to delete a file ?</h4>
-              <p class="text-muted fs-14 mb-4 pt-1">Deleting your file will remove all of your information from our database.</p>
+              <h4 class="fs-semibold">You are about to delete a record ?</h4>
+              <p class="text-muted fs-14 mb-4 pt-1">Deleting your record will remove all of your information from our database.</p>
               <div class="hstack gap-2 justify-content-center remove">
-                <button class="btn btn-light" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#incident-modal">Cancel</button>
-                <button class="btn btn-soft-danger" @click="delFileConfirm">Yes, Delete It</button>
+                <!-- <button class="btn btn-light" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#incident-modal">Cancel</button> -->
+                <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-soft-danger" @click="delConfirm">Yes, Delete It</button>
               </div>
             </div>
           </div>
@@ -417,11 +525,29 @@ export default {
   data() {
     return {
       columnDefs: [
-        { headerName: '#', minWidth: 50, maxWidth: 60, valueGetter: (params) => { return params.node.rowIndex + 1 } },
-        { headerName: 'Incident ID', field: 'incident_id', filter: 'agSetColumnFilter', hide: false },
-        { headerName: 'No', field: 'incident_no', maxWidth: 60, filter: 'agSetColumnFilter' },
-        { headerName: 'Incident Title', field: 'incident_title', minWidth: 250, filter: 'agSetColumnFilter' },
-        { headerName: 'Date Time', field: 'date_time', maxWidth: 145, filter: 'agSetColumnFilter', valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm') : '' },
+        {
+          headerName: '#', minWidth: 50, maxWidth: 50, sortable: false, resizable: false, suppressMovable: true, suppressMenu: true, valueGetter: (params) => { return params.node.rowIndex + 1 },
+          cellStyle: p => {
+            if (Number(p.data.risk_rating) <= 3) {
+              return { backgroundColor: '#3AB249', 'text-align': 'center' };
+            } else if (Number(p.data.actual_severity) == 2 && Number(p.data.potential_severity) == 2) {
+              return { backgroundColor: '#3AB249', 'text-align': 'center' };
+            } else if (Number(p.data.actual_severity) !== Number(p.data.potential_severity) && Number(p.data.risk_rating) == 4) {
+              return { backgroundColor: '#F7EC0F', 'text-align': 'center' };
+            } else if (Number(p.data.risk_rating) >= 5 && Number(p.data.risk_rating) <= 9) {
+              return { backgroundColor: '#F7EC0F', 'text-align': 'center' };
+            } else if (Number(p.data.risk_rating) >= 10 && Number(p.data.risk_rating) <= 12) {
+              return { backgroundColor: '#F89122', 'text-align': 'center' };
+            } else if (Number(p.data.risk_rating) > 12) {
+              return { backgroundColor: '#E52125', 'text-align': 'center' };
+            };
+            return { 'text-align': 'center' };
+          },
+        },
+        { headerName: 'Incident ID', field: 'incident_id', filter: 'agSetColumnFilter', hide: true },
+        { headerName: 'No', field: 'incident_no', maxWidth: 60, filter: 'agSetColumnFilter', valueGetter: p => Number(p.data.incident_no) },
+        { headerName: 'Incident Title', field: 'incident_title', minWidth: 250, filter: 'agSetColumnFilter', },
+        { headerName: 'Date Time', field: 'date_time', minWidth: 140, filter: 'agSetColumnFilter', valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm') : '' },
         { headerName: 'Location', field: 'location', filter: 'agSetColumnFilter' },
         { headerName: 'Company', field: 'company', filter: 'agSetColumnFilter' },
         { headerName: 'Department', field: 'department', filter: 'agSetColumnFilter' },
@@ -432,9 +558,9 @@ export default {
         { headerName: 'Injury Type', field: 'injury_type', filter: 'agSetColumnFilter' },
         { headerName: 'Injury Group', field: 'injury_group', filter: 'agSetColumnFilter' },
         { headerName: 'Injury Body Part', field: 'injury_part', filter: 'agSetColumnFilter' },
-        { headerName: 'Actual Severity', field: 'actual_severity', filter: 'agSetColumnFilter' },
-        { headerName: 'Potential Severity', field: 'potential_severity', filter: 'agSetColumnFilter' },
-        { headerName: 'Risk Rating', field: 'risk_rating', filter: 'agSetColumnFilter' },
+        { headerName: 'Actual Severity', field: 'actual_severity', filter: 'agSetColumnFilter', valueGetter: p => Number(p.data.actual_severity) },
+        { headerName: 'Potential Severity', field: 'potential_severity', filter: 'agSetColumnFilter', valueGetter: p => Number(p.data.potential_severity) },
+        { headerName: 'Risk Rating', field: 'risk_rating', filter: 'agSetColumnFilter', valueGetter: p => Number(p.data.risk_rating) },
         { headerName: 'Invest Status', field: 'invest_status', filter: 'agSetColumnFilter' },
         { headerName: 'Invest Lead', field: 'invest_lead', filter: 'agSetColumnFilter' },
         { headerName: 'Action Status', field: 'action_status', filter: 'agSetColumnFilter' },
@@ -443,6 +569,12 @@ export default {
         { headerName: 'Followup By', field: 'followup_by', filter: 'agSetColumnFilter' },
         { headerName: 'Corrective Action', field: 'corrective_action', filter: 'agSetColumnFilter' },
         { headerName: 'Incident Description', field: 'incident_descr', filter: 'agSetColumnFilter' },
+
+        { headerName: 'Created at', field: 'created_at', maxWidth: 145, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
+        { headerName: 'Created by', field: 'created_by', maxWidth: 150, filter: 'agSetColumnFilter' },
+        { headerName: 'Updated at', field: 'updated_at', maxWidth: 145, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
+        { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
+
       ],
 
       defaultColDef: {
@@ -455,7 +587,6 @@ export default {
       },
 
       incForm: { data_id: '', incident_id: '', incident_no: '', incident_title: '', date_time: '', location: '', company: null, department: null, incident_group: null, incident_type: null, injury_type: null, injury_group: null, injury_part: '', significant: null, flash_alert: null, actual_severity: null, potential_severity: null, risk_rating: '', invest_status: null, invest_lead: '', action_status: null, action_duedate: '', incident_manager: '', followup_by: '', incident_descr: '', corrective_action: '' },
-
 
       lkYesNo: ['Yes', 'No', 'N/A'],
       lkActionStatus: [],
@@ -476,10 +607,10 @@ export default {
       files: [],
       fileFilter: [],
 
-
       mode: 'Month',
       value: '',
       actMode: '',
+      viewMode: 'main',
       loading: false,
 
 
@@ -531,7 +662,16 @@ export default {
           return '';
         };
       };
-    }
+    },
+
+    riskRatingCalc() {
+      let f = this.incForm;
+      if (f.actual_severity && f.potential_severity) {
+        f.risk_rating = Number(f.actual_severity) * Number(f.potential_severity);
+      } else {
+        f.risk_rating = '';
+      };
+    },
   },
 
   methods: {
@@ -854,14 +994,17 @@ export default {
 
       try {
         const response = await axios.post('api/safety/upd-incident', fd, { headers: { 'Content-Type': 'multipart/form-data', Authorization: 'Bearer ' + this.authStore.getToken } })
+
         if (this.mode == 'Range') {
           const data = await this.getIncidentRange();
         } else {
           const data = await this.getIncident(this.mode);
         };
         const file = await this.getFile();
+        this.disableMenu();
         $('#incident-modal').modal('hide');
         toastr.success('Update successfully!');
+
       } catch (error) {
         toastr.error('This code already exists in the database.');
       };
@@ -924,34 +1067,35 @@ export default {
       }
     },
 
-    // delFile(file_id, new_name, inx) {
-    //   if (this.auth.del == 0) {
-    //     toastr.warning("You're not authorized to delete!");
-    //   } else {
+    delIncident() {
+      if (this.auth.del == 0) {
+        toastr.warning("You're not authorized to delete!");
+      } else {
+        $('#delete-modal').modal('show');
+      };
+    },
 
+    async delConfirm() {
+      try {
+        const response = await axios.post('api/safety/del-incident', {
+          incident_id: this.incForm.incident_id,
+          fileList: this.fileFilter
+        }, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
 
-    //     $('#incident-modal').modal('hide');
-    //     $('#file-delete-modal').modal('show');
-    //   };
-    // },
+        if (this.mode == 'Range') {
+          const data = await this.getIncidentRange();
+        } else {
+          const data = await this.getIncident(this.mode);
+        };
+        const file = await this.getFile();
+        this.disableMenu();
+        $('#delete-modal').modal('hide');
+        toastr.success('Delete Successfully.');
 
-    // async delFileConfirm() {
-    //   const response = await axios.post('api/safety/del-file', this.codeForm, 
-
-    //   { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-
-
-    //   if (response.data.success) {
-    //     const code = await this.getCode();
-    //     let item = this.codes.filter(e => e.category == this.codeForm.category);
-    //     this.codeFilter = item;
-    //     this.codeForm.code_id = '';
-    //     toastr.success('Delete Successfully.');
-    //     $('#delete-modal').modal('hide');
-    //   } else {
-    //     toastr.error(`${response.data.message}`);
-    //   };
-    // },
+      } catch (err) {
+        toastr.error(`${err}`);
+      };
+    },
 
     cellCicked(e) {
       this.enableMenu();
@@ -985,6 +1129,10 @@ export default {
 
       let file = this.files.filter(e => e.incident_id == this.incForm.incident_id);
       this.fileFilter = file;
+    },
+
+    viewIncident() {
+      this.viewMode = 'view';
     },
 
     downloadFile(file) {

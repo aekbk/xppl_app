@@ -17,6 +17,14 @@
           </div>
         </div>
 
+        <form class="app-search d-md-block py-0 ps-0 border-bottom">
+          <div class="position-relative">
+            <input type="text" class="form-control border-0" placeholder="Search..." v-model="search" @input="onSearch">
+            <span class="ri-search-line search-icon search-widget-icon fs-14"></span>
+            <span class="mdi mdi-close-circle search-widget-icon search-widget-icon-close cursor-pointer d-none" id="search-close" @click="searchClear"></span>
+          </div>
+        </form>
+
         <div class="chat-room-list simplebar-scrollable-y" data-simplebar="init">
           <div class="simplebar-wrapper" style="margin: -16px 0px 0px;">
             <div class="simplebar-height-auto-observer-wrapper">
@@ -29,7 +37,7 @@
 
                     <div class="chat-message-list">
                       <ul class="list-unstyled chat-list chat-user-list">
-                        <li v-for="(item, index) in category" :key="index" @click="cateSelected(item.category, index)" :id="'category-' + index">
+                        <li v-for="(item, index) in categoryList" :key="index" @click="cateSelected(item.category, index)" :id="'category-' + index">
                           <a href="javascript: void(0)" class="py-2">
                             <div class="d-flex align-items-center">
                               <!-- <div class="flex-shrink-0 chat-user-img align-self-center me-2 ms-0">
@@ -53,7 +61,8 @@
                 </div>
               </div>
             </div>
-            <div class="simplebar-placeholder" style="width: 300px; height: calc(100vh - 13.125rem);"></div>
+            <div class="simplebar-placeholder" style="width: 300px; height: calc(100vh - 14rem);"></div>
+            <!-- <div class="simplebar-placeholder" style="width: 300px; height: calc(100vh - 13.125rem);"></div> -->
           </div>
         </div>
       </div>
@@ -328,6 +337,58 @@
       </div>
     </div>
 
+    <!-- Room Number Modal -->
+    <div class="modal fade zoomIn" id="room-modal" data-bs-keyboard="false" tabindex="-1" aria-modal="true" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header bg-light p-3">
+            <h5 v-if="actMode == 'add'" class="modal-title">Add {{ codeForm.category }}</h5>
+            <h5 v-if="actMode == 'edit'" class="modal-title">Edit {{ codeForm.category }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="close-modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Camp <span class="text-danger">*</span></label>
+              <multiselect :searchable="true" :searchStart="true" placeholder="Select camp" v-model="roomForm.camp_id" :options="lkCamp" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Room Number <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Enter room number" v-model="roomForm.room_no">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Room Type <span class="text-danger">*</span></label>
+              <multiselect :searchable="true" :searchStart="false" placeholder="Select room type" v-model="roomForm.room_type" :options="lkRoomType" />
+            </div>
+            <div class="row">
+              <div class="mb-3 col-6">
+                <label class="form-label">Room Capacity <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" placeholder="Enter capacity" v-model="roomForm.capacity">
+              </div>
+              <div class="mb-3 col-6">
+                <label class="form-label">Number of Bed <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" placeholder="Enter no of bed" v-model="roomForm.no_bed">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Room Condition <span class="text-danger">*</span></label>
+              <multiselect :searchable="true" :searchStart="false" placeholder="Select room type" v-model="roomForm.room_condition" :options="lkRoomCondition" />
+            </div>
+            <div>
+              <label class="form-label">Remarks </label>
+              <textarea type="text" class="form-control" placeholder="Enter remarks" v-model="roomForm.remark"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer" style="display: block;">
+            <div class="hstack gap-2 justify-content-end">
+              <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+              <button v-if="actMode == 'add'" type="button" class="btn btn-success" :class="roomFormDis" @click="addRoom">Add Room</button>
+              <button v-if="actMode == 'edit'" type="button" class="btn btn-success" :class="roomFormDis" @click="updRoom">Save Change</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
 
     <!-- Delete Modal -->
@@ -561,23 +622,11 @@ export default {
         { headerName: 'Room ID', field: 'room_id', minWidth: 80, maxWidth: 100, hide: true },
         { headerName: 'Camp Code', field: 'camp_code', filter: 'agSetColumnFilter' },
         { headerName: 'Room No.', field: 'room_no', filter: 'agSetColumnFilter' },
-        { headerName: 'Room Type', field: 'type', filter: 'agSetColumnFilter' },
+        { headerName: 'Room Type', field: 'room_type', filter: 'agSetColumnFilter' },
         { headerName: 'Capacity', field: 'capacity', filter: 'agSetColumnFilter' },
         { headerName: 'No of Bed', field: 'no_bed', filter: 'agSetColumnFilter' },
-        { headerName: 'Room Condition', field: 'condition', filter: 'agSetColumnFilter' },
+        { headerName: 'Room Condition', field: 'room_condition', filter: 'agSetColumnFilter' },
         { headerName: 'Remark', field: 'remark', filter: 'agSetColumnFilter' },
-        { headerName: 'Description Eng', field: 'descr_eng', filter: 'agSetColumnFilter' },
-        { headerName: 'Description Lao', field: 'descr_lao', filter: 'agSetColumnFilter' },
-        {
-          headerName: 'Active', field: 'active', maxWidth: 100, filter: 'agSetColumnFilter',
-          cellRenderer: (p) => {
-            if (p.value == false) {
-              return 'No';
-            } else {
-              return 'Yes';
-            }
-          }
-        },
         { headerName: 'Created at', field: 'created_at', maxWidth: 145, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
         { headerName: 'Created by', field: 'created_by', maxWidth: 150, filter: 'agSetColumnFilter' },
         { headerName: 'Updated at', field: 'updated_at', maxWidth: 145, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
@@ -591,7 +640,6 @@ export default {
         filterParams: { buttons: ['reset'] },
         minWidth: 100,
         cellClassRules: { 'pointer': 'true' },
-        menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
       },
 
       auth: [],
@@ -610,10 +658,11 @@ export default {
       lkActive: [{ value: 1, label: 'Yes' }, { value: 0, label: 'No' }],
 
       codeForm: { code_id: '', category: '', code: '', code_ori: '', descr_eng: '', descr_lao: '', active: null, tbl_name: '', col_name: '' },
-      deptForm: { department_id: '', company_id: null, department_eng: '', department_lao: '' },
-      provForm: { province_id: '', country_id: null, province_eng: '', province_lao: '' },
-      distForm: { district_id: '', country_id: null, province_id: null, district_eng: '', district_lao: '' },
-      villForm: { village_id: '', country_id: null, province_id: null, district_id: null, village_eng: '', village_lao: '' },
+      deptForm: { department_id: '', company_id: null, department_eng: '', department_lao: '', active: null },
+      provForm: { province_id: '', country_id: null, province_eng: '', province_lao: '', active: null },
+      distForm: { district_id: '', country_id: null, province_id: null, district_eng: '', district_lao: '', active: null },
+      villForm: { village_id: '', country_id: null, province_id: null, district_id: null, village_eng: '', village_lao: '', active: null },
+      roomForm: { room_id: '', camp_id: '', room_no: '', room_type: null, capacity: '', no_bed: '', remark: '', room_condition: null },
 
 
 
@@ -621,8 +670,11 @@ export default {
       lkCountry: [],
       lkProvince: [],
       lkDistrict: [],
+      lkCamp: [],
+      lkRoomType: [],
+      lkRoomCondition: [],
 
-
+      search: '',
 
       actMode: '',
       rowSelect: ''
@@ -673,7 +725,24 @@ export default {
       } else {
         return '';
       }
-    }
+    },
+
+    roomFormDis() {
+      if (this.roomForm.camp_id == null || this.roomForm.room_no == '' || this.roomForm.room_type == null || this.roomForm.capacity == '' || this.roomForm.no_bed == '' || this.roomForm.room_condition == null) {
+        return 'disabled';
+      } else {
+        return '';
+      }
+    },
+
+    categoryList() {
+      if (this.search.trim().length > 0) {
+        return this.category.filter(e =>
+          e.category.substring(0, this.search.trim().length).toLowerCase() == this.search.trim().toLowerCase()
+        );
+      };
+      return this.category;
+    },
   },
 
   methods: {
@@ -705,24 +774,24 @@ export default {
       const result = await axios.get('api/employee/codes', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
       this.code = result.data;
 
-      // const category = [
-      //   { cate: 'Company', lk: 'lkCompany', lb: 'descr_eng' },
-      //   { cate: 'Country', lk: 'lkCountry', lb: 'descr_eng' },
-      // ];
-      // for (let j = 0; j < category.length; j++) {
-      //   let cateName = category[j].cate;
-      //   let lkName = category[j].lk;
-      //   let labelCol = category[j].lb;
+      const category = [
+        { cate: 'Room Type', lk: 'lkRoomType', lb: 'descr_eng' },
+        { cate: 'Room Condition', lk: 'lkRoomCondition', lb: 'descr_eng' },
+      ];
+      for (let j = 0; j < category.length; j++) {
+        let cateName = category[j].cate;
+        let lkName = category[j].lk;
+        let labelCol = category[j].lb;
 
-      //   let item = this.code.filter((e) => e.category == [cateName] && e.active == 1);
-      //   this[lkName] = [];
-      //   for (let i = 0; i < item.length; i++) {
-      //     this[lkName].push({
-      //       value: item[i].code,
-      //       label: item[i][labelCol]
-      //     });
-      //   };
-      // };
+        let item = this.code.filter((e) => e.category == [cateName] && e.active == 1);
+        this[lkName] = [];
+        for (let i = 0; i < item.length; i++) {
+          this[lkName].push({
+            value: item[i].code,
+            label: item[i][labelCol]
+          });
+        };
+      };
     },
 
     async getCompany() {
@@ -772,6 +841,13 @@ export default {
     async getCamp() {
       const camp = await axios.get('/api/employee/camps', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
       this.camps = camp.data;
+
+      this.camps.forEach(e => {
+        this.lkCamp.push({
+          value: e.camp_id,
+          label: e.camp_code
+        });
+      });
     },
 
     async getRoom() {
@@ -870,11 +946,9 @@ export default {
             this.villForm.active = 1;
             $('#village-modal').modal('show');
             break;
-          case 'Room Zone':
-
-            break;
           case 'Room Number':
-
+            this.roomForm = {};
+            $('#room-modal').modal('show');
             break;
           default:
             this.codeForm.code = '';
@@ -891,7 +965,7 @@ export default {
         case 'Company':
           const companies = await axios.post('api/employee/add-company', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
           if (companies.data.success) {
-            const comp = await this.getCompany();
+            const code = await this.getCompany();
             this.codeFilter = this.company;
             this.rowSelect = '';
             toastr.success('Add successfully.');
@@ -903,7 +977,7 @@ export default {
         case 'Country':
           const countries = await axios.post('api/employee/add-country', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
           if (countries.data.success) {
-            const count = await this.getCountry();
+            const code = await this.getCountry();
             this.codeFilter = this.country;
             this.rowSelect = '';
             toastr.success('Add successfully.');
@@ -915,7 +989,7 @@ export default {
         case 'Camp':
           const camp = await axios.post('api/employee/add-camp', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
           if (camp.data.success) {
-            const count = await this.getCamp();
+            const code = await this.getCamp();
             this.codeFilter = this.camps;
             this.rowSelect = '';
             toastr.success('Add successfully.');
@@ -998,7 +1072,14 @@ export default {
           this.codeForm.active = e.data.active;
           break;
         case 'Room Number':
-
+          this.roomForm.room_id = e.data.room_id;
+          this.roomForm.camp_id = e.data.camp_id;
+          this.roomForm.room_no = e.data.room_no;
+          this.roomForm.room_type = e.data.room_type;
+          this.roomForm.capacity = e.data.capacity;
+          this.roomForm.no_bed = e.data.no_bed;
+          this.roomForm.room_condition = e.data.room_condition;
+          this.roomForm.remark = e.data.remark;
           break;
         default:
           this.rowSelect = e.data.code_id;
@@ -1019,7 +1100,6 @@ export default {
         toastr.info("Select a row to edit.");
       } else {
         this.actMode = 'edit';
-
         switch (this.codeForm.category) {
           case 'Department':
             $('#department-modal').modal('show');
@@ -1037,12 +1117,12 @@ export default {
             $('#village-modal').modal('show');
             break;
           case 'Room Number':
-
+            $('#room-modal').modal('show');
             break;
           default:
             $('#code-modal').modal('show');
-        }
-      }
+        };
+      };
     },
 
     async updCode() {
@@ -1149,15 +1229,11 @@ export default {
         case 'Province':
           try {
             const prov = await axios.post('api/employee/del-province', this.provForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-            // if (prov.data.success) {
             const code = await this.getProvince();
             this.codeFilter = this.province;
             this.rowSelect = '';
             toastr.success('Delete Successfully.');
             $('#delete-modal').modal('hide');
-            // } else {
-            //   toastr.error(`${prov.data.message}`);
-            // };
           } catch (error) {
             toastr.error('This code has already been used; it cannot be deleted.');
           };
@@ -1187,11 +1263,29 @@ export default {
             toastr.error('This code has already been used; it cannot be deleted.');
           };
           break;
-        case 'Room Zone':
-
+        case 'Camp':
+          try {
+            const response = await axios.post('api/employee/del-camp', this.codeForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+            const code = await this.getCamp();
+            this.codeFilter = this.camps;
+            this.rowSelect = '';
+            toastr.success('Delete Successfully.');
+            $('#delete-modal').modal('hide');
+          } catch (error) {
+            toastr.error('This code has already been used; it cannot be deleted.');
+          };
           break;
         case 'Room Number':
-
+          try {
+            const response = await axios.post('api/employee/del-room', this.roomForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+            const code = await this.getRoom();
+            this.codeFilter = this.rooms;
+            this.rowSelect = '';
+            toastr.success('Delete Successfully.');
+            $('#delete-modal').modal('hide');
+          } catch (error) {
+            toastr.error('This code has already been used; it cannot be deleted.');
+          };
           break;
         default:
           const response = await axios.post('api/employee/del-code', {
@@ -1323,6 +1417,32 @@ export default {
       };
     },
 
+    async addRoom() {
+      const response = await axios.post('api/employee/add-room', this.roomForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+      if (response.data.success) {
+        const code = await this.getRoom();
+        this.codeFilter = this.rooms;
+        this.rowSelect = '';
+        toastr.success('Add successfully.');
+        $('#room-modal').modal('hide');
+      } else {
+        toastr.error(`${response.data.message}`);
+      };
+    },
+
+    async updRoom() {
+      try {
+        const response = await axios.post('api/employee/upd-room', this.roomForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+        const code = await this.getRoom();
+        this.codeFilter = this.rooms;
+        this.rowSelect = '';
+        toastr.success('Update Successfully.');
+        $('#room-modal').modal('hide');
+      } catch (error) {
+        toastr.error('This code already exists in the database.');
+      };
+    },
+
     getLKProvince() {
       if (this.codeForm.category === 'District') {
         let items = this.province.filter(e => e.country_id === this.distForm.country_id);
@@ -1356,8 +1476,18 @@ export default {
       });
     },
 
+    async onSearch() {
+      if (this.search.length > 0) {
+        document.getElementById('search-close').classList.remove('d-none');
+      } else {
+        document.getElementById('search-close').classList.add('d-none');
+      }
+    },
 
-
+    async searchClear() {
+      this.search = '';
+      document.getElementById('search-close').classList.add('d-none');
+    },
 
     backToMain() {
       document.getElementById('code-detail').classList.remove('user-chat-show');

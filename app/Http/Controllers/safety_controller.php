@@ -276,6 +276,17 @@ class safety_controller extends Controller
         };
     }
 
+    public function delIncident(Request $request){
+        DB::table('st_incidents')->where('incident_id', $request->incident_id)->delete();
+        DB::table('st_incident_files')->where('incident_id', $request->incident_id)->delete();
+
+        foreach($request->fileList as $list) {
+            if(file_exists('assets/images/incidents/'.$list['new_name'])){
+                unlink('assets/images/incidents/'.$list['new_name']);
+            };
+        };   
+    }
+
     public function downloadIncidentFile($file){
         return response()->download('assets/images/incidents/'.$file);
     }

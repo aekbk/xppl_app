@@ -87,6 +87,12 @@ export const useStore = defineStore('store', () => {
     }
   }
 
+  function dateTime2(value) {
+    if (value) {
+      return moment(value).format('DD MMMM, YYYY HH:mm');
+    }
+  }
+
   function fullMonth(value) {
     if (value) {
       return moment(value).format('DD MMMM YYYY');
@@ -161,6 +167,20 @@ export const useStore = defineStore('store', () => {
     }
   }
 
+  function severity(text) {
+    if (text == '1') {
+      return '1 (Insignificant)';
+    } else if (text == '2') {
+      return '2 (Low)';
+    } else if (text == '3') {
+      return '3 (Moderate)';
+    } else if (text == '4') {
+      return '4 (High)';
+    } else {
+      return '5 (Extreme)';
+    };
+  }
+
   async function getLoginData() {
     const response = await axios('api/login-data');
     loginData.value = response.data;
@@ -190,6 +210,7 @@ export const useStore = defineStore('store', () => {
     setCustomizer,
     getLoginData,
     dateTime,
+    dateTime2,
     ddmmyyyy,
     yyyymmdd,
     mmyyyy,
@@ -200,6 +221,7 @@ export const useStore = defineStore('store', () => {
     numInt,
     numDec,
     bit,
-    fileType
+    fileType,
+    severity
   }
 })
