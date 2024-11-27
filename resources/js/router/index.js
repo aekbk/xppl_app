@@ -6,6 +6,7 @@ import { useAuthStore } from "../stores/auth.js";
 const routes = [
     { path: '/', redirect: '/home' },
     { path: '/home', name: 'homePage', component: () => import('../pages/home.vue'), meta: { requiresAuth: true } },
+    { path: '/control-tower', name: 'controlTower', component: () => import('../pages/control_tower.vue'), meta: { requiresAuth: true } },
     { path: '/login', name: 'loginPage', component: () => import('../pages/login.vue') },
     { path: '/register', name: 'registerPage', component: () => import('../pages/register.vue') },
     { path: '/maintenance', name: 'maintenancePage', component: () => import('../pages/maintenance.vue') },

@@ -91,6 +91,18 @@
               </div>
             </li>
 
+            <!-- New Dashboard -->
+            <li v-if="auth.M01" class="nav-item">
+              <a class="nav-link menu-link" id="m-menu-2" href="#dashboard2" data-bs-toggle="collapse" role="button" aria-expanded="false" @click="onMenuClick()">
+                <i class="ri-dashboard-line"></i><span>{{ $t('dashboard') }}</span>
+              </a>
+              <div class="collapse menu-dropdown" id="dashboard">
+                <ul class="nav nav-sm flex-column">
+                  <li v-if="auth.M01S01 == 1" class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/control-tower">Control Tower</router-link></li>
+                </ul>
+              </div>
+            </li>
+
             <!-- Admin tasks -->
             <li v-if="auth.M02" class="nav-item">
               <a class="nav-link menu-link" id="m-menu-3" href="#empoyee" data-bs-toggle="collapse" role="button" aria-expanded="false" @click="onMenuClick()">

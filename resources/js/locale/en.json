@@ -18,6 +18,7 @@
 
    "menu" : "Menu",
    "dashboard" : "Dashboards",
+   "control-tower" : "Control Tower",
    "dash-production" : "Production",
    "dash-employee" : "Employee",
    "dash-safety" : "Safety & Clinic",
