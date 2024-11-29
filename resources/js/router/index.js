@@ -6,11 +6,13 @@ import { useAuthStore } from "../stores/auth.js";
 const routes = [
     { path: '/', redirect: '/home' },
     { path: '/home', name: 'homePage', component: () => import('../pages/home.vue'), meta: { requiresAuth: true } },
-    { path: '/control-tower', name: 'controlTower', component: () => import('../pages/control_tower.vue'), meta: { requiresAuth: true } },
     { path: '/login', name: 'loginPage', component: () => import('../pages/login.vue') },
     { path: '/register', name: 'registerPage', component: () => import('../pages/register.vue') },
     { path: '/maintenance', name: 'maintenancePage', component: () => import('../pages/maintenance.vue') },
     { path: '/authorise', name: 'authorisePage', component: () => import('../pages/authorise.vue'), meta: { requiresAuth: true } },
+
+    { path: '/control-tower', name: 'controlTower', component: () => import('../pages/control_tower.vue'), meta: { requiresAuth: true } },
+    { path: '/drilldown-mining', name: 'drilldownMining', component: () => import('../pages/drilldown_mining.vue'), meta: { requiresAuth: true } },
 
     { path: '/admin-menu', name: 'adminPage', component: () => import('../pages/admin_menu.vue'), meta: { requiresAuth: true } },
     { path: '/admin-email-register', name: 'adminEmailPage', component: () => import('../pages/admin_email_register.vue'), meta: { requiresAuth: true } },

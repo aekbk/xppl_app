@@ -8,15 +8,20 @@
               <div class="d-flex align-items-lg-center flex-lg-row flex-column">
                 <div class="flex-grow-1">
                   <h4 class="fs-16 mb-1">Xekong Power Plant Co,.Ltd</h4>
-                  <p class="text-muted mb-0">Mine production dashboards updated on <span class="text-danger fw-semibold">{{ store.fullMDY(selectDate) }}</span> (Geology's data)</p>
+                  <p class="text-muted mb-0">Mine production dashboards updated on <span
+                      class="text-danger fw-semibold">{{ store.fullMDY(selectDate) }}</span> (Geology's data)</p>
                 </div>
                 <div class="mt-3 mt-lg-0">
 
                   <div class="row g-2 mb-0 align-items-center">
                     <div class="col-sm-auto">
                       <div class="input-group">
-                        <input type="text" id="select-date" class="form-control flatpickr-input flatpickr-single rounded-start-2 cursor-pointer" placeholder="Select date" v-model="selectDate" @input="onSelectDate()">
-                        <button type="button" class="btn btn-soft-info" style="border-color: var(--vz-input-border-custom);" @click="refresh()"><i class="ri-refresh-line align-middle"></i></button>
+                        <input type="text" id="select-date"
+                          class="form-control flatpickr-input flatpickr-single rounded-start-2 cursor-pointer"
+                          placeholder="Select date" v-model="selectDate" @input="onSelectDate()">
+                        <button type="button" class="btn btn-soft-info"
+                          style="border-color: var(--vz-input-border-custom);" @click="refresh()"><i
+                            class="ri-refresh-line align-middle"></i></button>
                       </div>
                     </div>
                     <!-- <div class="col-auto">
@@ -51,8 +56,10 @@
                           </div>
                           <div class="d-flex align-items-end justify-content-between mt-4">
                             <div>
-                              <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{ store.numInt(dash1Data[0].trip) }}<span class="text-muted fw-normal fs-13 ms-1">trip</span></h4>
-                              <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{ store.numInt(dash1Data[0].ton) }}<span class="text-muted fw-normal fs-13 ms-1">ton</span></h4>
+                              <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{ store.numInt(dash1Data[0].trip) }}<span
+                                  class="text-muted fw-normal fs-13 ms-1">trip</span></h4>
+                              <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{ store.numInt(dash1Data[0].ton) }}<span
+                                  class="text-muted fw-normal fs-13 ms-1">ton</span></h4>
                             </div>
                             <div class="avatar-sm flex-shrink-0" v-if="dash1Data[0].ton - dash1Data[1].ton > 0">
                               <span class="avatar-title bg-success-subtle rounded fs-3">
@@ -83,8 +90,10 @@
                           </div>
                           <div class="d-flex align-items-end justify-content-between mt-4">
                             <div>
-                              <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{ store.numInt(dash1Data[2].trip) }}<span class="text-muted fw-normal fs-13 ms-1">trip</span></h4>
-                              <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{ store.numInt(dash1Data[2].ton) }}<span class="text-muted fw-normal fs-13 ms-1">ton</span></h4>
+                              <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{ store.numInt(dash1Data[2].trip) }}<span
+                                  class="text-muted fw-normal fs-13 ms-1">trip</span></h4>
+                              <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{ store.numInt(dash1Data[2].ton) }}<span
+                                  class="text-muted fw-normal fs-13 ms-1">ton</span></h4>
                             </div>
                             <div class="avatar-sm flex-shrink-0" v-if="dash1Data[2].ton - dash1Data[3].ton > 0">
                               <span class="avatar-title bg-success-subtle rounded fs-3">
@@ -117,8 +126,10 @@
                           </div>
                           <div class="d-flex align-items-end justify-content-between mt-4">
                             <div>
-                              <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{ store.numInt(dash1Data[4].trip) }}<span class="text-muted fw-normal fs-13 ms-1">trip</span></h4>
-                              <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{ store.numInt(dash1Data[4].ton) }}<span class="text-muted fw-normal fs-13 ms-1">ton</span></h4>
+                              <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{ store.numInt(dash1Data[4].trip) }}<span
+                                  class="text-muted fw-normal fs-13 ms-1">trip</span></h4>
+                              <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{ store.numInt(dash1Data[4].ton) }}<span
+                                  class="text-muted fw-normal fs-13 ms-1">ton</span></h4>
                             </div>
                             <div class="avatar-sm flex-shrink-0" v-if="dash1Data[4].ton - dash1Data[5].ton > 0">
                               <span class="avatar-title bg-success-subtle rounded fs-3">
@@ -147,7 +158,8 @@
                             </div> -->
                           </div>
                           <div class="d-flex align-items-end justify-content-between align-items-baseline">
-                            <h4 class="fs-22 fw-semibold ff-secondary mb-0">15,000,000<span class="text-muted fw-normal fs-13 ms-1">ton</span></h4>
+                            <h4 class="fs-22 fw-semibold ff-secondary mb-0">15,000,000<span
+                                class="text-muted fw-normal fs-13 ms-1">ton</span></h4>
                           </div>
 
                           <div class="d-flex align-items-center" style="margin-top: 4.5px">
@@ -156,8 +168,10 @@
                             </div>
                           </div>
                           <div class="d-flex align-items-end justify-content-between align-items-baseline">
-                            <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{ store.numInt(dash1Data[4].ton) }}<span class="text-muted fw-normal fs-13 ms-1">ton</span></h4>
-                            <p class="mb-0 text-truncate ms-1 text-secondary fw-medium">{{ store.numDec(dash1Data[4].ton * 100 / 15000000) }}%</p>
+                            <h4 class="fs-22 fw-semibold ff-secondary mb-0">{{ store.numInt(dash1Data[4].ton) }}<span
+                                class="text-muted fw-normal fs-13 ms-1">ton</span></h4>
+                            <p class="mb-0 text-truncate ms-1 text-secondary fw-medium">{{ store.numDec(dash1Data[4].ton
+                              * 100 / 15000000) }}%</p>
                           </div>
                         </div>
                       </div>
@@ -273,25 +287,32 @@
                   <div class="card-header border-bottom">
                     <div class="row g-2 align-items-center email-topbar-link">
                       <div class="col-xl-6 col-lg-6">
-                        <h5 class="card-title mb-0 flex-grow-1 overflow-hidden">Coal mined on {{ store.fullMonY(selectMonth) }} (ton)</h5>
+                        <h5 class="card-title mb-0 flex-grow-1 overflow-hidden">Coal mined on {{
+                          store.fullMonY(selectMonth) }} (ton)</h5>
                       </div>
                       <div class="col-xxl-2 col-xl-3 col-lg-3 col-md-4 col-sm-6 ms-auto text-end">
-                        <input type="month" class="form-control form-control-sm" v-model="selectMonth" @input="getDash7">
+                        <input type="month" class="form-control form-control-sm" v-model="selectMonth"
+                          @input="getDash7">
                       </div>
-                      <button class="btn btn-ghost-secondary btn-icon btn-sm material-shadow-none active" @click="exportData4" title="Export to excel file.">
+                      <button class="btn btn-ghost-secondary btn-icon btn-sm material-shadow-none active"
+                        @click="exportData4" title="Export to excel file.">
                         <i class="ri-file-excel-2-line align-bottom fs-15"></i>
                       </button>
                     </div>
                   </div>
                   <div class="card-body">
                     <div class="table-responsive table-card">
-                      <table class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm">
+                      <table
+                        class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm">
                         <thead class="text-muted bg-light-subtle" style="height: 32px;">
                           <tr class="text-end">
                             <th class="text-start">Grade Range</th>
                             <th class="text-start">Category</th>
                             <th class="text-start">Stockpile</th>
-                            <th v-for="(col, colInx) in dateColheader" :key="colInx" class="text-end" style="width: 100px; " :style="headDate(col.colId) == cdate ? 'color: red; font-weight: bold;' : ''">{{ col.colName }}</th>
+                            <th v-for="(col, colInx) in dateColheader" :key="colInx" class="text-end"
+                              style="width: 100px; "
+                              :style="headDate(col.colId) == cdate ? 'color: red; font-weight: bold;' : ''">{{
+                              col.colName }}</th>
                             <th style="width: 100px;">Total</th>
                           </tr>
                         </thead>
@@ -300,7 +321,8 @@
                             <td class="text-start">Padou</td>
                             <td></td>
                             <td></td>
-                            <td v-for="(col, colInx) in dateColheader" :key="colInx">{{ store.numInt(dash7PadouTotal[col.colId]) }}</td>
+                            <td v-for="(col, colInx) in dateColheader" :key="colInx">{{
+                              store.numInt(dash7PadouTotal[col.colId]) }}</td>
                             <td class="fw-medium">{{ store.numInt(dash7PadouTotal.total) }}</td>
                           </tr>
                         </tbody>
@@ -309,7 +331,8 @@
                             <td class="text-start">{{ item.grade_range }}</td>
                             <td class="text-start">{{ item.coal_category }}</td>
                             <td class="text-start">{{ item.stockpile }}</td>
-                            <td v-for="(col, colInx) in dateColheader" :key="colInx">{{ store.numInt(item[col.colId]) }}</td>
+                            <td v-for="(col, colInx) in dateColheader" :key="colInx">{{ store.numInt(item[col.colId]) }}
+                            </td>
                             <td class="fw-medium">{{ store.numInt(item.total) }}</td>
                           </tr>
                         </tbody>
@@ -318,7 +341,8 @@
                             <td class="text-start">Pakxai</td>
                             <td></td>
                             <td></td>
-                            <td v-for="(col, colInx) in dateColheader" :key="colInx">{{ store.numInt(dash7PakxaiTotal[col.colId]) }}</td>
+                            <td v-for="(col, colInx) in dateColheader" :key="colInx">{{
+                              store.numInt(dash7PakxaiTotal[col.colId]) }}</td>
                             <td class="fw-medium">{{ store.numInt(dash7PakxaiTotal.total) }}</td>
                           </tr>
                         </tbody>
@@ -327,7 +351,8 @@
                             <td class="text-start">{{ item.grade_range }}</td>
                             <td class="text-start">{{ item.coal_category }}</td>
                             <td class="text-start">{{ item.stockpile }}</td>
-                            <td v-for="(col, colInx) in dateColheader" :key="colInx">{{ store.numInt(item[col.colId]) }}</td>
+                            <td v-for="(col, colInx) in dateColheader" :key="colInx">{{ store.numInt(item[col.colId]) }}
+                            </td>
                             <td class="fw-medium">{{ store.numInt(item.total) }}</td>
                           </tr>
                         </tbody>
@@ -336,7 +361,8 @@
                             <td class="text-start">Kaleum</td>
                             <td></td>
                             <td></td>
-                            <td v-for="(col, colInx) in dateColheader" :key="colInx">{{ store.numInt(dash7KaleumTotal[col.colId]) }}</td>
+                            <td v-for="(col, colInx) in dateColheader" :key="colInx">{{
+                              store.numInt(dash7KaleumTotal[col.colId]) }}</td>
                             <td class="fw-medium">{{ store.numInt(dash7KaleumTotal.total) }}</td>
                           </tr>
                         </tbody>
@@ -345,7 +371,8 @@
                             <td class="text-start">{{ item.grade_range }}</td>
                             <td class="text-start">{{ item.coal_category }}</td>
                             <td class="text-start">{{ item.stockpile }}</td>
-                            <td v-for="(col, colInx) in dateColheader" :key="colInx">{{ store.numInt(item[col.colId]) }}</td>
+                            <td v-for="(col, colInx) in dateColheader" :key="colInx">{{ store.numInt(item[col.colId]) }}
+                            </td>
                             <td class="fw-medium">{{ store.numInt(item.total) }}</td>
                           </tr>
                         </tbody>
@@ -354,7 +381,8 @@
                             <td class="text-start">Grand Total</td>
                             <td></td>
                             <td></td>
-                            <td v-for="(col, colInx) in dateColheader" :key="colInx">{{ store.numInt(dash7DataTotal[col.colId]) }}</td>
+                            <td v-for="(col, colInx) in dateColheader" :key="colInx">{{
+                              store.numInt(dash7DataTotal[col.colId]) }}</td>
                             <td>{{ store.numInt(dash7DataTotal.total) }}</td>
                           </tr>
                         </tbody>
@@ -367,26 +395,31 @@
               <div class="col-xl-12">
                 <div class="card">
                   <div class="card-header align-items-center d-flex email-topbar-link">
-                    <h4 class="card-title mb-0 flex-grow-1 overflow-hidden">Coal mined by month in {{ selectYear }} (ton)</h4>
+                    <h4 class="card-title mb-0 flex-grow-1 overflow-hidden">Coal mined by month in {{ selectYear }}
+                      (ton)</h4>
                     <div class="flex-shrink-0">
                       <div class="dropdown card-header-dropdown">
-                        <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown" aria-haspopup="true"
+                          aria-expanded="false">
                           <span class="text-muted">{{ selectYear }}<i class="mdi mdi-chevron-down ms-1"></i></span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end overflow-auto" style="max-height: 300px">
-                          <a class="dropdown-item" href="#" v-for="(item, index) in lkYear" :key="index" @click="getDashboard4(item.value)">
+                          <a class="dropdown-item" href="#" v-for="(item, index) in lkYear" :key="index"
+                            @click="getDashboard4(item.value)">
                             {{ item.value }}
                           </a>
                         </div>
                       </div>
                     </div>
-                    <button class="btn btn-ghost-secondary btn-icon btn-sm material-shadow-none" @click="exportData1" title="Export to excel file.">
+                    <button class="btn btn-ghost-secondary btn-icon btn-sm material-shadow-none" @click="exportData1"
+                      title="Export to excel file.">
                       <i class="ri-file-excel-2-line align-bottom fs-15"></i>
                     </button>
                   </div>
                   <div class="card-body">
                     <div class="table-responsive table-card">
-                      <table class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm">
+                      <table
+                        class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm">
                         <thead class="text-muted bg-light-subtle" style="height: 32px;">
                           <tr class="text-end">
                             <th class="text-start">Grade Range</th>
@@ -557,13 +590,15 @@
                 <div class="card">
                   <div class="card-header align-items-center d-flex email-topbar-link">
                     <h4 class="card-title mb-0 flex-grow-1">Statistic on coal mined by area from 2013 (ton)</h4>
-                    <button class="btn btn-ghost-secondary btn-icon btn-sm material-shadow-none" @click="exportData2" title="Export to excel file.">
+                    <button class="btn btn-ghost-secondary btn-icon btn-sm material-shadow-none" @click="exportData2"
+                      title="Export to excel file.">
                       <i class="ri-file-excel-2-line align-bottom fs-15"></i>
                     </button>
                   </div>
                   <div class="card-body">
                     <div class="table-responsive table-card">
-                      <table class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm">
+                      <table
+                        class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm">
                         <thead class="text-muted bg-light-subtle" style="height: 32px;">
                           <tr class="text-end">
                             <th class="text-start">Area</th>
@@ -626,13 +661,15 @@
                 <div class="card">
                   <div class="card-header align-items-center d-flex email-topbar-link">
                     <h4 class="card-title mb-0 flex-grow-1">Statistics on coal mined by grade from 2013 (ton)</h4>
-                    <button class="btn btn-ghost-secondary btn-icon btn-sm material-shadow-none" @click="exportData3" title="Export to excel file.">
+                    <button class="btn btn-ghost-secondary btn-icon btn-sm material-shadow-none" @click="exportData3"
+                      title="Export to excel file.">
                       <i class="ri-file-excel-2-line align-bottom fs-15"></i>
                     </button>
                   </div>
                   <div class="card-body">
                     <div class="table-responsive table-card">
-                      <table class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm">
+                      <table
+                        class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm">
                         <thead class="text-muted bg-light-subtle" style="height: 32px;">
                           <tr class="text-end">
                             <th class="text-start">Grade Range</th>
@@ -653,7 +690,8 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item, index) in dash6Filter" :key="index" class="text-end border-bottom border-bottom-dashed">
+                          <tr v-for="(item, index) in dash6Filter" :key="index"
+                            class="text-end border-bottom border-bottom-dashed">
                             <td class="text-start">{{ item.grade_range }}</td>
                             <td class="text-start">{{ item.coal_category }}</td>
                             <td>{{ store.numInt(item.y2013) }}</td>
@@ -696,7 +734,9 @@
 
 
               <!-- Export table -->
-              <table class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm d-none" id="export1">
+              <table
+                class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm d-none"
+                id="export1">
                 <thead class="text-muted bg-light-subtle" style="height: 32px;">
                   <tr class="text-end">
                     <th class="text-start">Grade Range</th>
@@ -867,7 +907,9 @@
                 </tbody>
               </table>
 
-              <table class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm d-none" id="export2">
+              <table
+                class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm d-none"
+                id="export2">
                 <thead class="text-muted bg-light-subtle" style="height: 32px;">
                   <tr class="text-end">
                     <th class="text-start">Area</th>
@@ -922,7 +964,9 @@
                 </tbody>
               </table>
 
-              <table class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm d-none" id="export3">
+              <table
+                class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm d-none"
+                id="export3">
                 <thead class="text-muted bg-light-subtle" style="height: 32px;">
                   <tr class="text-end">
                     <th class="text-start">Grade Range</th>
@@ -943,7 +987,8 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(item, index) in dash6Filter" :key="index" class="text-end border-bottom border-bottom-dashed">
+                  <tr v-for="(item, index) in dash6Filter" :key="index"
+                    class="text-end border-bottom border-bottom-dashed">
                     <td class="text-start">{{ item.grade_range }}</td>
                     <td class="text-start">{{ item.coal_category }}</td>
                     <td>{{ item.y2013 }}</td>
@@ -980,13 +1025,16 @@
                 </tbody>
               </table>
 
-              <table class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm d-none" id="export4">
+              <table
+                class="table table-hover table-borderless table-centered align-middle table-nowrap mb-0 table-sm d-none"
+                id="export4">
                 <thead class="text-muted bg-light-subtle" style="height: 32px;">
                   <tr class="text-end">
                     <th class="text-start">Grade Range</th>
                     <th class="text-start">Category</th>
                     <th class="text-start">Stockpile</th>
-                    <th v-for="(col, colInx) in dateColheader" :key="colInx" class="text-end" style="width: 100px; ">{{ headDate2(col.colId) }}</th>
+                    <th v-for="(col, colInx) in dateColheader" :key="colInx" class="text-end" style="width: 100px; ">{{
+                      headDate2(col.colId) }}</th>
                     <th style="width: 100px;">Total</th>
                   </tr>
                 </thead>

@@ -16,25 +16,27 @@
                     ">
           <div class="col">
             <div class="">MTD Plan</div>
-            <div class="fs-4">
+            <div class="fs-3">
               7.36 &nbsp;<span class="fs-6">Mt</span>
             </div>
           </div>
           <div class="col">
             <div class="">Actual</div>
-            <div class="fs-4">
+            <div class="fs-3">
               7.36 &nbsp;<span class="fs-6">Mt</span>
             </div>
           </div>
           <div class="col">
             <div>% Plan Diff.</div>
             <div class="fs-4">
-              <span class="badge text-bg-success">Within</span>
-              &nbsp;<span class="fs-6">36%</span>
+              <span class="badge text-bg-success fs-4">36%</span>
             </div>
           </div>
         </div>
-        <kpi-chart></kpi-chart>
+        <kpi-chart
+          :actualData="mainMetricActual"
+          :planData="mainMetricPlan"
+        ></kpi-chart>
       </div>
 
       <div>
@@ -83,6 +85,14 @@ export default {
       required: false,
       default: "",
     },
+    mainMetricActual: {
+      type: Array,
+      required: false,
+    },
+    mainMetricPlan: {
+      type: Array,
+      required: false,
+    },
     secondaryMetricTitle: {
       type: String,
       required: true,
@@ -91,11 +101,6 @@ export default {
       type: String,
       required: false,
       default: "",
-    },
-    stats: {
-      type: Array,
-      required: true,
-      default: () => [],
     },
   },
 };

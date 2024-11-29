@@ -7,57 +7,27 @@
                         <div class="row">
                             <div class="col-xxl-6 align-self-center">
                                 <div class="">
-                                    <p class="fs-15 mt-3">OVERALL <span class="ms-3 text-muted fs-6">Last updated on
+                                    <p class="fs-15 mt-3">MINING <span class="ms-3 text-muted fs-6">Last updated on
                                       </span><span class="text-danger fs-6">November 13, 2024, at 15:32:06</span></p>
+                                </div>
+                                <div>
+                                    <ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" href="#">Active</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Link</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Link</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link disabled" href="#">Disabled</a>
+  </li>
+</ul>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <div class="row justify-content-evenly mb-4">
-                    <div class="col-lg-6">
-                        <summary-statistic
-                            :title="statistic1.title"
-                            :subtitle="statistic1.subtitle"
-                            :stats="statistic1.statisticsContent"
-                        ></summary-statistic>
-                    </div>
-                    <div class="col-lg-6">
-                        <summary-statistic
-                            :title="statistic2.title"
-                            :stats="statistic2.statisticsContent"
-                        ></summary-statistic>
-                    </div>
-                </div>
-                <div class="row justify-content-evenly mb-4">
-                    <div class="col-lg-4">
-                        <department-summary
-                            :title="miningSummary.title"
-                            :mainMetricTitle="miningSummary.mainMetricTitle"
-                            :mainMetricSubtitle="miningSummary.mainMetricSubtitle"
-                            :mainMetricActualData="miningSummary.mainMetricActualData"
-                            :secondaryMetricTitle="miningSummary.secondaryMetricTitle"
-                            :secondaryMetricSubtitle="miningSummary.secondaryMetricSubtitle"
-                        ></department-summary>
-                    </div>
-                    <div class="col-lg-4">
-                        <department-summary
-                            :title="processingSummary.title"
-                            :mainMetricTitle="processingSummary.mainMetricTitle"
-                            :mainMetricSubtitle="processingSummary.mainMetricSubtitle"
-                            :secondaryMetricTitle="processingSummary.secondaryMetricTitle"
-                            :secondaryMetricSubtitle="processingSummary.secondaryMetricSubtitle"
-                        ></department-summary>
-                    </div>
-                    <div class="col-lg-4">
-                      <department-summary
-                            :title="processingSummary.title"
-                            :mainMetricTitle="processingSummary.mainMetricTitle"
-                            :mainMetricSubtitle="processingSummary.mainMetricSubtitle"
-                            :secondaryMetricTitle="processingSummary.secondaryMetricTitle"
-                            :secondaryMetricSubtitle="processingSummary.secondaryMetricSubtitle"
-                        ></department-summary>
                     </div>
                 </div>
             </div>
@@ -68,17 +38,9 @@
 <script>
 import SummaryStatistic from "../components/summary-statistic.vue";
 import DepartmentSummary from "../components/department-summary.vue";
-import { useAuthStore } from "../stores/auth";
-import { useStore } from "../stores/store";
 
 export default {
     name: "ControlTower",
-
-    setup() {
-      const authStore = useAuthStore();
-      const store = useStore();
-      return { authStore, store };
-    },
 
     components: {
         SummaryStatistic,
@@ -184,17 +146,6 @@ export default {
 
     mounted() {},
 
-    methods: {
-      async fetchMiningData() {
-        const response = await axios.get("/api/control-tower/mining?start_date=2024-11-01&end_date=2024-12-01", { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-        this.miningSummary.mainMetricActualData = response.data.map(i => i.total_coal_actual_kt);
-      },
-      async fetchData() {
-        this.fetchMiningData();
-      }
-    },
-    created() {
-      this.fetchData();
-    },
+    methods: {},
 };
 </script>

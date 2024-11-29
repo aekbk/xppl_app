@@ -31,7 +31,6 @@ export default {
         chart: {
           height: 500,
           type: "line",
-          stacked: false,
           toolbar: {
             show: true,
           },
@@ -51,7 +50,7 @@ export default {
           },
         },
         dataLabels: {
-          enabled: false,
+          enabled: true,
         },
         xaxis: {
           categories: [

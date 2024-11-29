@@ -13,6 +13,7 @@ use App\Http\Controllers\safety_controller;
 use App\Http\Controllers\clinic_controller;
 use App\Http\Controllers\geology_controller;
 use App\Http\Controllers\employee_controller;
+use App\Http\Controllers\control_tower_controller;
 
 
 Route::post('register', [user_controller::class, 'register']);
@@ -230,3 +231,8 @@ Route::get('salesdata', [geology_controller::class, 'getSaleData']);
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
 // })->middleware('auth:sanctum');
+
+// Control Tower
+Route::prefix('control-tower')->group(function () {
+    Route::get('/mining', [control_tower_controller::class, 'mining_data']);
+});
