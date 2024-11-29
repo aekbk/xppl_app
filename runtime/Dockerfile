@@ -19,6 +19,42 @@ RUN echo "Acquire::http::Pipeline-Depth 0;" > /etc/apt/apt.conf.d/99custom && \
     echo "Acquire::http::No-Cache true;" >> /etc/apt/apt.conf.d/99custom && \
     echo "Acquire::BrokenProxy    true;" >> /etc/apt/apt.conf.d/99custom
 
+RUN apt-get update && apt-get install -y \
+    curl \
+    gnupg \
+    ca-certificates \
+    apt-transport-https \
+    software-properties-common \
+    apt-utils
+
+RUN add-apt-repository ppa:ondrej/php -y && \
+    apt-get update && \
+    apt-get install php8.2 php8.2-dev php8.2-fpm php8.2-xml -y --allow-unauthenticated
+
+# By this step, fpm status should be already working
+
+# Install ODBC driver for SQL Server. It only supports certain ubuntu version.
+# Refer to https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server?view=sql-server-ver16&tabs=ubuntu18-install%2Calpine17-install%2Cdebian8-install%2Credhat7-13-install%2Crhel7-offline
+
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc \
+    && curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | tee /etc/apt/sources.list.d/mssql-release.list
+
+RUN apt-get update && \
+    ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18 unixodbc-dev
+
+RUN echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
+
+# optional: for unixODBC development headers
+RUN apt-get install -y unixodbc-dev
+
+# Install sqlsrv and pdo_sqlsrv PHP extensions
+RUN pecl install sqlsrv pdo_sqlsrv
+
+# Enable the extensions
+RUN echo "extension=sqlsrv.so" > /etc/php/8.2/mods-available/sqlsrv.ini \
+    && echo "extension=pdo_sqlsrv.so" > /etc/php/8.2/mods-available/pdo_sqlsrv.ini \
+    && phpenmod sqlsrv pdo_sqlsrv
+
 RUN apt-get update && apt-get upgrade -y \
     && mkdir -p /etc/apt/keyrings \
     && apt-get install -y gnupg gosu curl ca-certificates zip unzip git supervisor sqlite3 libcap2-bin libpng-dev python2 dnsutils librsvg2-bin fswatch ffmpeg nano  \
@@ -50,7 +86,6 @@ RUN apt-get update && apt-get upgrade -y \
     && apt-get install -y yarn \
     && apt-get install -y mysql-client \
     && apt-get install -y postgresql-client-$POSTGRES_VERSION \
-    && apt-get freetds-common freetds-bin unixodbc php8.2-sybase \
     && apt-get -y autoremove \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
