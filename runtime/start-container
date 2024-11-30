@@ -15,6 +15,12 @@ fi
 
 chmod -R ugo+rw /.composer
 
+# Run composer install
+composer install
+
+# Run bun install
+bun install && bun run build
+
 if [ $# -gt 0 ]; then
     if [ "$SUPERVISOR_PHP_USER" = "root" ]; then
         exec "$@"

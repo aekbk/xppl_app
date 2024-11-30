@@ -51,9 +51,7 @@ RUN apt-get install -y unixodbc-dev
 RUN pecl install sqlsrv pdo_sqlsrv
 
 # Enable the extensions
-RUN echo "extension=sqlsrv.so" > /etc/php/8.2/mods-available/sqlsrv.ini \
-    && echo "extension=pdo_sqlsrv.so" > /etc/php/8.2/mods-available/pdo_sqlsrv.ini \
-    && phpenmod sqlsrv pdo_sqlsrv
+RUN phpenmod sqlsrv pdo_sqlsrv
 
 RUN apt-get update && apt-get upgrade -y \
     && mkdir -p /etc/apt/keyrings \
