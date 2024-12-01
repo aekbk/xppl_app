@@ -37,6 +37,7 @@
                             :mainMetricTitle="miningSummary.mainMetricTitle"
                             :mainMetricSubtitle="miningSummary.mainMetricSubtitle"
                             :mainMetricActualData="miningSummary.mainMetricActualData"
+                            :mainMetricCategories="miningSummary.mainMetricCategories"
                             :mainMetricPlanData="miningSummary.mainMetricPlanData"
                             :secondaryMetricTitle="miningSummary.secondaryMetricTitle"
                             :secondaryMetricSubtitle="miningSummary.secondaryMetricSubtitle"
@@ -71,6 +72,8 @@ import SummaryStatistic from "../components/summary-statistic.vue";
 import DepartmentSummary from "../components/department-summary.vue";
 import { useAuthStore } from "../stores/auth";
 import { useStore } from "../stores/store";
+import { convertToDailyKpiData } from "../utils/chart";
+import { formatDateToDayMonth } from "../utils/date";
 
 export default {
     name: "ControlTower",
@@ -150,8 +153,7 @@ export default {
                 mainMetricSubtitle: "(MTD)",
                 mainMetricActualData: [],
                 mainMetricPlanData: [],
-                mainMetricCumPlanData: [],
-                mainMetricCumActualData: [],
+                mainMetricCategories: [],
                 secondaryMetricTitle: "Strip Ratio",
                 secondaryMetricSubtitle: "(MTD)",
                 secondaryMetricStats: [],
@@ -187,9 +189,11 @@ export default {
 
     methods: {
       async fetchMiningData() {
-        const response = await axios.get("/api/control-tower/mining?start_date=2024-11-01&end_date=2024-12-01", { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-        this.miningSummary.mainMetricActualData = response.data.map(i => i.total_coal_actual_kt);
-        this.miningSummary.mainMetricPlanData = response.data.map(i => i.total_coal_plan_kt);
+        const response = await axios.get("/api/control-tower/mining_detail?start_date=2024-11-01&end_date=2024-12-01", { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+        const kpiData = convertToDailyKpiData(response.data);
+        this.miningSummary.mainMetricActualData = kpiData.map(i => i.actual);
+        this.miningSummary.mainMetricPlanData = kpiData.map(i => i.plan);
+        this.miningSummary.mainMetricCategories = kpiData.map(i => formatDateToDayMonth(i.date));
       },
       async fetchData() {
         this.fetchMiningData();

@@ -36,6 +36,7 @@
         <kpi-chart
           :actualData="mainMetricActualData"
           :planData="mainMetricPlanData"
+          :categories="mainMetricCategories"
         ></kpi-chart>
       </div>
 
@@ -61,6 +62,7 @@
 </template>
 
 <script>
+import { categories } from "@vueuse/core/metadata.cjs";
 import { addAll, getKpiCategory } from "../utils/chart";
 import { roundToDecimalPlace } from "../utils/number";
 import KpiChart from "./kpi-chart.vue";
@@ -93,6 +95,11 @@ export default {
       default: [],
     },
     mainMetricPlanData: {
+      type: Array,
+      required: false,
+      default: [],
+    },
+    mainMetricCategories: {
       type: Array,
       required: false,
       default: [],

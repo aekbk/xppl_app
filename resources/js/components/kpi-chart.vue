@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import VueApexCharts from "vue3-apexcharts";
-import { getCumulativeData, getStepSize, getYMax } from "../utils/chart";
+import { getCumulativeData, getYMax } from "../utils/chart";
 
 export default {
   name: "KpiChart",
@@ -49,7 +49,7 @@ export default {
 
       return {
         chart: {
-          height: 500,
+          height: 300,
           type: "line",
           stacked: false,
           toolbar: {
@@ -71,13 +71,7 @@ export default {
         },
         colors: ["#2c3e50", "#2ecc71", "#3498db", "#f1c40f", "#34495e"],
         xaxis: {
-          categories: [
-            "1 Nov", "2 Nov", "3 Nov", "4 Nov", "5 Nov", "6 Nov", "7 Nov", "8 Nov",
-            "9 Nov", "10 Nov", "11 Nov", "12 Nov", "13 Nov", "14 Nov", "15 Nov",
-            "16 Nov", "17 Nov", "18 Nov", "19 Nov", "20 Nov", "21 Nov", "22 Nov",
-            "23 Nov", "24 Nov", "25 Nov", "26 Nov", "27 Nov", "28 Nov", "29 Nov",
-            "30 Nov",
-          ],
+          categories: this.categories,
         },
         yaxis: [
           {

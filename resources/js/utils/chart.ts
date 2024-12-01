@@ -212,3 +212,87 @@ function roundProcessedDataItemNumbers(data: ProcessedDataItem): ProcessedDataIt
     totalPlan: roundToDecimalPlace(data.totalPlan, 2),
   };
 }
+
+interface DailyKpiDataItem {
+  date: Date;
+  actual: number;
+  plan: number;
+  diff: number;
+}
+
+// Convert the raw data to KPI data and group by date
+export function convertToDailyKpiData(rawData: RawDataItem[]): Array<DailyKpiDataItem> {
+  const kpiDataMap = new Map<string, DailyKpiDataItem>();
+
+  rawData.forEach(item => {
+    const date = new Date(item.date);
+    const key = date.toISOString();
+
+    if (!kpiDataMap.has(key)) {
+      kpiDataMap.set(key, {
+        date,
+        actual: 0,
+        plan: 0,
+        diff: 0,
+      });
+    }
+
+    const kpiData = kpiDataMap.get(key);
+
+    // Convert coal_actual_kt and coal_plan_kt to numbers
+    const coal_actual_kt = parseFloat(item.coal_actual_kt) || 0;
+    const coal_plan_kt = parseFloat(item.coal_plan_kt) || 0;
+
+    kpiData!.actual += coal_actual_kt;
+    kpiData!.plan += coal_plan_kt;
+  });
+
+  // Calculate the difference
+  kpiDataMap.forEach(kpiData => {
+    kpiData.diff = calculateDiff(kpiData.actual, kpiData.plan);
+  });
+
+  return Array.from(kpiDataMap.values());
+}
+
+interface MonthlyKpiDataItem {
+  date: Date;
+  actual: number;
+  plan: number;
+  diff: number;
+}
+
+// Convert the raw data to KPI data and group by date
+export function convertToMonthlyKpiData(rawData: RawDataItem[]): Array<MonthlyKpiDataItem> {
+  const kpiDataMap = new Map<string, MonthlyKpiDataItem>();
+
+  rawData.forEach(item => {
+    const date = new Date(item.date);
+    const key = `${date.getFullYear()}-${date.getMonth()}`;
+
+    if (!kpiDataMap.has(key)) {
+      kpiDataMap.set(key, {
+        date,
+        actual: 0,
+        plan: 0,
+        diff: 0,
+      });
+    }
+
+    const kpiData = kpiDataMap.get(key);
+
+    // Convert coal_actual_kt and coal_plan_kt to numbers
+    const coal_actual_kt = parseFloat(item.coal_actual_kt) || 0;
+    const coal_plan_kt = parseFloat(item.coal_plan_kt) || 0;
+
+    kpiData!.actual += coal_actual_kt;
+    kpiData!.plan += coal_plan_kt;
+  });
+
+  // Calculate the difference
+  kpiDataMap.forEach(kpiData => {
+    kpiData.diff = calculateDiff(kpiData.actual, kpiData.plan);
+  });
+
+  return Array.from(kpiDataMap.values());
+}

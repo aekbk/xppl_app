@@ -16,3 +16,11 @@ export function isSameMonthAndYear(date1: Date, date2: Date): boolean {
 export function isSameYear(date1: Date, date2: Date): boolean {
     return date1.getFullYear() === date2.getFullYear();
 }
+
+export function formatDateToDayMonth(date: Date): string {
+  const formatter = new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+  });
+  return formatter.format(date);
+}
