@@ -892,6 +892,9 @@ import axios from 'axios';
 import { useStore } from './stores/store.js';
 import { useAuthStore } from './stores/auth.js';
 import { useToastr } from "./toastr.js";
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import 'ag-grid-enterprise';
 const toastr = useToastr();
 
 export default {

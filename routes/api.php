@@ -235,4 +235,5 @@ Route::get('salesdata', [geology_controller::class, 'getSaleData']);
 // Control Tower
 Route::prefix('control-tower')->group(function () {
     Route::get('/mining', [control_tower_controller::class, 'mining_data']);
+    Route::get('/mining_detail', [control_tower_controller::class, 'mining_detail']);
 });

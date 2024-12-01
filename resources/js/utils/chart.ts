@@ -1,3 +1,6 @@
+import { isSameDate, isSameMonthAndYear, isSameYear } from "./date";
+import { roundToDecimalPlace } from "./number";
+
 function getDivider(number: number): number {
   let absNumber = Math.abs(number); // Handle negative numbers
 
@@ -93,4 +96,119 @@ export function getKpiCategory(resultPercentage: number, flexPercentage = 10) {
     return 'warning';
   }
   return 'success';
+}
+
+interface RawDataItem {
+  year: string;
+  month: string;
+  date: string; // e.g., "2024-01-01"
+  pit: string;
+  category: string;
+  contractor: string;
+  coal_actual_kt: string; // string representation of a number
+  coal_plan_kt: string;   // string representation of a number
+  truck_count: string;
+}
+
+interface ProcessedDataItem {
+  attr: string;
+  todayPlan: number;
+  todayActual: number;
+  todayPlanDiff: number;
+  mtdPlan: number;
+  mtdActual: number;
+  mtdPlanDiff: number;
+  ytdPlan: number;
+  ytdActual: number;
+  ytdPlanDiff: number;
+  totalPlan: number;
+}
+
+export function transformToToDateTableData(rawData: RawDataItem[], currentDate: Date, attr: string): ProcessedDataItem[] {
+  // If currentDate is not provided, get the latest date from the data
+  if (!currentDate) {
+    const dates = rawData.map(item => new Date(item.date));
+    currentDate = new Date(Math.max.apply(null, dates));
+  }
+
+  // Prepare a Map to store data per attribute type
+  const attributeDataMap = new Map<string, any>();
+
+  rawData.forEach(item => {
+    const attrValue = item[attr];
+    const dataDate = new Date(item.date);
+
+    // Initialize data for contractor if not present
+    if (!attributeDataMap.has(attrValue)) {
+      attributeDataMap.set(attrValue, {
+        attr: attrValue,
+        todayPlan: 0,
+        todayActual: 0,
+        mtdPlan: 0,
+        mtdActual: 0,
+        ytdPlan: 0,
+        ytdActual: 0,
+        totalPlan: 0,
+      });
+    }
+
+    const attributeData = attributeDataMap.get(attrValue);
+
+    // Convert coal_actual_kt and coal_plan_kt to numbers
+    const coal_actual_kt = parseFloat(item.coal_actual_kt) || 0;
+    const coal_plan_kt = parseFloat(item.coal_plan_kt) || 0;
+
+    // Update totalPlan
+    attributeData.totalPlan += coal_plan_kt;
+
+    // If the date matches currentDate, update todayPlan and todayActual
+    if (isSameDate(dataDate, currentDate)) {
+      attributeData.todayPlan += coal_plan_kt;
+      attributeData.todayActual += coal_actual_kt;
+    }
+
+    // If the date is in the same month and year, and before or equal to currentDate, update mtdPlan and mtdActual
+    if (isSameMonthAndYear(dataDate, currentDate) && dataDate <= currentDate) {
+      attributeData.mtdPlan += coal_plan_kt;
+      attributeData.mtdActual += coal_actual_kt;
+    }
+
+    // If the date is in the same year, and before or equal to currentDate, update ytdPlan and ytdActual
+    if (isSameYear(dataDate, currentDate) && dataDate <= currentDate) {
+      attributeData.ytdPlan += coal_plan_kt;
+      attributeData.ytdActual += coal_actual_kt;
+    }
+  });
+
+  // Now compute the plan differences and prepare the result array
+  const result: ProcessedDataItem[] = [];
+
+  attributeDataMap.forEach(attrData => {
+    attrData.todayPlanDiff = calculateDiff(attrData.todayActual, attrData.todayPlan);
+    attrData.mtdPlanDiff = calculateDiff(attrData.mtdActual, attrData.mtdPlan);
+    attrData.ytdPlanDiff = calculateDiff(attrData.ytdActual, attrData.ytdPlan);
+
+    result.push(attrData);
+  });
+
+  return result.map(roundProcessedDataItemNumbers);
+}
+
+function calculateDiff(actual: number, plan: number): number {
+  if (plan === 0) return 0;
+  const diff = (actual / plan) * 100;
+  return diff;
+}
+
+function roundProcessedDataItemNumbers(data: ProcessedDataItem): ProcessedDataItem {
+  return {
+    ...data,
+    todayPlan: roundToDecimalPlace(data.todayPlan, 2),
+    todayActual: roundToDecimalPlace(data.todayActual, 2),
+    mtdPlan: roundToDecimalPlace(data.mtdPlan, 2),
+    mtdActual: roundToDecimalPlace(data.mtdActual, 2),
+    ytdPlan: roundToDecimalPlace(data.ytdPlan, 2),
+    ytdActual: roundToDecimalPlace(data.ytdActual, 2),
+    totalPlan: roundToDecimalPlace(data.totalPlan, 2),
+  };
 }
