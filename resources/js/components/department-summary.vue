@@ -17,25 +17,25 @@
           <div class="col">
             <div class="">MTD Plan</div>
             <div class="fs-3">
-              7.36 &nbsp;<span class="fs-6">Mt</span>
+              {{ mtdPlan }} &nbsp;<span class="fs-6">Mt</span>
             </div>
           </div>
           <div class="col">
             <div class="">Actual</div>
             <div class="fs-3">
-              7.36 &nbsp;<span class="fs-6">Mt</span>
+              {{ mtdActual }} &nbsp;<span class="fs-6">Mt</span>
             </div>
           </div>
           <div class="col">
             <div>% Plan Diff.</div>
             <div class="fs-4">
-              <span class="badge text-bg-success fs-4">36%</span>
+              <span class="badge fs-4" :class="badgeClass">{{ planDiff }}</span>
             </div>
           </div>
         </div>
         <kpi-chart
-          :actualData="mainMetricActual"
-          :planData="mainMetricPlan"
+          :actualData="mainMetricActualData"
+          :planData="mainMetricPlanData"
         ></kpi-chart>
       </div>
 
@@ -61,6 +61,8 @@
 </template>
 
 <script>
+import { addAll, getKpiCategory } from "../utils/chart";
+import { roundToDecimalPlace } from "../utils/number";
 import KpiChart from "./kpi-chart.vue";
 import MonthLine from "./month-line.vue";
 
@@ -85,13 +87,15 @@ export default {
       required: false,
       default: "",
     },
-    mainMetricActual: {
+    mainMetricActualData: {
       type: Array,
       required: false,
+      default: [],
     },
-    mainMetricPlan: {
+    mainMetricPlanData: {
       type: Array,
       required: false,
+      default: [],
     },
     secondaryMetricTitle: {
       type: String,
@@ -102,6 +106,27 @@ export default {
       required: false,
       default: "",
     },
+  },
+  computed: {
+    mtdPlan() {
+      return roundToDecimalPlace(addAll(this.mainMetricPlanData) / 1000, 2);
+    },
+    mtdActual() {
+      return roundToDecimalPlace(addAll(this.mainMetricActualData) / 1000, 2);
+    }, 
+    planDiff() {
+      return roundToDecimalPlace((this.mtdActual / this.mtdPlan) * 100, 2);
+    },
+    planDiffCategory() {
+      return getKpiCategory(this.planDiff, 10);
+    },
+    badgeClass() {
+      return {
+        "text-bg-success": this.planDiffCategory === "success",
+        "text-bg-warning": this.planDiffCategory === "warning",
+        "text-bg-danger": this.planDiffCategory === "danger",
+      };
+    },  
   },
 };
 </script>

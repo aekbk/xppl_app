@@ -37,6 +37,7 @@
                             :mainMetricTitle="miningSummary.mainMetricTitle"
                             :mainMetricSubtitle="miningSummary.mainMetricSubtitle"
                             :mainMetricActualData="miningSummary.mainMetricActualData"
+                            :mainMetricPlanData="miningSummary.mainMetricPlanData"
                             :secondaryMetricTitle="miningSummary.secondaryMetricTitle"
                             :secondaryMetricSubtitle="miningSummary.secondaryMetricSubtitle"
                         ></department-summary>
@@ -188,6 +189,7 @@ export default {
       async fetchMiningData() {
         const response = await axios.get("/api/control-tower/mining?start_date=2024-11-01&end_date=2024-12-01", { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
         this.miningSummary.mainMetricActualData = response.data.map(i => i.total_coal_actual_kt);
+        this.miningSummary.mainMetricPlanData = response.data.map(i => i.total_coal_plan_kt);
       },
       async fetchData() {
         this.fetchMiningData();
