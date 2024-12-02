@@ -59,7 +59,7 @@ class control_tower_controller extends Controller
         return response()->json($mining_data);
     }
 
-    public function processing_data(Request $request)
+    public function processing_detail(Request $request)
     {
         // Retrieve query string parameters with default values
         $start_date = $request->query('start_date');
@@ -72,19 +72,14 @@ class control_tower_controller extends Controller
         ]);
 
         // Fetch data from the database
-        $mining_data = DB::select("
-            SELECT 
-                date,
-                SUM(coal_actual_kt) AS total_coal_actual_kt,
-                SUM(coal_plan_kt) AS total_coal_plan_kt
-            FROM ct_coal_production
+        $processing_data = DB::select("
+            SELECT *
+            FROM ct_plant_processing
             WHERE date >= ? AND date < ?
-            GROUP BY date
-            ORDER BY date;
         ", [$start_date, $end_date]);
 
         // Return the data as JSON response
-        return response()->json($mining_data);
+        return response()->json($processing_data);
     }
 
     public function waste_detail(Request $request)
