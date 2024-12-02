@@ -122,9 +122,9 @@ interface ProcessedDataItem {
   ytdActual: number;
   ytdPlanDiff: number;
   totalPlan: number;
-}
+} 
 
-export function transformToToDateTableData(rawData: RawDataItem[], currentDate: Date, attr: string): ProcessedDataItem[] {
+export function transformToToDateTableData(rawData: RawDataItem[], currentDate: Date, attr: string, planAttr: string, actualAttr: string): ProcessedDataItem[] {
   // If currentDate is not provided, get the latest date from the data
   if (!currentDate) {
     const dates = rawData.map(item => new Date(item.date));
@@ -154,29 +154,29 @@ export function transformToToDateTableData(rawData: RawDataItem[], currentDate: 
 
     const attributeData = attributeDataMap.get(attrValue);
 
-    // Convert coal_actual_kt and coal_plan_kt to numbers
-    const coal_actual_kt = parseFloat(item.coal_actual_kt) || 0;
-    const coal_plan_kt = parseFloat(item.coal_plan_kt) || 0;
+    // Convert plan and actual to numbers
+    const actualDataNode = parseFloat(item[actualAttr]) || 0;
+    const planDataNode = parseFloat(item[planAttr]) || 0;
 
     // Update totalPlan
-    attributeData.totalPlan += coal_plan_kt;
+    attributeData.totalPlan += planDataNode;
 
     // If the date matches currentDate, update todayPlan and todayActual
     if (isSameDate(dataDate, currentDate)) {
-      attributeData.todayPlan += coal_plan_kt;
-      attributeData.todayActual += coal_actual_kt;
+      attributeData.todayPlan += planDataNode;
+      attributeData.todayActual += actualDataNode;
     }
 
     // If the date is in the same month and year, and before or equal to currentDate, update mtdPlan and mtdActual
     if (isSameMonthAndYear(dataDate, currentDate) && dataDate <= currentDate) {
-      attributeData.mtdPlan += coal_plan_kt;
-      attributeData.mtdActual += coal_actual_kt;
+      attributeData.mtdPlan += planDataNode;
+      attributeData.mtdActual += actualDataNode;
     }
 
     // If the date is in the same year, and before or equal to currentDate, update ytdPlan and ytdActual
     if (isSameYear(dataDate, currentDate) && dataDate <= currentDate) {
-      attributeData.ytdPlan += coal_plan_kt;
-      attributeData.ytdActual += coal_actual_kt;
+      attributeData.ytdPlan += planDataNode;
+      attributeData.ytdActual += actualDataNode;
     }
   });
 

@@ -33,6 +33,14 @@ export default {
             type: String,
             required: true,
         },
+        planAttrName: {
+            type: String,
+            required: true,
+        },
+        actualAttrName: {
+            type: String,
+            required: true,
+        },
         attributeHeader: {
             type: String,
             required: true,
@@ -162,6 +170,8 @@ export default {
                 this.data,
                 new Date("2024-11-20"),
                 this.sliceAttribute,
+                this.planAttrName,
+                this.actualAttrName
             );
             return result;
         },

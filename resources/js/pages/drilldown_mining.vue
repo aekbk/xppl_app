@@ -53,7 +53,13 @@
 
                 <div class="row justify-content-evenly mb-4">
                     <card title="Total Mining Coal Production By Contractor">
-                        <to-date-table :data="miningData" :sliceAttribute="'contractor'" :attributeHeader="'Con.'"></to-date-table>
+                        <to-date-table
+                            :data="miningData"
+                            :sliceAttribute="'contractor'"
+                            :attributeHeader="'Con.'"
+                            :actualAttrName="'coal_plan_kt'"
+                            :planAttrName="'coal_plan_kt'"
+                        ></to-date-table>
 
                         <kpi-chart
                             :actualData="coalProductionActualData"
@@ -117,11 +123,17 @@ export default {
             );
             this.miningData = response.data;
 
-            const novemberData = subset(response.data, "2024-11-01", "2024-11-30");
+            const novemberData = subset(
+                response.data,
+                "2024-11-01",
+                "2024-11-30"
+            );
             const kpiData = convertToDailyKpiData(novemberData);
-            this.coalProductionActualData = kpiData.map(i => i.actual);
-            this.coalProductionPlanData = kpiData.map(i => i.plan);
-            this.coalProductionCategories = kpiData.map(i => formatDateToDayMonth(i.date));
+            this.coalProductionActualData = kpiData.map((i) => i.actual);
+            this.coalProductionPlanData = kpiData.map((i) => i.plan);
+            this.coalProductionCategories = kpiData.map((i) =>
+                formatDateToDayMonth(i.date)
+            );
         },
         async fetchData() {
             this.fetchMiningData();

@@ -23,7 +23,8 @@ const routes = [
             {
                 path: 'input',
                 default: true,
-                component: () => import('../pages/drilldown_processing_input.vue'), 
+                component: () => import('../pages/drilldown_processing_input.vue'),
+                meta: { requiresAuth: true },
             },
         ],
 
