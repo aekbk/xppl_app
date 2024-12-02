@@ -11,8 +11,7 @@
                             <div class="col-xxl-6 align-self-center">
                                 <div class="">
                                     <p class="fs-15 mt-3">
-                                        OVERALL
-                                        <span class="ms-3 text-muted fs-6"
+                                        OVERALL <span class="ms-3 text-muted fs-6"
                                             >Last updated on </span
                                         ><span class="text-danger fs-6"
                                             >November 13, 2024, at
@@ -81,26 +80,44 @@
                             :mainMetricSubtitle="
                                 processingSummary.mainMetricSubtitle
                             "
+                            :mainMetricActualData="
+                                processingSummary.mainMetricActualData
+                            "
+                            :mainMetricCategories="
+                                processingSummary.mainMetricCategories
+                            "
+                            :mainMetricPlanData="
+                                processingSummary.mainMetricPlanData
+                            "
                             :secondaryMetricTitle="
                                 processingSummary.secondaryMetricTitle
                             "
                             :secondaryMetricSubtitle="
                                 processingSummary.secondaryMetricSubtitle
+                            "
+                            :secondaryMetricStats="
+                                processingSummary.secondaryMetricStats
+                            "
+                            :secondaryMetricCategories="
+                                processingSummary.secondaryMetricCategories
+                            "
+                            :secondarySummaryHeader="
+                                processingSummary.secondarySummaryHeader
                             "
                         ></department-summary>
                     </div>
                     <div class="col-lg-4">
                         <department-summary
-                            :title="processingSummary.title"
-                            :mainMetricTitle="processingSummary.mainMetricTitle"
+                            :title="salesLogisticsSummary.title"
+                            :mainMetricTitle="salesLogisticsSummary.mainMetricTitle"
                             :mainMetricSubtitle="
-                                processingSummary.mainMetricSubtitle
+                                salesLogisticsSummary.mainMetricSubtitle
                             "
                             :secondaryMetricTitle="
-                                processingSummary.secondaryMetricTitle
+                                salesLogisticsSummary.secondaryMetricTitle
                             "
                             :secondaryMetricSubtitle="
-                                processingSummary.secondaryMetricSubtitle
+                                salesLogisticsSummary.secondaryMetricSubtitle
                             "
                         ></department-summary>
                     </div>
@@ -203,8 +220,8 @@ export default {
                 secondaryMetricSubtitle: "(MTD)",
                 secondaryMetricStats: [],
             },
-            processingSummary: {
-                title: "Mining",
+            salesLogisticsSummary: {
+                title: "Sales & Logistics",
                 mainMetricTitle: "Total Coal Sales Volume",
                 mainMetricSubtitle: "(MTD)",
                 mainMetricActualData: [],
@@ -242,6 +259,13 @@ export default {
             this.miningData = response.data;
             this.miningDataLoaded = true;
         },
+        async fetchProcessingData() {
+            const response = await axios.get("/api/control-tower/processing_detail?start_date=2024-11-01&end_date=2024-12-01", { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+            const kpiData = convertToDailyKpiDataByAttr(response.data, 'output_target', 'output_actual');
+            this.processingSummary.mainMetricActualData = kpiData.map(i => i.actual);
+            this.processingSummary.mainMetricPlanData = kpiData.map(i => i.plan);
+            this.processingSummary.mainMetricCategories = kpiData.map(i => formatDateToDayMonth(i.date));
+        },
         async fetchWasteData() {
             this.isLoadingWasteData = true;
             const response = await axios.get(
@@ -258,6 +282,7 @@ export default {
         },
         async fetchData() {
             this.fetchMiningData();
+            this.fetchProcessingData();
             this.fetchWasteData();
         },
     },
