@@ -259,6 +259,13 @@ export default {
             this.miningData = response.data;
             this.miningDataLoaded = true;
         },
+        async fetchProcessingData() {
+            const response = await axios.get("/api/control-tower/processing_detail?start_date=2024-11-01&end_date=2024-12-01", { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+            const kpiData = convertToDailyKpiDataByAttr(response.data, 'output_target', 'output_actual');
+            this.processingSummary.mainMetricActualData = kpiData.map(i => i.actual);
+            this.processingSummary.mainMetricPlanData = kpiData.map(i => i.plan);
+            this.processingSummary.mainMetricCategories = kpiData.map(i => formatDateToDayMonth(i.date));
+        },
         async fetchWasteData() {
             this.isLoadingWasteData = true;
             const response = await axios.get(
@@ -275,6 +282,7 @@ export default {
         },
         async fetchData() {
             this.fetchMiningData();
+            this.fetchProcessingData();
             this.fetchWasteData();
         },
     },
