@@ -98,8 +98,8 @@ COPY ./runtime/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY ./runtime/php.ini /etc/php/8.2/cli/conf.d/99-sail.ini
 RUN chmod +x /usr/local/bin/start-container
 
-COPY . .
-RUN COMPOSER_VENDOR_DIR="/var/www/vendor" composer install
+# COPY . .
+# RUN COMPOSER_VENDOR_DIR="/var/www/vendor" composer install
 # RUN composer install
 
 EXPOSE 80/tcp
