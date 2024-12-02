@@ -219,6 +219,7 @@ export default {
                 secondaryMetricTitle: "Yield",
                 secondaryMetricSubtitle: "(MTD)",
                 secondaryMetricStats: [],
+                secondarySummaryHeader: "MTD Avg",
             },
             salesLogisticsSummary: {
                 title: "Sales & Logistics",
