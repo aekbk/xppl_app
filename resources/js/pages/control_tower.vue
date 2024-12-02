@@ -220,7 +220,7 @@ export default {
                 secondaryMetricSubtitle: "(MTD)",
                 secondaryMetricStats: [],
             },
-            salesLogisticSummary: {
+            salesLogisticsSummary: {
                 title: "Sales & Logistics",
                 mainMetricTitle: "Total Coal Sales Volume",
                 mainMetricSubtitle: "(MTD)",
