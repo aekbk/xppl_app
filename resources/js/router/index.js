@@ -13,6 +13,21 @@ const routes = [
 
     { path: '/control-tower', name: 'controlTower', component: () => import('../pages/control_tower.vue'), meta: { requiresAuth: true } },
     { path: '/drilldown-mining', name: 'drilldownMining', component: () => import('../pages/drilldown_mining.vue'), meta: { requiresAuth: true } },
+    { 
+        path: '/drilldown-processing', 
+        name: 'processingDrilldown', 
+        component: () => import('../pages/drilldown_processing.vue'), 
+        meta: { requiresAuth: true },
+        redirect: to => { return '/drilldown-processing/input' },
+        children: [
+            {
+                path: 'input',
+                default: true,
+                component: () => import('../pages/drilldown_processing_input.vue'), 
+            },
+        ],
+
+    },
 
     { path: '/admin-menu', name: 'adminPage', component: () => import('../pages/admin_menu.vue'), meta: { requiresAuth: true } },
     { path: '/admin-email-register', name: 'adminEmailPage', component: () => import('../pages/admin_email_register.vue'), meta: { requiresAuth: true } },

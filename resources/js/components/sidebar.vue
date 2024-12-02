@@ -106,6 +106,7 @@
                 <div class="ms-3 mt-4 fs-6 fw-bold text-white">Overall</div>
                 <ul class="nav nav-sm flex-column">
                   <li v-if="auth.M01S01 == 1" class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/drilldown-mining">Mining</router-link></li>
+                  <li v-if="auth.M01S01 == 1" class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/drilldown-processing">Processing</router-link></li>
                 </ul>
               </div>
               
