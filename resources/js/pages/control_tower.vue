@@ -2,13 +2,23 @@
     <div>
         <div class="row">
             <div class="col-lg-12">
-                <div class="card rounded-0 mx-n4 mt-n4 border-top sticky-top" style="top: 70px;">
+                <div
+                    class="card rounded-0 mx-n4 mt-n4 border-top sticky-top"
+                    style="top: 70px"
+                >
                     <div class="px-4">
                         <div class="row">
                             <div class="col-xxl-6 align-self-center">
                                 <div class="">
-                                    <p class="fs-15 mt-3">OVERALL <span class="ms-3 text-muted fs-6">Last updated on
-                                      </span><span class="text-danger fs-6">November 13, 2024, at 15:32:06</span></p>
+                                    <p class="fs-15 mt-3">
+                                        OVERALL
+                                        <span class="ms-3 text-muted fs-6"
+                                            >Last updated on </span
+                                        ><span class="text-danger fs-6"
+                                            >November 13, 2024, at
+                                            15:32:06</span
+                                        >
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -35,30 +45,63 @@
                         <department-summary
                             :title="miningSummary.title"
                             :mainMetricTitle="miningSummary.mainMetricTitle"
-                            :mainMetricSubtitle="miningSummary.mainMetricSubtitle"
-                            :mainMetricActualData="miningSummary.mainMetricActualData"
-                            :mainMetricCategories="miningSummary.mainMetricCategories"
-                            :mainMetricPlanData="miningSummary.mainMetricPlanData"
-                            :secondaryMetricTitle="miningSummary.secondaryMetricTitle"
-                            :secondaryMetricSubtitle="miningSummary.secondaryMetricSubtitle"
+                            :mainMetricSubtitle="
+                                miningSummary.mainMetricSubtitle
+                            "
+                            :mainMetricActualData="
+                                miningSummary.mainMetricActualData
+                            "
+                            :mainMetricCategories="
+                                miningSummary.mainMetricCategories
+                            "
+                            :mainMetricPlanData="
+                                miningSummary.mainMetricPlanData
+                            "
+                            :secondaryMetricTitle="
+                                miningSummary.secondaryMetricTitle
+                            "
+                            :secondaryMetricSubtitle="
+                                miningSummary.secondaryMetricSubtitle
+                            "
+                            :secondaryMetricStats="
+                                miningSummary.secondaryMetricStats
+                            "
+                            :secondaryMetricCategories="
+                                miningSummary.secondaryMetricCategories
+                            "
+                            :secondarySummaryHeader="
+                                miningSummary.secondarySummaryHeader
+                            "
                         ></department-summary>
                     </div>
                     <div class="col-lg-4">
                         <department-summary
                             :title="processingSummary.title"
                             :mainMetricTitle="processingSummary.mainMetricTitle"
-                            :mainMetricSubtitle="processingSummary.mainMetricSubtitle"
-                            :secondaryMetricTitle="processingSummary.secondaryMetricTitle"
-                            :secondaryMetricSubtitle="processingSummary.secondaryMetricSubtitle"
+                            :mainMetricSubtitle="
+                                processingSummary.mainMetricSubtitle
+                            "
+                            :secondaryMetricTitle="
+                                processingSummary.secondaryMetricTitle
+                            "
+                            :secondaryMetricSubtitle="
+                                processingSummary.secondaryMetricSubtitle
+                            "
                         ></department-summary>
                     </div>
                     <div class="col-lg-4">
-                      <department-summary
+                        <department-summary
                             :title="processingSummary.title"
                             :mainMetricTitle="processingSummary.mainMetricTitle"
-                            :mainMetricSubtitle="processingSummary.mainMetricSubtitle"
-                            :secondaryMetricTitle="processingSummary.secondaryMetricTitle"
-                            :secondaryMetricSubtitle="processingSummary.secondaryMetricSubtitle"
+                            :mainMetricSubtitle="
+                                processingSummary.mainMetricSubtitle
+                            "
+                            :secondaryMetricTitle="
+                                processingSummary.secondaryMetricTitle
+                            "
+                            :secondaryMetricSubtitle="
+                                processingSummary.secondaryMetricSubtitle
+                            "
                         ></department-summary>
                     </div>
                 </div>
@@ -72,16 +115,17 @@ import SummaryStatistic from "../components/summary-statistic.vue";
 import DepartmentSummary from "../components/department-summary.vue";
 import { useAuthStore } from "../stores/auth";
 import { useStore } from "../stores/store";
-import { convertToDailyKpiData } from "../utils/chart";
+import { convertToDailyKpiData, convertToDailyKpiDataByAttr } from "../utils/chart";
 import { formatDateToDayMonth } from "../utils/date";
+import { roundToDecimalPlace } from "../utils/number";
 
 export default {
     name: "ControlTower",
 
     setup() {
-      const authStore = useAuthStore();
-      const store = useStore();
-      return { authStore, store };
+        const authStore = useAuthStore();
+        const store = useStore();
+        return { authStore, store };
     },
 
     components: {
@@ -147,17 +191,6 @@ export default {
                     },
                 ],
             },
-            miningSummary: {
-                title: "Mining",
-                mainMetricTitle: "Total Coal Mined",
-                mainMetricSubtitle: "(MTD)",
-                mainMetricActualData: [],
-                mainMetricPlanData: [],
-                mainMetricCategories: [],
-                secondaryMetricTitle: "Strip Ratio",
-                secondaryMetricSubtitle: "(MTD)",
-                secondaryMetricStats: [],
-            },
             processingSummary: {
                 title: "Processing",
                 mainMetricTitle: "Total Processing Throughput",
@@ -182,25 +215,92 @@ export default {
                 secondaryMetricSubtitle: "(MTD)",
                 secondaryMetricStats: [],
             },
+            miningData: [],
+            isLoadingMiningData: false,
+            miningDataLoaded: false,
+
+            wasteData: [],
+            isLoadingWasteData: false,
+            wasteDataLoaded: false,
         };
     },
 
     mounted() {},
 
     methods: {
-      async fetchMiningData() {
-        const response = await axios.get("/api/control-tower/mining_detail?start_date=2024-11-01&end_date=2024-12-01", { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-        const kpiData = convertToDailyKpiData(response.data);
-        this.miningSummary.mainMetricActualData = kpiData.map(i => i.actual);
-        this.miningSummary.mainMetricPlanData = kpiData.map(i => i.plan);
-        this.miningSummary.mainMetricCategories = kpiData.map(i => formatDateToDayMonth(i.date));
-      },
-      async fetchData() {
-        this.fetchMiningData();
-      }
+        async fetchMiningData() {
+            this.isLoadingMiningData = true;
+            const response = await axios.get(
+                "/api/control-tower/mining_detail?start_date=2024-11-01&end_date=2024-12-01",
+                {
+                    headers: {
+                        Authorization: "Bearer " + this.authStore.getToken,
+                    },
+                }
+            );
+            this.isLoadingMiningData = false;
+            this.miningData = response.data;
+            this.miningDataLoaded = true;
+        },
+        async fetchWasteData() {
+            this.isLoadingWasteData = true;
+            const response = await axios.get(
+                "/api/control-tower/waste_detail?start_date=2024-11-01&end_date=2024-12-01",
+                {
+                    headers: {
+                        Authorization: "Bearer " + this.authStore.getToken,
+                    },
+                }
+            );
+            this.isLoadingWasteData = false;
+            this.wasteData = response.data;
+            this.wasteDataLoaded = true;
+        },
+        async fetchData() {
+            this.fetchMiningData();
+            this.fetchWasteData();
+        },
     },
     created() {
-      this.fetchData();
+        this.fetchData();
+    },
+    computed: {
+        miningSummary() {
+            const mainKpiData = convertToDailyKpiData(this.miningData);
+            const miningActualData = mainKpiData.map(
+                (i) => i.actual
+            );
+            const miningPlanData = mainKpiData.map((i) => i.plan);
+            const miningCategories = mainKpiData.map((i) =>
+                formatDateToDayMonth(i.date)
+            );
+            
+            const secondaryKpiData = convertToDailyKpiDataByAttr(this.wasteData, 'waste_plan_kbcm', 'waste_actual_kbcm');
+            const wasteActualData = secondaryKpiData.map(
+                (i) => i.actual
+            );
+            const stripRatio = wasteActualData.map((item, index) => {
+                const result = item / miningActualData[index];
+                if (isNaN(result)) {
+                    return null;
+                }
+                return roundToDecimalPlace(result, 2);
+            });
+
+            return {
+                title: "Mining",
+                mainMetricTitle: "Total Coal Mined",
+                mainMetricSubtitle: "(MTD)",
+                mainMetricActualData: miningActualData,
+                mainMetricPlanData: miningPlanData,
+                mainMetricCategories: miningCategories,
+                secondaryMetricTitle: "Strip Ratio",
+                secondaryMetricSubtitle: "(MTD)",
+                secondaryMetricStats: stripRatio,
+                secondaryMetricCategories: miningCategories,
+                secondarySummaryHeader: "MTD Avg", 
+            };
+        },
     },
 };
 </script>

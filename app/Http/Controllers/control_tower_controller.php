@@ -86,4 +86,27 @@ class control_tower_controller extends Controller
         // Return the data as JSON response
         return response()->json($mining_data);
     }
+
+    public function waste_detail(Request $request)
+    {
+        // Retrieve query string parameters with default values
+        $start_date = $request->query('start_date');
+        $end_date = $request->query('end_date');
+
+        // Validate the input
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+        ]);
+
+        // Fetch data from the database
+        $mining_data = DB::select("
+            SELECT *
+            FROM ct_waste_production
+            WHERE date >= ? AND date < ?;
+        ", [$start_date, $end_date]);
+
+        // Return the data as JSON response
+        return response()->json($mining_data);
+    }
 }

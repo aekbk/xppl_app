@@ -255,6 +255,41 @@ export function convertToDailyKpiData(rawData: RawDataItem[]): Array<DailyKpiDat
   return Array.from(kpiDataMap.values());
 }
 
+// Convert the raw data to KPI data and group by date
+export function convertToDailyKpiDataByAttr(rawData: Array<any>, planAttr: string, actualAttr: string): Array<DailyKpiDataItem> {
+  const kpiDataMap = new Map<string, DailyKpiDataItem>();
+
+  rawData.forEach(item => {
+    const date = new Date(item.date);
+    const key = date.toISOString();
+
+    if (!kpiDataMap.has(key)) {
+      kpiDataMap.set(key, {
+        date,
+        actual: 0,
+        plan: 0,
+        diff: 0,
+      });
+    }
+
+    const kpiData = kpiDataMap.get(key);
+
+    // Convert actualDataNode and coal_plan_kt to numbers
+    const actualDataNode = parseFloat(item[actualAttr]) || 0;
+    const planDataNode = parseFloat(item[planAttr]) || 0;
+
+    kpiData!.actual += actualDataNode;
+    kpiData!.plan += planDataNode;
+  });
+
+  // Calculate the difference
+  kpiDataMap.forEach(kpiData => {
+    kpiData.diff = calculateDiff(kpiData.actual, kpiData.plan);
+  });
+
+  return Array.from(kpiDataMap.values());
+}
+
 interface MonthlyKpiDataItem {
   date: Date;
   actual: number;

@@ -49,22 +49,24 @@
                         margin: 8px 0px 8px 8px;
                     ">
           <div class="col">
-            <div class="">MTD Plan</div>
+            <div class="">{{ secondarySummaryHeader }}</div>
             <div class="fs-4">
-              7.36 &nbsp;<span class="fs-6">Mt</span>
+              {{ avgStat }} &nbsp;<span v-if="secondarySummaryUnit" class="fs-6">{{ secondarySummaryUnit }}</span>
             </div>
           </div>
         </div>
-        <month-line></month-line>
+        <month-line
+          :data="secondaryMetricStats"
+          :categories="secondaryMetricCategories"
+        ></month-line>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { categories } from "@vueuse/core/metadata.cjs";
 import { addAll, getKpiCategory } from "../utils/chart";
-import { roundToDecimalPlace } from "../utils/number";
+import { average, roundToDecimalPlace } from "../utils/number";
 import KpiChart from "./kpi-chart.vue";
 import MonthLine from "./month-line.vue";
 
@@ -113,6 +115,26 @@ export default {
       required: false,
       default: "",
     },
+    secondaryMetricStats: {
+      type: Array,
+      required: false,
+      default: [],
+    },
+    secondaryMetricCategories: {
+      type: Array,
+      required: false,
+      default: [],
+    },
+    secondarySummaryHeader: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    secondarySummaryUnit: {
+      type: String,
+      required: false,
+      default: "",
+    }
   },
   computed: {
     mtdPlan() {
@@ -133,13 +155,11 @@ export default {
         "text-bg-warning": this.planDiffCategory === "warning",
         "text-bg-danger": this.planDiffCategory === "danger",
       };
-    },  
+    },
+    avgStat() {
+      // Get the average value of stringRatio that is not null
+      return average(this.secondaryMetricStats.filter((item) => item !== null));
+    }
   },
 };
 </script>
-
-<style scoped>
-.icon {
-  margin-bottom: 10px;
-}
-</style>
