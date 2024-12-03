@@ -73,6 +73,53 @@
                             :planData="coalProductionPlanData"
                             :categories="coalProductionCategories"
                         ></kpi-chart>
+
+                        <month-line
+                            :data="tonesPerHourData"
+                            :categories="coalProductionCategories"
+                        ></month-line>
+                    </card>
+
+                    <card title="Total Mining Coal Production By Grade">
+                        <to-date-table
+                            :data="miningData"
+                            :sliceAttribute="'category'"
+                            :attributeHeader="'Grade'"
+                            :actualAttrName="'coal_plan_kt'"
+                            :planAttrName="'coal_plan_kt'"
+                        ></to-date-table>
+
+                        <kpi-chart
+                            :actualData="coalProductionActualData"
+                            :planData="coalProductionPlanData"
+                            :categories="coalProductionCategories"
+                        ></kpi-chart>
+
+                        <month-line
+                            :data="tonesPerHourData"
+                            :categories="coalProductionCategories"
+                        ></month-line>
+                    </card>
+
+                    <card title="Total Mining Coal Production By Contractor & Grade">
+                        <to-date-table
+                            :data="miningData"
+                            :sliceAttribute="'contractor'"
+                            :attributeHeader="'Con.'"
+                            :actualAttrName="'coal_plan_kt'"
+                            :planAttrName="'coal_plan_kt'"
+                        ></to-date-table>
+
+                        <kpi-chart
+                            :actualData="coalProductionActualData"
+                            :planData="coalProductionPlanData"
+                            :categories="coalProductionCategories"
+                        ></kpi-chart>
+
+                        <month-line
+                            :data="tonesPerHourData"
+                            :categories="coalProductionCategories"
+                        ></month-line>
                     </card>
                 </div>
             </div>
@@ -83,6 +130,7 @@
 <script>
 import SummaryStatistic from "../components/summary-statistic.vue";
 import DepartmentSummary from "../components/department-summary.vue";
+import MonthLine from "../components/month-line.vue";
 import Card from "../components/card.vue";
 import { useAuthStore } from "../stores/auth";
 import { useStore } from "../stores/store";
@@ -91,6 +139,7 @@ import KpiChart from "../components/kpi-chart.vue";
 import { convertToDailyKpiData } from "../utils/chart";
 import { formatDateToDayMonth } from "../utils/date";
 import { subset } from "../utils/data";
+import { roundToDecimalPlace } from "../utils/number";
 
 export default {
     name: "MinintDrilldown",
@@ -105,6 +154,7 @@ export default {
         ToDateTable,
         KpiChart,
         Card,
+        MonthLine,
     },
 
     data() {
@@ -116,6 +166,12 @@ export default {
             coalProductionPlanData: [],
             coalProductionCategories: [],
         };
+    },
+
+    computed: {
+        tonesPerHourData() {
+            return this.coalProductionActualData.map((i) => roundToDecimalPlace(i / 24));
+        },
     },
 
     methods: {
