@@ -26,6 +26,12 @@ const routes = [
                 component: () => import('../pages/drilldown_processing_input.vue'),
                 meta: { requiresAuth: true },
             },
+            {
+                path: 'throughput',
+                default: true,
+                component: () => import('../pages/drilldown_processing_throughput.vue'),
+                meta: { requiresAuth: true },
+            },
         ],
 
     },

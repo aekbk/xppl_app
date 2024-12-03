@@ -543,7 +543,7 @@ export default {
 
   methods: {
     authAccess() {
-      axios.get('api/auth/auth-access', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } }).then((response) => {
+      axios.get('/api/auth/auth-access', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } }).then((response) => {
         this.auth = response.data[0];
       }).catch((error) => {
         console.log(error);
@@ -665,6 +665,8 @@ export default {
   },
 
   created() {
+    console.log("Sidebar created");
+    console.log(this.authStore.getToken);
     if (this.authStore.getToken) {
       this.authAccess();
     }
