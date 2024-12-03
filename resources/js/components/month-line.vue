@@ -30,7 +30,7 @@ export default {
                     name: "TrendLine",
                     type: "line",
 					// Compute trendline y = mx + b
-                    data: this.data.map((y, i, arr) => {
+                    data: this.data.filter(item => item != null).map((y, i, arr) => {
                         const n = arr.length; // Total number of points
                         const xValues = arr.map((_, idx) => idx); // Use indices as x-values
 
