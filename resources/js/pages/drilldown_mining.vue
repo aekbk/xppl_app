@@ -29,18 +29,6 @@
                     </div>
                 </div>
                 <router-view />
-
-
-        		<!-- Content :  Strip Ratio-->
-             	<div class="row justify-content-evenly mb-4" v-if="activeTab === 'stripRatio'">
-                    <card title="Strip Ratio">
-                        <month-line
-                            :data="stripRatioData"
-                            :categories="wasteProductionCategories"
-                        ></month-line>
-                    </card>
-                </div>
-
             </div>
         </div>
     </div>
@@ -93,12 +81,6 @@ export default {
                 { label: "Water Volume", to: "/drilldown-mining/water-volume" },
             ],
         };
-    },
-
-    computed: {
-        stripRatioData() {
-            return this.stripRatioProductionData;
-        },
     },
 
     methods: {

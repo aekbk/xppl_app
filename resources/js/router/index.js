@@ -31,6 +31,12 @@ const routes = [
                 component: () => import('../pages/drilldown_mining_waste_production.vue'),
                 meta: { requiresAuth: true },
             },
+            {
+                path: 'strip-ratio',
+                default: true,
+                component: () => import('../pages/drilldown_mining_strip_ratio.vue'),
+                meta: { requiresAuth: true },
+            },
         ]
     },
     { 
