@@ -11,6 +11,7 @@
 
 <script>
 import VueApexCharts from "vue3-apexcharts";
+import { format } from "numerable";
 import { roundToDecimalPlace } from "../utils/number";
 
 export default {
@@ -24,7 +25,12 @@ export default {
                 {
                     name: "Actual",
                     type: "line",
-                    data: this.data,
+                    data: this.data.map((dataNode) => {
+                        if (dataNode === 0) {
+                            return null;
+                        }
+                        return dataNode;
+                    }),
                 },
                 {
                     name: "TrendLine",
@@ -47,12 +53,13 @@ export default {
                         const intercept = yMean - slope * xMean;
 
                         // Compute the trendline value for the current index (x = i)
-                        return roundToDecimalPlace(slope * i + intercept);
+                        return slope * i + intercept;
                     }),
                 }
             ];
         },
         chartOptions() {
+            const self = this;
             return {
                 chart: {
                     height: 500,
@@ -65,10 +72,10 @@ export default {
                     enabled: true,
                 },
                 stroke: {
-                    curve: "smooth",
+                    curve: "straight",
                 },
                 markers: {
-                    size: 1,
+                    size: 3,
                 },
                 plotOptions: {
                     bar: {
@@ -77,6 +84,13 @@ export default {
                 },
                 dataLabels: {
                     enabled: true,
+                    enabledOnSeries: [0],
+                    formatter: function (value) {
+                        if (value === null) {
+                            return "";
+                        }
+                        return format(value, "0,0.0a")+ self.units; 
+                    },
                 },
                 xaxis: {
                     categories: this.categories,
@@ -85,6 +99,14 @@ export default {
                     {
                         title: {
                             text: "Daily Production (Ktonnes)",
+                        },
+                        labels: {
+                            formatter: function (value) {
+                                if (value === null) {
+                                    return null;
+                                }
+                                return format(value, "0,0.0a") + self.units;
+                            },
                         },
                     },
                 ],
@@ -108,6 +130,11 @@ export default {
             type: Array,
             required: false,
             default: [],
+        },
+        units: {
+            type: String,
+            required: false,
+            default: `t`,
         },
     },
 };

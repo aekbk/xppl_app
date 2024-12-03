@@ -8,6 +8,7 @@
 <script lang="ts">
 import VueApexCharts from "vue3-apexcharts";
 import { getCumulativeData, getYMax } from "../utils/chart";
+import { format } from "numerable";
 
 export default {
   name: "KpiChart",
@@ -58,18 +59,22 @@ export default {
         },
         stroke: {
           width: [2, 2, 2, 2, 2], // Match number of series
-          curve: "smooth",
+          curve: "straight",
           dashArray: [0, 0, 0, 0, 5], // Dashed line for Revised Plan
         },
+        // markers: {
+        //   size: 5,
+        // },
         plotOptions: {
           bar: {
-            columnWidth: "50%",
+            columnWidth: "100%",
           },
         },
         dataLabels: {
           enabled: false,
         },
-        colors: ["#2c3e50", "#2ecc71", "#3498db", "#f1c40f", "#34495e"],
+        // colors: [bar, redLine, blueLine, yellowLine],
+        colors: ["#2A3B6C", "#F8876A", "#4F9AD6", "#F4C56E"],
         xaxis: {
           categories: this.categories,
         },
@@ -81,7 +86,7 @@ export default {
             max: getYMax([...this.actualData, ...this.planData]),
             min: 0,
             labels: {
-              formatter: (value) => `${value} Kt`,
+              formatter: (value) => format(value, "0,0.0a"),
             },
             tickAmount: 10,
           },
@@ -93,7 +98,7 @@ export default {
             max: getYMax([...this.actualData, ...this.planData]),
             show: false,
             labels: {
-              formatter: (value) => `${value} Kt`,
+              formatter: (value) => format(value, "0,0.0a"),
             },
             tickAmount: 10,
           },
@@ -108,7 +113,7 @@ export default {
             tickAmount: 10,
             max: getYMax([...cumActual, ...cumPlan]),
             labels: {
-              formatter: (value) => `${value} Mt`, // divide by 1000 to convert to Mt
+              formatter: (value) => format(value, "0,0.0a"), // divide by 1000 to convert to Mt
             },
           },
           {
@@ -122,7 +127,7 @@ export default {
             tickAmount: 10,
             max: getYMax([...cumActual, ...cumPlan]),
             labels: {
-              formatter: (value) => `${value} Mt`, // divide by 1000 to convert to Mt
+              formatter: (value) => format(value, "0,0.0a"), // divide by 1000 to convert to Mt
             },
           },
         ],

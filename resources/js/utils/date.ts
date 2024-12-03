@@ -24,3 +24,11 @@ export function formatDateToDayMonth(date: Date): string {
   });
   return formatter.format(date);
 }
+
+export function formatDateToMonthYear(date: Date): string {
+  const formatter = new Intl.DateTimeFormat("en-GB", {
+    month: "short",
+    year: "numeric",
+  });
+  return formatter.format(date);
+}
