@@ -21,53 +21,14 @@
                                     </p>
                                 </div>
                                 <div>
-                                    <ul class="nav nav-tabs">
-                                        <li class="nav-item">
-                                            <a class="nav-link active" href="#"
-                                                >Active</a
-                                            >
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="#"
-                                                >Link</a
-                                            >
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="#"
-                                                >Link</a
-                                            >
-                                        </li>
-                                        <li class="nav-item">
-                                            <a
-                                                class="nav-link disabled"
-                                                href="#"
-                                                >Disabled</a
-                                            >
-                                        </li>
-                                    </ul>
+                                    <nav-tabs :navs="navs">
+                                    </nav-tabs>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="row justify-content-evenly mb-4">
-                    <card title="Total Mining Coal Production By Contractor">
-                        <to-date-table
-                            :data="miningData"
-                            :sliceAttribute="'contractor'"
-                            :attributeHeader="'Con.'"
-                            :actualAttrName="'coal_plan_kt'"
-                            :planAttrName="'coal_plan_kt'"
-                        ></to-date-table>
-
-                        <kpi-chart
-                            :actualData="coalProductionActualData"
-                            :planData="coalProductionPlanData"
-                            :categories="coalProductionCategories"
-                        ></kpi-chart>
-                    </card>
-                </div>
+                <router-view />
             </div>
         </div>
     </div>
@@ -76,17 +37,21 @@
 <script>
 import SummaryStatistic from "../components/summary-statistic.vue";
 import DepartmentSummary from "../components/department-summary.vue";
+import MonthLine from "../components/month-line.vue";
 import Card from "../components/card.vue";
 import { useAuthStore } from "../stores/auth";
 import { useStore } from "../stores/store";
 import ToDateTable from "../components/to-date-table.vue";
 import KpiChart from "../components/kpi-chart.vue";
-import { convertToDailyKpiData } from "../utils/chart";
+import { convertToDailyKpiData, convertToDailyKpiDataByAttr} from "../utils/chart";
 import { formatDateToDayMonth } from "../utils/date";
 import { subset } from "../utils/data";
+import { roundToDecimalPlace } from "../utils/number";
+import {RouterView } from "vue-router";
+import NavTabs from "../components/nav-tabs.vue";
 
 export default {
-    name: "MinintDrilldown",
+    name: "MiningDrilldown",
     setup() {
         const authStore = useAuthStore();
         const store = useStore();
@@ -98,16 +63,23 @@ export default {
         ToDateTable,
         KpiChart,
         Card,
+        MonthLine,
+        RouterView,
+        NavTabs,
     },
 
     data() {
         return {
-            miningData: [],
+            // Strip Ratio
+            stripRatioProductionData: [],
 
-            // Kpi chart data
-            coalProductionActualData: [],
-            coalProductionPlanData: [],
-            coalProductionCategories: [],
+            navs: [
+                { label: "Coal Production", to: "/drilldown-mining/coal-production" },
+                { label: "Waste Production", to: "/drilldown-mining/waste-production" },
+                { label: "Strip Ratio", to: "/drilldown-mining/strip-ratio" },
+                { label: "Broken Stock", to: "/drilldown-mining/broken-stock" },
+                { label: "Water Volume", to: "/drilldown-mining/water-volume" },
+            ],
         };
     },
 
@@ -135,12 +107,51 @@ export default {
                 formatDateToDayMonth(i.date)
             );
         },
+        async fetchWasteData() {
+            const response = await axios.get(
+                "/api/control-tower/waste_detail?start_date=2024-01-01&end_date=2024-12-01",
+                {
+                    headers: {
+                        Authorization: "Bearer " + this.authStore.getToken,
+                    },
+                }
+            );
+            this.wasteData = response.data;
+
+            const novemberData = subset(
+                response.data,
+                "2024-11-01",
+                "2024-11-30"
+            );
+            const kpiData = convertToDailyKpiDataByAttr(novemberData, 'waste_plan_kbcm', 'waste_actual_kbcm');
+            const wasteActualData = kpiData.map((i) => i.actual);
+            const wastePlanData = kpiData.map((i) => i.plan);
+            const wasteCategories = kpiData.map((i) =>
+                formatDateToDayMonth(i.date)
+            );
+
+            this.wasteProductionActualData = wasteActualData;
+            this.wasteProductionPlanData = wastePlanData;
+            this.wasteProductionCategories = wasteCategories;
+
+            this.stripRatioProductionData = wasteActualData.map((item, index) => {
+                const result = item / this.coalProductionActualData[index];
+                if (isNaN(result)) {
+                    return null;
+                }
+                return roundToDecimalPlace(result, 2);
+            });
+
+
+        },
+
         async fetchData() {
             this.fetchMiningData();
+            this.fetchWasteData();
         },
     },
     created() {
-        this.fetchData();
+        //this.fetchData();
     },
 };
 </script>

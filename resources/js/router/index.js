@@ -12,7 +12,33 @@ const routes = [
     { path: '/authorise', name: 'authorisePage', component: () => import('../pages/authorise.vue'), meta: { requiresAuth: true } },
 
     { path: '/control-tower', name: 'controlTower', component: () => import('../pages/control_tower.vue'), meta: { requiresAuth: true } },
-    { path: '/drilldown-mining', name: 'drilldownMining', component: () => import('../pages/drilldown_mining.vue'), meta: { requiresAuth: true } },
+    {
+        path: '/drilldown-mining', // parent url: localhost/drilldown-mining
+        name: 'drilldownMining',
+        component: () => import('../pages/drilldown_mining.vue'),
+        meta: { requiresAuth: true },
+        redirect: to => { return '/drilldown-mining/coal-production' }, // default url redirect
+        children: [
+            {
+                path: 'coal-production', // child url display: localhost/drilldown-mining/coal-production
+                default: true,
+                component: () => import('../pages/drilldown_mining_coal_production.vue'),
+                meta: { requiresAuth: true },
+            },
+            {
+                path: 'waste-production',
+                default: true,
+                component: () => import('../pages/drilldown_mining_waste_production.vue'),
+                meta: { requiresAuth: true },
+            },
+            {
+                path: 'strip-ratio',
+                default: true,
+                component: () => import('../pages/drilldown_mining_strip_ratio.vue'),
+                meta: { requiresAuth: true },
+            },
+        ]
+    },
     { 
         path: '/drilldown-processing', 
         name: 'processingDrilldown', 
