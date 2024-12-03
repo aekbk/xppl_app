@@ -21,115 +21,14 @@
                                     </p>
                                 </div>
                                 <div>
-                                    <ul class="nav nav-tabs">
-										<li class="nav-item">
-											<a
-												class="nav-link"
-												:class="{ active: activeTab === 'coalProduction' }"
-												href="#"
-												@click.prevent="activeTab = 'coalProduction'"
-											>
-												Coal Production
-											</a>
-										</li>
-										<li class="nav-item">
-											<a
-												class="nav-link"
-												:class="{ active: activeTab === 'wasteProduction' }"
-												href="#"
-												@click.prevent="activeTab = 'wasteProduction'"
-											>
-												Waste Production
-											</a>
-										</li>
-										<li class="nav-item">
-											<a
-												class="nav-link"
-												:class="{ active: activeTab === 'stripRatio' }"
-												href="#"
-												@click.prevent="activeTab = 'stripRatio'"
-											>
-												Strip Ratio
-											</a>
-										</li>
-										<li class="nav-item">
-											<a class="nav-link disabled" href="#">Broken Stock</a>
-										</li>
-										<li class="nav-item">
-											<a class="nav-link disabled" href="#">Water Volume</a>
-										</li>
-									</ul>
+                                    <nav-tabs :navs="navs">
+                                    </nav-tabs>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Content : Coal Production-->
-                <div class="row justify-content-evenly mb-4" v-if="activeTab === 'coalProduction'">
-                    <card title="Total Mining Coal Production By Contractor">
-                        <to-date-table
-                            :data="miningData"
-                            :sliceAttribute="'contractor'"
-                            :attributeHeader="'Con.'"
-                            :actualAttrName="'coal_plan_kt'"
-                            :planAttrName="'coal_plan_kt'"
-                        ></to-date-table>
-
-                        <kpi-chart
-                            :actualData="coalProductionActualData"
-                            :planData="coalProductionPlanData"
-                            :categories="coalProductionCategories"
-                        ></kpi-chart>
-
-                        <month-line
-                            :data="tonesPerHourData"
-                            :categories="coalProductionCategories"
-                        ></month-line>
-                    </card>
-
-                    <card title="Total Mining Coal Production By Grade">
-                        <to-date-table
-                            :data="miningData"
-                            :sliceAttribute="'category'"
-                            :attributeHeader="'Grade'"
-                            :actualAttrName="'coal_plan_kt'"
-                            :planAttrName="'coal_plan_kt'"
-                        ></to-date-table>
-
-                        <kpi-chart
-                            :actualData="coalProductionActualData"
-                            :planData="coalProductionPlanData"
-                            :categories="coalProductionCategories"
-                        ></kpi-chart>
-
-                        <month-line
-                            :data="tonesPerHourData"
-                            :categories="coalProductionCategories"
-                        ></month-line>
-                    </card>
-
-                    <card title="Total Mining Coal Production By Contractor & Grade">
-                        <to-date-table
-                            :data="miningData"
-                            :sliceAttribute="'contractor'"
-                            :attributeHeader="'Con.'"
-                            :actualAttrName="'coal_plan_kt'"
-                            :planAttrName="'coal_plan_kt'"
-                        ></to-date-table>
-
-                        <kpi-chart
-                            :actualData="coalProductionActualData"
-                            :planData="coalProductionPlanData"
-                            :categories="coalProductionCategories"
-                        ></kpi-chart>
-
-                        <month-line
-                            :data="tonesPerHourData"
-                            :categories="coalProductionCategories"
-                        ></month-line>
-                    </card>
-                </div>
+                <router-view />
 
         		<!-- Content : Waste Production-->
              	<div class="row justify-content-evenly mb-4" v-if="activeTab === 'wasteProduction'">
@@ -183,9 +82,11 @@ import { convertToDailyKpiData, convertToDailyKpiDataByAttr} from "../utils/char
 import { formatDateToDayMonth } from "../utils/date";
 import { subset } from "../utils/data";
 import { roundToDecimalPlace } from "../utils/number";
+import {RouterView } from "vue-router";
+import NavTabs from "../components/nav-tabs.vue";
 
 export default {
-    name: "MinintDrilldown",
+    name: "MiningDrilldown",
     setup() {
         const authStore = useAuthStore();
         const store = useStore();
@@ -198,19 +99,12 @@ export default {
         KpiChart,
         Card,
         MonthLine,
+        RouterView,
+        NavTabs,
     },
 
     data() {
         return {
-			activeTab: "coalProduction", // Default active tab
-
-            // Mining data
-            miningData: [],
-
-            coalProductionActualData: [],
-            coalProductionPlanData: [],
-            coalProductionCategories: [],
-
             // Waste Production
             wasteData: [],
 
@@ -220,6 +114,14 @@ export default {
 
             // Strip Ratio
             stripRatioProductionData: [],
+
+            navs: [
+                { label: "Coal Production", to: "/drilldown-mining/coal-production" },
+                { label: "Waste Production", to: "/drilldown-mining/waste-production" },
+                { label: "Strip Ratio", to: "/drilldown-mining/strip-ratio" },
+                { label: "Broken Stock", to: "/drilldown-mining/broken-stock" },
+                { label: "Water Volume", to: "/drilldown-mining/water-volume" },
+            ],
         };
     },
 
@@ -303,7 +205,7 @@ export default {
         },
     },
     created() {
-        this.fetchData();
+        //this.fetchData();
     },
 };
 </script>
