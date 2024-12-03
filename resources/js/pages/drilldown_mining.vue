@@ -30,29 +30,6 @@
                 </div>
                 <router-view />
 
-        		<!-- Content : Waste Production-->
-             	<div class="row justify-content-evenly mb-4" v-if="activeTab === 'wasteProduction'">
-                    <card title="Total Mining Coal Production By Contractor">
-                        <to-date-table
-                            :data="wasteData"
-                            :sliceAttribute="'contractor'"
-                            :attributeHeader="'Con.'"
-                            :actualAttrName="'waste_actual_kbcm'"
-                            :planAttrName="'waste_plan_kbcm'"
-                        ></to-date-table>
-
-                        <kpi-chart
-                            :actualData="wasteProductionActualData"
-                            :planData="wasteProductionPlanData"
-                            :categories="wasteProductionCategories"
-                        ></kpi-chart>
-
-                        <month-line
-                            :data="wasteBCMPerHourData"
-                            :categories="wasteProductionCategories"
-                        ></month-line>
-                    </card>
-                </div>
 
         		<!-- Content :  Strip Ratio-->
              	<div class="row justify-content-evenly mb-4" v-if="activeTab === 'stripRatio'">
@@ -105,13 +82,6 @@ export default {
 
     data() {
         return {
-            // Waste Production
-            wasteData: [],
-
-            wasteProductionActualData: [],
-            wasteProductionPlanData: [],
-            wasteProductionCategories: [],
-
             // Strip Ratio
             stripRatioProductionData: [],
 
@@ -126,12 +96,6 @@ export default {
     },
 
     computed: {
-        tonesPerHourData() {
-            return this.coalProductionActualData.map((i) => roundToDecimalPlace(i / 24));
-        },
-        wasteBCMPerHourData() {
-            return this.wasteProductionActualData.map((i) => roundToDecimalPlace(i / 24));
-        },
         stripRatioData() {
             return this.stripRatioProductionData;
         },

@@ -25,6 +25,12 @@ const routes = [
                 component: () => import('../pages/drilldown_mining_coal_production.vue'),
                 meta: { requiresAuth: true },
             },
+            {
+                path: 'waste-production',
+                default: true,
+                component: () => import('../pages/drilldown_mining_waste_production.vue'),
+                meta: { requiresAuth: true },
+            },
         ]
     },
     { 
