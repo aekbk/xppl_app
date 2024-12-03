@@ -80,6 +80,7 @@ import {
 import { formatDateToDayMonth } from "../utils/date";
 import { subset } from "../utils/data";
 import { roundToDecimalPlace } from "../utils/number";
+import MonthLine from "../components/month-line.vue";
 
 export default {
     name: "MiningDrilldown/Coal-Production",
@@ -94,6 +95,7 @@ export default {
         ToDateTable,
         KpiChart,
         Card,
+        MonthLine,
     },
 
     data() {
