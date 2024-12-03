@@ -21,7 +21,6 @@ export const getStepSize = (data: Array<number>, step = 10) => {
   const divider = getDivider(max);
   const maxRounded = Math.ceil(max / divider) * divider;
   const stepSize = maxRounded / step;
-  console.log('stepSize', stepSize);
   return stepSize;
 }
 
@@ -61,7 +60,6 @@ function calculateYAxisMax(maxValue: number, ticks: number = 10): { maxY: number
 export const getYMax = (data: Array<number>, step = 10) => {
   const stepSize = getStepSize(data, step);
   const calculatedYAxis = calculateYAxisMax(Math.max(...data), stepSize);
-  console.log('calculatedYAxis', calculatedYAxis);
   return calculatedYAxis.maxY;
 }
 
