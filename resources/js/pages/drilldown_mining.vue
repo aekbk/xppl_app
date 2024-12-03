@@ -131,7 +131,7 @@
                     </card>
                 </div>
 
-				<!-- Content : Waste Production-->
+        		<!-- Content : Waste Production-->
              	<div class="row justify-content-evenly mb-4" v-if="activeTab === 'wasteProduction'">
                     <card title="Total Mining Coal Production By Contractor">
                         <to-date-table
@@ -155,7 +155,7 @@
                     </card>
                 </div>
 
-				<!-- Content :  Strip Ratio-->
+        		<!-- Content :  Strip Ratio-->
              	<div class="row justify-content-evenly mb-4" v-if="activeTab === 'stripRatio'">
                     <card title="Strip Ratio">
                         <month-line
