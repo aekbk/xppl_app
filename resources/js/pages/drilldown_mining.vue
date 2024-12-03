@@ -43,7 +43,7 @@ import { useAuthStore } from "../stores/auth";
 import { useStore } from "../stores/store";
 import ToDateTable from "../components/to-date-table.vue";
 import KpiChart from "../components/kpi-chart.vue";
-import { convertToDailyKpiData, convertToDailyKpiDataByAttr} from "../utils/chart";
+import { convertToDailyKpiData, convertToKpiDataByAttr} from "../utils/chart";
 import { formatDateToDayMonth } from "../utils/date";
 import { subset } from "../utils/data";
 import { roundToDecimalPlace } from "../utils/number";
@@ -123,7 +123,7 @@ export default {
                 "2024-11-01",
                 "2024-11-30"
             );
-            const kpiData = convertToDailyKpiDataByAttr(novemberData, 'waste_plan_kbcm', 'waste_actual_kbcm');
+            const kpiData = convertToKpiDataByAttr(novemberData, 'waste_plan_kbcm', 'waste_actual_kbcm').daily;
             const wasteActualData = kpiData.map((i) => i.actual);
             const wastePlanData = kpiData.map((i) => i.plan);
             const wasteCategories = kpiData.map((i) =>

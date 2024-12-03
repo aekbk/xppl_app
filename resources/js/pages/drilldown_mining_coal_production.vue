@@ -75,7 +75,7 @@ import ToDateTable from "../components/to-date-table.vue";
 import KpiChart from "../components/kpi-chart.vue";
 import {
     convertToDailyKpiData,
-    convertToDailyKpiDataByAttr,
+    convertToKpiDataByAttr,
 } from "../utils/chart";
 import { formatDateToDayMonth } from "../utils/date";
 import { subset } from "../utils/data";

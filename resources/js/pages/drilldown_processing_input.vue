@@ -2,23 +2,34 @@
     <div class="row justify-content-evenly mb-4">
         <card title="Input By Plant">
             <to-date-table
-                :data="processingData"
+                :data="rawProcessingData"
                 :sliceAttribute="'plant'"
                 :attributeHeader="'Plants'"
                 :actualAttrName="'input_actual'"
                 :planAttrName="'input_target'"
             ></to-date-table>
 
-            <kpi-chart
-                :actualData="coalProductionActualData"
-                :planData="coalProductionPlanData"
-                :categories="coalProductionCategories"
-            ></kpi-chart>
+            <chart-group
+                :selectedTab="'mtd'"
+                @filterChange="consoleEvent"
+                @tabSwitch="setSelectedTab"
+            >
+                <kpi-chart
+                    :actualData="coalProductionActualData"
+                    :planData="coalProductionPlanData"
+                    :categories="coalProductionCategories"
+                ></kpi-chart>
+
+                <month-line
+                    :data="coalProductionActualData"
+                    :categories="coalProductionCategories"
+                ></month-line>
+            </chart-group>
         </card>
 
         <card title="Input By ROM Grade">
             <to-date-table
-                :data="processingData"
+                :data="rawProcessingData"
                 :sliceAttribute="'input_grade'"
                 :attributeHeader="'Coal Grade'"
                 :actualAttrName="'input_actual'"
@@ -43,11 +54,12 @@ import { useStore } from "../stores/store";
 import ToDateTable from "../components/to-date-table.vue";
 import KpiChart from "../components/kpi-chart.vue";
 import {
-    convertToDailyKpiData,
-    convertToDailyKpiDataByAttr,
+    convertToKpiDataByAttr,
 } from "../utils/chart";
-import { formatDateToDayMonth } from "../utils/date";
+import { formatDateToDayMonth, formatDateToMonthYear } from "../utils/date";
 import { subset } from "../utils/data";
+import ChartGroup from "../components/chart-group.vue";
+import MonthLine from "../components/month-line.vue";
 
 export default {
     name: "ProcessingDrilldown/Input",
@@ -62,17 +74,50 @@ export default {
         ToDateTable,
         KpiChart,
         Card,
+        ChartGroup,
+        MonthLine,
     },
 
     data() {
         return {
-            processingData: [],
+            rawProcessingData: [],
+            processingData: {
+                daily: [],
+                monthly: [],
+            },
 
             // Kpi chart data
-            coalProductionActualData: [],
             coalProductionPlanData: [],
             coalProductionCategories: [],
+
+            selectedTab: 'mtd',
         };
+    },
+
+    computed: {
+        coalProductionActualData() {
+            console.log("recalculating coalProductionActualData");
+            if (this.selectedTab === 'mtd') {
+                return this.processingData.daily.map((i) => i.actual);
+            }
+            return this.processingData.monthly.map((i) => i.actual);
+        },
+        coalProductionPlanData() {
+            if (this.selectedTab === 'mtd') {
+                return this.processingData.daily.map((i) => i.plan);
+            }
+            return this.processingData.monthly.map((i) => i.plan);
+        },
+        coalProductionCategories() {
+            if (this.selectedTab === 'mtd') {
+                return this.processingData.daily.map((i) =>
+                    formatDateToDayMonth(i.date)
+                );
+            }
+            return this.processingData.monthly.map((i) =>
+                formatDateToMonthYear(i.date)
+            );
+        },
     },
 
     methods: {
@@ -85,26 +130,20 @@ export default {
                     },
                 }
             );
-            this.processingData = response.data;
-
-            const novemberData = subset(
-                response.data,
+            this.rawProcessingData = response.data;
+            this.processingData = convertToKpiDataByAttr(
+                this.rawProcessingData,
+                "input_target",
+                "input_actual",
                 "2024-11-01",
                 "2024-11-30"
-            );
-            const kpiData = convertToDailyKpiDataByAttr(
-                novemberData,
-                "input_target",
-                "input_actual"
-            );
-            this.coalProductionActualData = kpiData.map((i) => i.actual);
-            this.coalProductionPlanData = kpiData.map((i) => i.plan);
-            this.coalProductionCategories = kpiData.map((i) =>
-                formatDateToDayMonth(i.date)
             );
         },
         async fetchData() {
             this.fetchProcessingData();
+        },
+        setSelectedTab(value) {
+            this.selectedTab = value;
         },
     },
     created() {

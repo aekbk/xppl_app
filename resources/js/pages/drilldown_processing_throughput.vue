@@ -44,7 +44,7 @@ import ToDateTable from "../components/to-date-table.vue";
 import KpiChart from "../components/kpi-chart.vue";
 import {
     convertToDailyKpiData,
-    convertToDailyKpiDataByAttr,
+    convertToKpiDataByAttr,
 } from "../utils/chart";
 import { formatDateToDayMonth } from "../utils/date";
 import { subset } from "../utils/data";
@@ -104,11 +104,11 @@ export default {
                 "2024-11-01",
                 "2024-11-30"
             );
-            const kpiData = convertToDailyKpiDataByAttr(
+            const kpiData = convertToKpiDataByAttr(
                 novemberData,
                 "input_target",
-                "input_actual"
-            );
+                "input_actual",
+            ).daily;
             this.coalProductionActualData = kpiData.map((i) => i.actual);
             this.coalProductionPlanData = kpiData.map((i) => i.plan);
             this.coalProductionCategories = kpiData.map((i) =>

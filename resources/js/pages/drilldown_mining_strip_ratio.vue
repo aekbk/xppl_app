@@ -20,7 +20,7 @@ import ToDateTable from "../components/to-date-table.vue";
 import KpiChart from "../components/kpi-chart.vue";
 import {
     convertToDailyKpiData,
-    convertToDailyKpiDataByAttr,
+    convertToKpiDataByAttr,
 } from "../utils/chart";
 import { formatDateToDayMonth } from "../utils/date";
 import { subset } from "../utils/data";
@@ -73,7 +73,7 @@ export default {
                 "2024-11-01",
                 "2024-11-30"
             );
-            const kpiData = convertToDailyKpiDataByAttr(novemberMiningData, 'coat_actual_kt', 'coal_plan_kt');
+            const kpiData = convertToKpiDataByAttr(novemberMiningData, 'coat_actual_kt', 'coal_plan_kt').daily;
             const coalProductionActualData = kpiData.map((i) => i.actual);
 
 
@@ -91,7 +91,7 @@ export default {
                 "2024-11-01",
                 "2024-11-30"
             );
-            const wasteKPIData = convertToDailyKpiDataByAttr(novemberWasteData, 'waste_plan_kbcm', 'waste_actual_kbcm');
+            const wasteKPIData = convertToKpiDataByAttr(novemberWasteData, 'waste_plan_kbcm', 'waste_actual_kbcm').daily;
             const wasteActualData = wasteKPIData.map((i) => i.actual);
             const wasteCategories = wasteKPIData.map((i) =>
                 formatDateToDayMonth(i.date)

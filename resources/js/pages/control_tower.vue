@@ -132,7 +132,7 @@ import SummaryStatistic from "../components/summary-statistic.vue";
 import DepartmentSummary from "../components/department-summary.vue";
 import { useAuthStore } from "../stores/auth";
 import { useStore } from "../stores/store";
-import { convertToDailyKpiData, convertToDailyKpiDataByAttr } from "../utils/chart";
+import { convertToDailyKpiData, convertToKpiDataByAttr } from "../utils/chart";
 import { formatDateToDayMonth } from "../utils/date";
 import { roundToDecimalPlace } from "../utils/number";
 
@@ -264,7 +264,7 @@ export default {
             const response = await axios.get("/api/control-tower/processing_detail?start_date=2024-11-01&end_date=2024-12-01", { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
 
             // plant processing output - top part
-            const processingOutputData = convertToDailyKpiDataByAttr(response.data, 'output_target', 'output_actual');
+            const processingOutputData = convertToKpiDataByAttr(response.data, 'output_target', 'output_actual').daily;
             const processingOutputActualData = processingOutputData.map(
                 (i) => i.actual
             );
@@ -278,7 +278,7 @@ export default {
             this.processingSummary.mainMetricCategories = processingOutputData.map(i => formatDateToDayMonth(i.date));
 
             // plant processing input - bottom part
-            const processingInputData = convertToDailyKpiDataByAttr(response.data, 'input_target', 'input_actual');
+            const processingInputData = convertToKpiDataByAttr(response.data, 'input_target', 'input_actual').daily;
             const processingInputActualData = processingInputData.map(
                 (i) => i.actual
             );
@@ -328,7 +328,7 @@ export default {
                 formatDateToDayMonth(i.date)
             );
             
-            const secondaryKpiData = convertToDailyKpiDataByAttr(this.wasteData, 'waste_plan_kbcm', 'waste_actual_kbcm');
+            const secondaryKpiData = convertToKpiDataByAttr(this.wasteData, 'waste_plan_kbcm', 'waste_actual_kbcm').daily;
             const wasteActualData = secondaryKpiData.map(
                 (i) => i.actual
             );
