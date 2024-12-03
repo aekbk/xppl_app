@@ -22,36 +22,43 @@
                                 </div>
                                 <div>
                                     <ul class="nav nav-tabs">
-                                        <li class="nav-item">
-                                            <a class="nav-link active" href="#"
-                                                >Coal Production</a
-                                            >
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="#"
-                                                >Waste Production</a
-                                            >
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="#"
-                                                >Strp Ratio</a
-                                            >
-                                        </li>
-                                        <li class="nav-item">
-                                            <a
-                                                class="nav-link disabled"
-                                                href="#"
-                                                >Broken Stock</a
-                                            >
-                                        </li>
-                                        <li class="nav-item">
-                                            <a
-                                                class="nav-link disabled"
-                                                href="#"
-                                                >Water Volume</a
-                                            >
-                                        </li>
-                                    </ul>
+										<li class="nav-item">
+											<a
+												class="nav-link"
+												:class="{ active: activeTab === 'coalProduction' }"
+												href="#"
+												@click.prevent="activeTab = 'coalProduction'"
+											>
+												Coal Production
+											</a>
+										</li>
+										<li class="nav-item">
+											<a
+												class="nav-link"
+												:class="{ active: activeTab === 'wasteProduction' }"
+												href="#"
+												@click.prevent="activeTab = 'wasteProduction'"
+											>
+												Waste Production
+											</a>
+										</li>
+										<li class="nav-item">
+											<a
+												class="nav-link"
+												:class="{ active: activeTab === 'stripRatio' }"
+												href="#"
+												@click.prevent="activeTab = 'stripRatio'"
+											>
+												Strip Ratio
+											</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link disabled" href="#">Broken Stock</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link disabled" href="#">Water Volume</a>
+										</li>
+									</ul>
                                 </div>
                             </div>
                         </div>
@@ -159,6 +166,9 @@ export default {
 
     data() {
         return {
+			activeTab: "coalProduction", // Default active tab
+
+            // Mining data
             miningData: [],
 
             // Kpi chart data
