@@ -1,7 +1,7 @@
 <template>
     <!-- Content : Waste Production-->
     <div class="row justify-content-evenly mb-4">
-        <card title="Total Mining Coal Production By Contractor">
+        <card title="Total Mining Waste Production">
         <to-date-table
                 :data="wasteData"
                 :sliceAttribute="'contractor'"
