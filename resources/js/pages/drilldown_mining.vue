@@ -24,24 +24,31 @@
                                     <ul class="nav nav-tabs">
                                         <li class="nav-item">
                                             <a class="nav-link active" href="#"
-                                                >Active</a
+                                                >Coal Production</a
                                             >
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" href="#"
-                                                >Link</a
+                                                >Waste Production</a
                                             >
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" href="#"
-                                                >Link</a
+                                                >Strp Ratio</a
                                             >
                                         </li>
                                         <li class="nav-item">
                                             <a
                                                 class="nav-link disabled"
                                                 href="#"
-                                                >Disabled</a
+                                                >Broken Stock</a
+                                            >
+                                        </li>
+                                        <li class="nav-item">
+                                            <a
+                                                class="nav-link disabled"
+                                                href="#"
+                                                >Water Volume</a
                                             >
                                         </li>
                                     </ul>
