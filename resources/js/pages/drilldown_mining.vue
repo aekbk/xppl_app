@@ -65,7 +65,8 @@
                     </div>
                 </div>
 
-                <div class="row justify-content-evenly mb-4">
+                <!-- Content : Coal Production-->
+                <div class="row justify-content-evenly mb-4" v-if="activeTab === 'coalProduction'">
                     <card title="Total Mining Coal Production By Contractor">
                         <to-date-table
                             :data="miningData"
@@ -129,6 +130,41 @@
                         ></month-line>
                     </card>
                 </div>
+
+				<!-- Content : Waste Production-->
+             	<div class="row justify-content-evenly mb-4" v-if="activeTab === 'wasteProduction'">
+                    <card title="Total Mining Coal Production By Contractor">
+                        <to-date-table
+                            :data="wasteData"
+                            :sliceAttribute="'contractor'"
+                            :attributeHeader="'Con.'"
+                            :actualAttrName="'waste_actual_kbcm'"
+                            :planAttrName="'waste_plan_kbcm'"
+                        ></to-date-table>
+
+                        <kpi-chart
+                            :actualData="wasteProductionActualData"
+                            :planData="wasteProductionPlanData"
+                            :categories="wasteProductionCategories"
+                        ></kpi-chart>
+
+                        <month-line
+                            :data="wasteBCMPerHourData"
+                            :categories="wasteProductionCategories"
+                        ></month-line>
+                    </card>
+                </div>
+
+				<!-- Content :  Strip Ratio-->
+             	<div class="row justify-content-evenly mb-4" v-if="activeTab === 'stripRatio'">
+                    <card title="Strip Ratio">
+                        <month-line
+                            :data="stripRatioData"
+                            :categories="wasteProductionCategories"
+                        ></month-line>
+                    </card>
+                </div>
+
             </div>
         </div>
     </div>
@@ -143,7 +179,7 @@ import { useAuthStore } from "../stores/auth";
 import { useStore } from "../stores/store";
 import ToDateTable from "../components/to-date-table.vue";
 import KpiChart from "../components/kpi-chart.vue";
-import { convertToDailyKpiData } from "../utils/chart";
+import { convertToDailyKpiData, convertToDailyKpiDataByAttr} from "../utils/chart";
 import { formatDateToDayMonth } from "../utils/date";
 import { subset } from "../utils/data";
 import { roundToDecimalPlace } from "../utils/number";
@@ -171,16 +207,31 @@ export default {
             // Mining data
             miningData: [],
 
-            // Kpi chart data
             coalProductionActualData: [],
             coalProductionPlanData: [],
             coalProductionCategories: [],
+
+            // Waste Production
+            wasteData: [],
+
+            wasteProductionActualData: [],
+            wasteProductionPlanData: [],
+            wasteProductionCategories: [],
+
+            // Strip Ratio
+            stripRatioProductionData: [],
         };
     },
 
     computed: {
         tonesPerHourData() {
             return this.coalProductionActualData.map((i) => roundToDecimalPlace(i / 24));
+        },
+        wasteBCMPerHourData() {
+            return this.wasteProductionActualData.map((i) => roundToDecimalPlace(i / 24));
+        },
+        stripRatioData() {
+            return this.stripRatioProductionData;
         },
     },
 
@@ -208,8 +259,47 @@ export default {
                 formatDateToDayMonth(i.date)
             );
         },
+        async fetchWasteData() {
+            const response = await axios.get(
+                "/api/control-tower/waste_detail?start_date=2024-01-01&end_date=2024-12-01",
+                {
+                    headers: {
+                        Authorization: "Bearer " + this.authStore.getToken,
+                    },
+                }
+            );
+            this.wasteData = response.data;
+
+            const novemberData = subset(
+                response.data,
+                "2024-11-01",
+                "2024-11-30"
+            );
+            const kpiData = convertToDailyKpiDataByAttr(novemberData, 'waste_plan_kbcm', 'waste_actual_kbcm');
+            const wasteActualData = kpiData.map((i) => i.actual);
+            const wastePlanData = kpiData.map((i) => i.plan);
+            const wasteCategories = kpiData.map((i) =>
+                formatDateToDayMonth(i.date)
+            );
+
+            this.wasteProductionActualData = wasteActualData;
+            this.wasteProductionPlanData = wastePlanData;
+            this.wasteProductionCategories = wasteCategories;
+
+            this.stripRatioProductionData = wasteActualData.map((item, index) => {
+                const result = item / this.coalProductionActualData[index];
+                if (isNaN(result)) {
+                    return null;
+                }
+                return roundToDecimalPlace(result, 2);
+            });
+
+
+        },
+
         async fetchData() {
             this.fetchMiningData();
+            this.fetchWasteData();
         },
     },
     created() {
