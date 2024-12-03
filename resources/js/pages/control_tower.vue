@@ -219,6 +219,7 @@ export default {
                 secondaryMetricTitle: "Yield",
                 secondaryMetricSubtitle: "(MTD)",
                 secondaryMetricStats: [],
+                secondarySummaryHeader: "MTD Avg",
             },
             salesLogisticsSummary: {
                 title: "Sales & Logistics",
@@ -261,10 +262,37 @@ export default {
         },
         async fetchProcessingData() {
             const response = await axios.get("/api/control-tower/processing_detail?start_date=2024-11-01&end_date=2024-12-01", { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-            const kpiData = convertToDailyKpiDataByAttr(response.data, 'output_target', 'output_actual');
-            this.processingSummary.mainMetricActualData = kpiData.map(i => i.actual);
-            this.processingSummary.mainMetricPlanData = kpiData.map(i => i.plan);
-            this.processingSummary.mainMetricCategories = kpiData.map(i => formatDateToDayMonth(i.date));
+
+            // plant processing output - top part
+            const processingOutputData = convertToDailyKpiDataByAttr(response.data, 'output_target', 'output_actual');
+            const processingOutputActualData = processingOutputData.map(
+                (i) => i.actual
+            );
+            const processingOutputPlanData = processingOutputData.map((i) => i.plan);
+            const processingCategories = processingOutputData.map((i) =>
+                formatDateToDayMonth(i.date)
+            );
+
+            this.processingSummary.mainMetricActualData = processingOutputActualData;
+            this.processingSummary.mainMetricPlanData = processingOutputData.map(i => i.plan);
+            this.processingSummary.mainMetricCategories = processingOutputData.map(i => formatDateToDayMonth(i.date));
+
+            // plant processing input - bottom part
+            const processingInputData = convertToDailyKpiDataByAttr(response.data, 'input_target', 'input_actual');
+            const processingInputActualData = processingInputData.map(
+                (i) => i.actual
+            );
+            const yieldRatio = processingInputActualData.map((item, index) => {
+                const result = item / processingOutputActualData[index];
+                if (isNaN(result)) {
+                    return null;
+                }
+                return roundToDecimalPlace(result, 2);
+            });
+
+            this.processingSummary.secondaryMetricStats = yieldRatio;
+            this.processingSummary.secondaryMetricCategories = processingCategories;
+
         },
         async fetchWasteData() {
             this.isLoadingWasteData = true;
