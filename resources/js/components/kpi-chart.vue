@@ -55,7 +55,7 @@ export default {
 
             return {
                 chart: {
-                    height: 300,
+                    height: 500,
                     type: "line",
                     stacked: false,
                     toolbar: {

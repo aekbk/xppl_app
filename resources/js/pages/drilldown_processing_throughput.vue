@@ -2,39 +2,64 @@
     <div class="row justify-content-evenly mb-4">
         <card title="Throughput By Plant">
             <to-date-table
-                :data="throughputData"
+                :data="rawThroughputData"
                 :sliceAttribute="'plant'"
                 :attributeHeader="'Plants'"
                 :actualAttrName="'throughput_actual'"
                 :planAttrName="'throughput_plan'"
             ></to-date-table>
 
-            <kpi-chart
-                :actualData="coalProductionActualData"
-                :planData="coalProductionPlanData"
-                :categories="coalProductionCategories"
-            ></kpi-chart>
+            <chart-group
+                :selectedTab="selectedByPlantTab"
+                :availableFilter="availableByPlantFilter"
+                :selectedFilter="selectedByPlantFilter"
+                @filterChange="setByPlantSelectedFilter"
+                @tabSwitch="setByPlantSelectedTab"
+            >
+                <h5>Total Throughput: {{ selectedByPlantFilter }}</h5>
+                <kpi-chart
+                    :actualData="coalThroughputActualDataByPlant"
+                    :planData="coalThroughputPlanDataByPlant"
+                    :categories="coalThroughputCategoriesByPlant"
+                ></kpi-chart>
+                <!-- <h5>Mining Coal Production</h5>
+                <month-line
+                    :data="coalThroughputActualData"
+                    :categories="coalThroughputCategories"
+                ></month-line> -->
+            </chart-group>
         </card>
 
         <card title="Throughput By Saleable Grade">
             <to-date-table
-                :data="processingData"
+                :data="rawThroughputData"
                 :sliceAttribute="'input_grade'"
                 :attributeHeader="'Coal Grade'"
-                :actualAttrName="'input_actual'"
-                :planAttrName="'input_target'"
+                :actualAttrName="'throughput_actual'"
+                :planAttrName="'throughput_plan'"
             ></to-date-table>
 
-            <kpi-chart
-                :actualData="coalProductionActualData"
-                :planData="coalProductionPlanData"
-                :categories="coalProductionCategories"
-            ></kpi-chart>
+            <chart-group
+                :selectedTab="selectedByGradeTab"
+                :availableFilter="availableByGradeFilter"
+                :selectedFilter="selectedByGradeFilter"
+                @filterChange="setByGradeSelectedFilter"
+                @tabSwitch="setByGradeSelectedTab"
+            >
+                <h5>Total Throughput SHG</h5>
+                <kpi-chart
+                    :actualData="coalThroughputActualDataByGrade"
+                    :planData="coalThroughputPlanDataByGrade"
+                    :categories="coalThroughputCategoriesByGrade"
+                ></kpi-chart>
+            </chart-group>
+            
         </card>
     </div>
 </template>
 
 <script>
+import { uniq } from "lodash";
 import SummaryStatistic from "../components/summary-statistic.vue";
 import DepartmentSummary from "../components/department-summary.vue";
 import Card from "../components/card.vue";
@@ -43,14 +68,14 @@ import { useStore } from "../stores/store";
 import ToDateTable from "../components/to-date-table.vue";
 import KpiChart from "../components/kpi-chart.vue";
 import {
-    convertToDailyKpiData,
     convertToKpiDataByAttr,
 } from "../utils/chart";
-import { formatDateToDayMonth } from "../utils/date";
-import { subset } from "../utils/data";
+import { formatDateToDayMonth, formatDateToMonthYear } from "../utils/date";
+import ChartGroup from "../components/chart-group.vue";
+import MonthLine from "../components/month-line.vue";
 
 export default {
-    name: "ProcessingDrilldown/Input",
+    name: "ProcessingDrilldown/Throughput",
     setup() {
         const authStore = useAuthStore();
         const store = useStore();
@@ -62,29 +87,117 @@ export default {
         ToDateTable,
         KpiChart,
         Card,
+        ChartGroup,
+        MonthLine,
     },
 
     data() {
         return {
-            processingData: [],
+            rawThroughputData: [],
 
-            // Kpi chart data
-            coalProductionActualData: [],
-            coalProductionPlanData: [],
-            coalProductionCategories: [],
+            // Input ByPlant filter
+            selectedByPlantTab: 'mtd',
+            selectedByPlantFilter: 'Total',
+
+            // Input ByGrade filter
+            selectedByGradeTab: 'mtd',
+            selectedByGradeFilter: 'Total',
         };
     },
 
     computed: {
-        throughputData() {
-            return this.processingData.map((i) => {
+        // Input screening section
+        inputScreeningData() {
+            if (this.rawThroughputData.length === 0) {
                 return {
-                    ...i,
-                    throughput_actual: i.input_actual / 24,
-                    throughput_plan: i.input_target / 24,
+                    daily: [],
+                    monthly: [],
                 };
-            });
-        }    
+            }
+
+            const filteredData = this.selectedByPlantFilter === "Total"
+                ? this.rawThroughputData
+                : this.rawThroughputData.filter((i) => i.plant === this.selectedByPlantFilter);
+            return convertToKpiDataByAttr(
+                filteredData,
+                "throughput_plan",
+                "throughput_actual",
+                "2024-11-01",
+                "2024-11-30"
+            );
+        },
+        coalThroughputActualDataByPlant() {
+            console.log("recalculating coalThroughputActualData");
+            if (this.selectedByPlantTab === 'mtd') {
+                return this.inputScreeningData.daily.map((i) => i.actual);
+            }
+            return this.inputScreeningData.monthly.map((i) => i.actual);
+        },
+        coalThroughputPlanDataByPlant() {
+            if (this.selectedByPlantTab === 'mtd') {
+                return this.inputScreeningData.daily.map((i) => i.plan);
+            }
+            return this.inputScreeningData.monthly.map((i) => i.plan);
+        },
+        coalThroughputCategoriesByPlant() {
+            if (this.selectedByPlantTab === 'mtd') {
+                return this.inputScreeningData.daily.map((i) =>
+                    formatDateToDayMonth(i.date)
+                );
+            }
+            return this.inputScreeningData.monthly.map((i) =>
+                formatDateToMonthYear(i.date)
+            );
+        },
+        availableByPlantFilter() {
+            return uniq(this.rawThroughputData.map((i) => i.plant));
+        },
+
+        // Input grade chart data
+        inputGradeData() {
+            if (this.rawThroughputData.length === 0) {
+                return {
+                    daily: [],
+                    monthly: [],
+                };
+            }
+
+            const filteredData = this.selectedByGradeFilter === "Total"
+                ? this.rawThroughputData
+                : this.rawThroughputData.filter((i) => i.input_grade === this.selectedByGradeFilter);
+            return convertToKpiDataByAttr(
+                filteredData,
+                "throughput_plan",
+                "throughput_actual",
+                "2024-11-01",
+                "2024-11-30"
+            );
+        },
+        coalThroughputActualDataByGrade() {
+            if (this.selectedByGradeTab === 'mtd') {
+                return this.inputGradeData.daily.map((i) => i.actual);
+            }
+            return this.inputGradeData.monthly.map((i) => i.actual);
+        },
+        coalThroughputPlanDataByGrade() {
+            if (this.selectedByGradeTab === 'mtd') {
+                return this.inputGradeData.daily.map((i) => i.plan);
+            }
+            return this.inputGradeData.monthly.map((i) => i.plan);
+        },
+        coalThroughputCategoriesByGrade() {
+            if (this.selectedByGradeTab === 'mtd') {
+                return this.inputGradeData.daily.map((i) =>
+                    formatDateToDayMonth(i.date)
+                );
+            }
+            return this.inputGradeData.monthly.map((i) =>
+                formatDateToMonthYear(i.date)
+            );
+        },
+        availableByGradeFilter() {
+            return uniq(this.rawThroughputData.map((i) => i['input_grade']));
+        }
     },
 
     methods: {
@@ -97,26 +210,31 @@ export default {
                     },
                 }
             );
-            this.processingData = response.data;
-
-            const novemberData = subset(
-                response.data,
-                "2024-11-01",
-                "2024-11-30"
-            );
-            const kpiData = convertToKpiDataByAttr(
-                novemberData,
-                "input_target",
-                "input_actual",
-            ).daily;
-            this.coalProductionActualData = kpiData.map((i) => i.actual);
-            this.coalProductionPlanData = kpiData.map((i) => i.plan);
-            this.coalProductionCategories = kpiData.map((i) =>
-                formatDateToDayMonth(i.date)
-            );
+            this.rawThroughputData = response.data.map(i => {
+                return {
+                    ...i,
+                    throughput_actual: i.input_actual / 24,
+                    throughput_plan: i.input_target / 24,
+                };
+            });
         },
         async fetchData() {
             this.fetchProcessingData();
+        },
+
+        setByPlantSelectedTab(value) {
+            console.log(value);
+            this.selectedByPlantTab = value;
+        },
+        setByPlantSelectedFilter(value) {
+            this.selectedByPlantFilter = value;
+        },
+        
+        setByGradeSelectedTab(value) {
+            this.selectedByGradeTab = value;
+        },
+        setByGradeSelectedFilter(value) {
+            this.selectedByGradeFilter = value;
         },
     },
     created() {
