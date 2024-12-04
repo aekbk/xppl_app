@@ -151,12 +151,12 @@ export default {
                                 return `${params.value.toFixed(2)}%`;
                             },
                         },
+                        {
+                            headerName: "Year Plan",
+                            field: "yearPlan",
+                            sortable: true,
+                        },
                     ],
-                },
-                {
-                    headerName: "Total Plan",
-                    field: "totalPlan",
-                    sortable: true,
                 },
             ],
             defaultColDef: {

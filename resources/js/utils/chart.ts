@@ -89,7 +89,7 @@ interface ProcessedDataItem {
     ytdPlan: number;
     ytdActual: number;
     ytdPlanDiff: number;
-    totalPlan: number;
+    yearPlan: number;
 }
 
 export function transformToToDateTableData(
@@ -123,7 +123,7 @@ export function transformToToDateTableData(
                 mthPlan: 0,
                 ytdPlan: 0,
                 ytdActual: 0,
-                totalPlan: 0,
+                yearPlan: 0,
             });
         }
 
@@ -132,9 +132,6 @@ export function transformToToDateTableData(
         // Convert plan and actual to numbers
         const actualDataNode = parseFloat(item[actualAttr]) || 0;
         const planDataNode = parseFloat(item[planAttr]) || 0;
-
-        // Update totalPlan
-        attributeData.totalPlan += planDataNode;
 
         // If the date matches currentDate, update todayPlan and todayActual
         if (isSameDate(dataDate, currentDate)) {
@@ -161,6 +158,11 @@ export function transformToToDateTableData(
         if (isSameYear(dataDate, currentDate) && dataDate <= currentDate) {
             attributeData.ytdPlan += planDataNode;
             attributeData.ytdActual += actualDataNode;
+        }
+
+        // Update the year plan
+        if (isSameYear(dataDate, currentDate)) {
+            attributeData.yearPlan += planDataNode;
         }
     });
 
@@ -205,7 +207,7 @@ function roundProcessedDataItemNumbers(
         mthPlan: roundToDecimalPlace(data.mthPlan, 2),
         ytdPlan: roundToDecimalPlace(data.ytdPlan, 2),
         ytdActual: roundToDecimalPlace(data.ytdActual, 2),
-        totalPlan: roundToDecimalPlace(data.totalPlan, 2),
+        yearPlan: roundToDecimalPlace(data.yearPlan, 2),
     };
 }
 
