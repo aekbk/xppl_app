@@ -58,6 +58,18 @@ const routes = [
                 component: () => import('../pages/drilldown_processing_throughput.vue'),
                 meta: { requiresAuth: true },
             },
+            {
+                path: 'yield',
+                default: true,
+                component: () => import('../pages/drilldown_processing_yield.vue'),
+                meta: { requiresAuth: true },
+            },
+            {
+                path: 'ma-uoa',
+                default: true,
+                component: () => import('../pages/drilldown_processing_ma_uoa.vue'),
+                meta: { requiresAuth: true },
+            },
         ],
 
     },

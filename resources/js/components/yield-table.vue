@@ -1,7 +1,7 @@
 <template>
     <div>
         <ag-grid-vue
-            style="height: 500px"
+            style="height: 700px"
             class="ag-theme-quartz"
             :columnDefs="columnDefs"
             :suppressMenuHide="false"
@@ -9,19 +9,22 @@
             :rowData="toDateData"
             animateRows="false"
             :defaultColDef="defaultColDef"
+            :groupTotalRow="'bottom'"
+            :grandTotalRow="'bottom'"
+            :groupDefaultExpanded="1"
         ></ag-grid-vue>
     </div>
 </template>
 
 <script lang="ts">
 import { AgGridVue } from "ag-grid-vue3";
-import { transformToToDateTableData } from "../utils/chart";
 import { format } from "numerable";
+import { transformToToDateTableData } from "../utils/chart";
 
 const NUMBER_FORMAT = "0,0.00"
 
 export default {
-    name: "ToDateTable",
+    name: "YieldTable",
     components: { AgGridVue },
     props: {
         data: {
@@ -49,6 +52,12 @@ export default {
     data() {
         return {
             columnDefs: [
+                {
+                    headerName: 'group',
+                    field: 'plant_group',
+                    rowGroup: true,
+                    hide: true,
+                },
                 {
                     headerName: this.attributeHeader,
                     field: 'attr',
@@ -78,22 +87,6 @@ export default {
                                 return params.value ? format(params.value, NUMBER_FORMAT) : "";
                             },
                         },
-                        {
-                            headerName: "% Plan Diff",
-                            field: "todayPlanDiff",
-                            sortable: true,
-                            cellClass: (params) => {
-                                if (params.value > 110) {
-                                    return "bg-warning"; // Apply this class if value > 100
-                                } else if (params.value < 90) {
-                                    return "bg-danger"; // Apply this class if value < 100
-                                }
-                                return 'bg-success'; // No class for other cases
-                            },
-                            valueFormatter: (params) => {
-                                return `${params.value.toFixed(2)}%`;
-                            },
-                        },
                     ],
                 },
                 {
@@ -112,32 +105,6 @@ export default {
                         {
                             headerName: "Actual",
                             field: "mtdActual",
-                            sortable: true,
-                            aggFunc: 'sum',
-                            cellClass: 'text-end',
-                            valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
-                            },
-                        },
-                        {
-                            headerName: "% Plan Diff",
-                            field: "mtdPlanDiff",
-                            sortable: true,
-                            cellClass: (params) => {
-                                if (params.value > 110) {
-                                    return "bg-warning"; // Apply this class if value > 100
-                                } else if (params.value < 90) {
-                                    return "bg-danger"; // Apply this class if value < 100
-                                }
-                                return 'bg-success'; // No class for other cases
-                            },
-                            valueFormatter: (params) => {
-                                return `${params.value.toFixed(2)}%`;
-                            },
-                        },
-                        {
-                            headerName: "Month Plan",
-                            field: "mthPlan",
                             sortable: true,
                             aggFunc: 'sum',
                             cellClass: 'text-end',
@@ -170,32 +137,6 @@ export default {
                                 return params.value ? format(params.value, NUMBER_FORMAT) : "";
                             },
                         },
-                        {
-                            headerName: "% Plan Diff",
-                            field: "ytdPlanDiff",
-                            sortable: true,
-                            cellClass: (params) => {
-                                if (params.value > 110) {
-                                    return "bg-warning"; // Apply this class if value > 100
-                                } else if (params.value < 90) {
-                                    return "bg-danger"; // Apply this class if value < 100
-                                }
-                                return 'bg-success'; // No class for other cases
-                            },
-                            valueFormatter: (params) => {
-                                return `${params.value.toFixed(2)}%`;
-                            },
-                        },
-                        {
-                            headerName: "Year Plan",
-                            field: "yearPlan",
-                            sortable: true,
-                            aggFunc: 'sum',
-                            cellClass: 'text-end',
-                            valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
-                            },
-                        },
                     ],
                 },
             ],
@@ -214,8 +155,20 @@ export default {
                 this.planAttrName,
                 this.actualAttrName
             );
-            return result;
+            return result.map(i => {
+                return {
+                    ...i,
+                    plant_group: i.attr.substring(0, 2),
+                };
+            });
         },
     },
 };
 </script>
+
+<style>
+.ag-row-footer {
+    background-color: #ECEEF3;
+    font-weight: bold;
+}
+</style>

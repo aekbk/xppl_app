@@ -77,8 +77,8 @@ export default {
                 { label: "Coal Production", to: "/drilldown-mining/coal-production" },
                 { label: "Waste Production", to: "/drilldown-mining/waste-production" },
                 { label: "Strip Ratio", to: "/drilldown-mining/strip-ratio" },
-                { label: "Broken Stock", to: "/drilldown-mining/broken-stock" },
-                { label: "Water Volume", to: "/drilldown-mining/water-volume" },
+                // { label: "Broken Stock", to: "/drilldown-mining/broken-stock" },
+                // { label: "Water Volume", to: "/drilldown-mining/water-volume" },
             ],
         };
     },

@@ -1,49 +1,49 @@
 <template>
     <div class="row justify-content-evenly mb-4">
         <card title="Total Mining Coal Production By Contractor">
-        <to-date-table
+            <to-date-table
                 :data="miningData"
                 :sliceAttribute="'contractor'"
                 :attributeHeader="'Con.'"
                 :actualAttrName="'coal_plan_kt'"
                 :planAttrName="'coal_plan_kt'"
-                ></to-date-table>
+            ></to-date-table>
 
-        <kpi-chart
+            <kpi-chart
                 :actualData="coalProductionActualData"
                 :planData="coalProductionPlanData"
                 :categories="coalProductionCategories"
-                ></kpi-chart>
+            ></kpi-chart>
 
-        <month-line
+            <month-line
                 :data="tonesPerHourData"
                 :categories="coalProductionCategories"
-                ></month-line>
+            ></month-line>
         </card>
 
         <card title="Total Mining Coal Production By Grade">
-        <to-date-table
+            <to-date-table
                 :data="miningData"
                 :sliceAttribute="'category'"
                 :attributeHeader="'Grade'"
                 :actualAttrName="'coal_plan_kt'"
                 :planAttrName="'coal_plan_kt'"
-                ></to-date-table>
+            ></to-date-table>
 
-        <kpi-chart
+            <kpi-chart
                 :actualData="coalProductionActualData"
                 :planData="coalProductionPlanData"
                 :categories="coalProductionCategories"
-                ></kpi-chart>
+            ></kpi-chart>
 
-        <month-line
+            <month-line
                 :data="tonesPerHourData"
                 :categories="coalProductionCategories"
-                ></month-line>
+            ></month-line>
         </card>
 
         <card title="Total Mining Coal Production By Contractor & Grade">
-        <to-nested-date-table
+            <to-nested-date-table
                 :data="miningData"
                 :primarySliceAttribute="'contractor'"
                 :secondarySliceAttribute="'category'"
@@ -51,18 +51,18 @@
                 :secondaryAttributeHeader="'Grade.'"
                 :actualAttrName="'coal_plan_kt'"
                 :planAttrName="'coal_plan_kt'"
-                ></to-nested-date-table>
+            ></to-nested-date-table>
 
-        <kpi-chart
+            <kpi-chart
                 :actualData="coalProductionActualData"
                 :planData="coalProductionPlanData"
                 :categories="coalProductionCategories"
-                ></kpi-chart>
+            ></kpi-chart>
 
-        <month-line
+            <month-line
                 :data="tonesPerHourData"
                 :categories="coalProductionCategories"
-                ></month-line>
+            ></month-line>
         </card>
     </div>
 </template>
@@ -76,10 +76,7 @@ import { useStore } from "../stores/store";
 import ToDateTable from "../components/to-date-table.vue";
 import ToNestedDateTable from "../components/to-nested-date-table.vue";
 import KpiChart from "../components/kpi-chart.vue";
-import {
-    convertToDailyKpiData,
-    convertToKpiDataByAttr,
-} from "../utils/chart";
+import { convertToDailyKpiData, convertToKpiDataByAttr } from "../utils/chart";
 import { formatDateToDayMonth } from "../utils/date";
 import { subset } from "../utils/data";
 import { roundToDecimalPlace } from "../utils/number";
@@ -114,7 +111,9 @@ export default {
     },
     computed: {
         tonesPerHourData() {
-            return this.coalProductionActualData.map((i) => roundToDecimalPlace(i / 24));
+            return this.coalProductionActualData.map((i) =>
+                roundToDecimalPlace(i / 24)
+            );
         },
     },
 
