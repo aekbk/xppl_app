@@ -211,6 +211,174 @@ function roundProcessedDataItemNumbers(
     };
 }
 
+// Similar to ProcessedDataItem, but with two attributes for grouping : primaryAttr and secondaryAttr
+interface ProcessedNestedDataItem {
+    primaryAttr: string;
+    secondaryAttr: string;
+    todayPlan: number;
+    todayActual: number;
+    todayPlanDiff: number;
+    mtdPlan: number;
+    mtdActual: number;
+    mtdPlanDiff: number;
+    mthPlan: number;
+    ytdPlan: number;
+    ytdActual: number;
+    ytdPlanDiff: number;
+    yearPlan: number;
+}
+
+/**
+ * Transforms raw data into a nested table structure grouped by two attributes
+ * `primary` and `secondary`, and computes aggregated plan and actual values
+ * (e.g., today, month-to-date, year-to-date). This function is copied from the
+ * original transformToDateTableData function and modified to accept two
+ * attribute for grouping. Refactoring is needed to avoid code duplication.
+ *
+ * @param {RawDataItem[]} rawData - The array of raw data items to process.
+ * @param {Date} currentDate - The current date used to calculate daily, monthly, and yearly metrics.
+ * @param {string} primaryAttr - The primary attribute for grouping the data.
+ * @param {string} secondaryAttr - The secondary attribute for grouping within the primary attribute.
+ * @param {string} planAttr - The attribute name representing the planned value.
+ * @param {string} actualAttr - The attribute name representing the actual value.
+ *
+ * @returns {ProcessedNestedDataItem[]} - An array of processed nested data items with
+ * computed metrics for each primary and secondary grouping.
+ * It computes the following metrics for each combination:
+ * - `todayPlan` and `todayActual`: Aggregates data for the current date.
+ * - `mtdPlan` and `mtdActual`: Aggregates data for the current month up to the current date.
+ * - `ytdPlan` and `ytdActual`: Aggregates data for the current year up to the current date.
+ * - `monthPlan`: Cumulative total plan value for the month.
+ * - `yearPlan`: Cumulative total plan value for the year.
+ * Additionally, the function calculates the differences between actual and planned values for each period (e.g., today, MTD, YTD).
+ */
+export function transformToNestedDateTableData(
+    rawData: RawDataItem[],
+    currentDate: Date,
+    primaryAttr: string,
+    secondaryAttr: string,
+    planAttr: string,
+    actualAttr: string
+): ProcessedNestedDataItem[] {
+    // If currentDate is not provided, get the latest date from the data
+    if (!currentDate) {
+        const dates = rawData.map((item) => new Date(item.date));
+        currentDate = new Date(Math.max.apply(null, dates));
+    }
+
+    // Prepare a nested Map to store data per attribute type
+    const attributeDataMap = new Map<string, Map<string, any>>();
+
+    rawData.forEach((item) => {
+        const primaryAttrValue = item[primaryAttr];
+        const secondaryAttrValue = item[secondaryAttr];
+        const dataDate = new Date(item.date);
+
+        // Initialize nested Map for primary attribute if not present
+        if (!attributeDataMap.has(primaryAttrValue)) {
+            attributeDataMap.set(primaryAttrValue, new Map());
+        }
+
+        const secondaryMap = attributeDataMap.get(primaryAttrValue);
+
+        // Initialize data for secondary attribute if not present
+        if (!secondaryMap.has(secondaryAttrValue)) {
+            secondaryMap.set(secondaryAttrValue, {
+                primaryAttr: primaryAttrValue,
+                secondaryAttr: secondaryAttrValue,
+                todayPlan: 0,
+                todayActual: 0,
+                mtdPlan: 0,
+                mtdActual: 0,
+                mthPlan: 0,
+                ytdPlan: 0,
+                ytdActual: 0,
+                yearPlan: 0,
+            });
+        }
+
+        const attributeData = secondaryMap.get(secondaryAttrValue);
+
+        // the rest of logic is similar to the transformToToDateTableData function
+        // Convert plan and actual to numbers
+        const actualDataNode = parseFloat(item[actualAttr]) || 0;
+        const planDataNode = parseFloat(item[planAttr]) || 0;
+
+        // If the date matches currentDate, update todayPlan and todayActual
+        if (isSameDate(dataDate, currentDate)) {
+            attributeData.todayPlan += planDataNode;
+            attributeData.todayActual += actualDataNode;
+        }
+
+        // If the date is in the same month and year, and before or equal to currentDate, update mtdPlan and mtdActual
+        if (
+            isSameMonthAndYear(dataDate, currentDate) &&
+            dataDate <= currentDate
+        ) {
+            attributeData.mtdPlan += planDataNode;
+            attributeData.mtdActual += actualDataNode;
+        }
+
+        // If the date falls within the current month and year, update the monthly plan.
+        // Since this is a monthly plan, it may contain future data for the month.
+        if (isSameMonthAndYear(dataDate, currentDate)) {
+            attributeData.mthPlan += planDataNode;
+        }
+
+        // If the date is in the same year, and before or equal to currentDate, update ytdPlan and ytdActual
+        if (isSameYear(dataDate, currentDate) && dataDate <= currentDate) {
+            attributeData.ytdPlan += planDataNode;
+            attributeData.ytdActual += actualDataNode;
+        }
+
+        // Update the year plan
+        if (isSameYear(dataDate, currentDate)) {
+            attributeData.yearPlan += planDataNode;
+        }
+    });
+
+    // Now compute the plan differences and prepare the result array
+    const result: ProcessedNestedDataItem[] = [];
+
+    attributeDataMap.forEach((secondaryMap) => {
+        secondaryMap.forEach((attrData) => {
+            attrData.todayPlanDiff = calculateDiff(
+                attrData.todayActual,
+                attrData.todayPlan
+            );
+            attrData.mtdPlanDiff = calculateDiff(
+                attrData.mtdActual,
+                attrData.mtdPlan
+            );
+            attrData.ytdPlanDiff = calculateDiff(
+                attrData.ytdActual,
+                attrData.ytdPlan
+            );
+
+            result.push(attrData);
+        });
+    });
+
+    return result.map(roundProcessedNestedDataItemNumbers);
+}
+
+// similar to roundProcessedDataItemNumbers, but for nested data interface
+function roundProcessedNestedDataItemNumbers(
+    data: ProcessedNestedDataItem
+): ProcessedNestedDataItem {
+    return {
+        ...data,
+        todayPlan: roundToDecimalPlace(data.todayPlan, 2),
+        todayActual: roundToDecimalPlace(data.todayActual, 2),
+        mtdPlan: roundToDecimalPlace(data.mtdPlan, 2),
+        mtdActual: roundToDecimalPlace(data.mtdActual, 2),
+        mthPlan: roundToDecimalPlace(data.mthPlan, 2),
+        ytdPlan: roundToDecimalPlace(data.ytdPlan, 2),
+        ytdActual: roundToDecimalPlace(data.ytdActual, 2),
+        yearPlan: roundToDecimalPlace(data.yearPlan, 2),
+    };
+}
+
 interface DailyKpiDataItem {
     date: Date;
     actual: number;
