@@ -90,7 +90,7 @@ export default {
                     headerName: "MTD (Mt)",
                     children: [
                         {
-                            headerName: "Plan",
+                            headerName: "MTD Plan",
                             field: "mtdPlan",
                             sortable: true,
                         },
@@ -126,7 +126,7 @@ export default {
                     headerName: "YTD (Mt)",
                     children: [
                         {
-                            headerName: "Plan",
+                            headerName: "YTD Plan",
                             field: "ytdPlan",
                             sortable: true,
                         },
