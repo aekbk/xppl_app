@@ -85,10 +85,11 @@ interface ProcessedDataItem {
     mtdPlan: number;
     mtdActual: number;
     mtdPlanDiff: number;
+    mthPlan: number;
     ytdPlan: number;
     ytdActual: number;
     ytdPlanDiff: number;
-    totalPlan: number;
+    yearPlan: number;
 }
 
 export function transformToToDateTableData(
@@ -119,9 +120,10 @@ export function transformToToDateTableData(
                 todayActual: 0,
                 mtdPlan: 0,
                 mtdActual: 0,
+                mthPlan: 0,
                 ytdPlan: 0,
                 ytdActual: 0,
-                totalPlan: 0,
+                yearPlan: 0,
             });
         }
 
@@ -130,9 +132,6 @@ export function transformToToDateTableData(
         // Convert plan and actual to numbers
         const actualDataNode = parseFloat(item[actualAttr]) || 0;
         const planDataNode = parseFloat(item[planAttr]) || 0;
-
-        // Update totalPlan
-        attributeData.totalPlan += planDataNode;
 
         // If the date matches currentDate, update todayPlan and todayActual
         if (isSameDate(dataDate, currentDate)) {
@@ -149,10 +148,21 @@ export function transformToToDateTableData(
             attributeData.mtdActual += actualDataNode;
         }
 
+        // If the date falls within the current month and year, update the monthly plan.
+        // Since this is a monthly plan, it may contain future data for the month.
+        if (isSameMonthAndYear(dataDate, currentDate)) {
+            attributeData.mthPlan += planDataNode;
+        }
+
         // If the date is in the same year, and before or equal to currentDate, update ytdPlan and ytdActual
         if (isSameYear(dataDate, currentDate) && dataDate <= currentDate) {
             attributeData.ytdPlan += planDataNode;
             attributeData.ytdActual += actualDataNode;
+        }
+
+        // Update the year plan
+        if (isSameYear(dataDate, currentDate)) {
+            attributeData.yearPlan += planDataNode;
         }
     });
 
@@ -194,9 +204,10 @@ function roundProcessedDataItemNumbers(
         todayActual: roundToDecimalPlace(data.todayActual, 2),
         mtdPlan: roundToDecimalPlace(data.mtdPlan, 2),
         mtdActual: roundToDecimalPlace(data.mtdActual, 2),
+        mthPlan: roundToDecimalPlace(data.mthPlan, 2),
         ytdPlan: roundToDecimalPlace(data.ytdPlan, 2),
         ytdActual: roundToDecimalPlace(data.ytdActual, 2),
-        totalPlan: roundToDecimalPlace(data.totalPlan, 2),
+        yearPlan: roundToDecimalPlace(data.yearPlan, 2),
     };
 }
 

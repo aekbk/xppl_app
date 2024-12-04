@@ -90,7 +90,7 @@ export default {
                     headerName: "MTD (Mt)",
                     children: [
                         {
-                            headerName: "Plan",
+                            headerName: "MTD Plan",
                             field: "mtdPlan",
                             sortable: true,
                         },
@@ -115,13 +115,18 @@ export default {
                                 return `${params.value.toFixed(2)}%`;
                             },
                         },
+                        {
+                            headerName: "Month Plan",
+                            field: "mthPlan",
+                            sortable: true,
+                        },
                     ],
                 },
                 {
                     headerName: "YTD (Mt)",
                     children: [
                         {
-                            headerName: "Plan",
+                            headerName: "YTD Plan",
                             field: "ytdPlan",
                             sortable: true,
                         },
@@ -146,12 +151,12 @@ export default {
                                 return `${params.value.toFixed(2)}%`;
                             },
                         },
+                        {
+                            headerName: "Year Plan",
+                            field: "yearPlan",
+                            sortable: true,
+                        },
                     ],
-                },
-                {
-                    headerName: "Total Plan",
-                    field: "totalPlan",
-                    sortable: true,
                 },
             ],
             defaultColDef: {
