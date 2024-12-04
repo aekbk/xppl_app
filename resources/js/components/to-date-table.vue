@@ -115,6 +115,11 @@ export default {
                                 return `${params.value.toFixed(2)}%`;
                             },
                         },
+                        {
+                            headerName: "Month Plan",
+                            field: "mthPlan",
+                            sortable: true,
+                        },
                     ],
                 },
                 {

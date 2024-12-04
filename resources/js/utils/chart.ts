@@ -85,6 +85,7 @@ interface ProcessedDataItem {
     mtdPlan: number;
     mtdActual: number;
     mtdPlanDiff: number;
+    mthPlan: number;
     ytdPlan: number;
     ytdActual: number;
     ytdPlanDiff: number;
@@ -119,6 +120,7 @@ export function transformToToDateTableData(
                 todayActual: 0,
                 mtdPlan: 0,
                 mtdActual: 0,
+                mthPlan: 0,
                 ytdPlan: 0,
                 ytdActual: 0,
                 totalPlan: 0,
@@ -147,6 +149,12 @@ export function transformToToDateTableData(
         ) {
             attributeData.mtdPlan += planDataNode;
             attributeData.mtdActual += actualDataNode;
+        }
+
+        // If the date falls within the current month and year, update the monthly plan.
+        // Since this is a monthly plan, it may contain future data for the month.
+        if (isSameMonthAndYear(dataDate, currentDate)) {
+            attributeData.mthPlan += planDataNode;
         }
 
         // If the date is in the same year, and before or equal to currentDate, update ytdPlan and ytdActual
@@ -194,6 +202,7 @@ function roundProcessedDataItemNumbers(
         todayActual: roundToDecimalPlace(data.todayActual, 2),
         mtdPlan: roundToDecimalPlace(data.mtdPlan, 2),
         mtdActual: roundToDecimalPlace(data.mtdActual, 2),
+        mthPlan: roundToDecimalPlace(data.mthPlan, 2),
         ytdPlan: roundToDecimalPlace(data.ytdPlan, 2),
         ytdActual: roundToDecimalPlace(data.ytdActual, 2),
         totalPlan: roundToDecimalPlace(data.totalPlan, 2),
