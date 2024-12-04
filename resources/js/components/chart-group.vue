@@ -1,6 +1,6 @@
 <template>
     <div class="card">
-        <div class="card-header d-flex justify-content-between">
+        <div class="card-header d-flex justify-content-between border">
             <div>
                 <h5 class="mb-0 d-inline-block me-3">{{ title }}</h5>
                 <p class="mb-0 d-inline">{{ subtitle }}</p>
@@ -14,24 +14,33 @@
                         data-bs-toggle="dropdown"
                         aria-expanded="false"
                     >
-                        Dropdown button
+                        {{ selectedFilter }}
                     </button>
                     <ul
                         class="dropdown-menu"
                         aria-labelledby="dropdownMenuButton1"
                     >
                         <li>
-                            <a class="dropdown-item active" href="#">Total</a>
+                            <button
+                                class="dropdown-item"
+                                :class="{ active: selectedFilter === 'Total' }"
+                                @click="onFilterChange('Total')"
+                            >
+                                Total
+                            </button>
                         </li>
                         <li><hr class="dropdown-divider" /></li>
-                        <li><h6 class="dropdown-header">By Grade</h6></li>
                         <li>
-                            <a class="dropdown-item" href="#">Another action</a>
+                            <h6 class="dropdown-header">{{ filterHeader }}</h6>
                         </li>
-                        <li>
-                            <a class="dropdown-item" href="#"
-                                >Something else here</a
+                        <li v-for="filter in availableFilter">
+                            <button
+                                class="dropdown-item"
+                                :class="{ active: selectedFilter === filter }"
+                                @click="onFilterChange(filter)"
                             >
+                                {{ filter }}
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -43,14 +52,11 @@
                     <input
                         type="radio"
                         class="btn-check"
-                        name="btnradio"
-                        id="btnmtd"
                         autocomplete="off"
-                        :checked="selectedTab === 'mtd'"
                     />
                     <label
                         class="btn btn-sm btn-outline-primary"
-                        for="btnmtd"
+                        :class="{ active: selectedTab === 'mtd' }"
                         @click="onTabSwitch('mtd')"
                         >MTD</label
                     >
@@ -58,14 +64,11 @@
                     <input
                         type="radio"
                         class="btn-check"
-                        name="btnradio"
-                        id="btnytd"
                         autocomplete="off"
-                        :checked="selectedTab === 'ytd'"
                     />
                     <label
                         class="btn btn-sm btn-outline-primary"
-                        for="btnytd"
+                        :class="{ active: selectedTab === 'ytd' }"
                         @click="onTabSwitch('ytd')"
                         >YTD</label
                     >
@@ -97,27 +100,31 @@ export default {
             required: false,
             default: [],
         },
-        filterHeader: {
-            type: String,
-            required: false,
-            default: "Select Filter",
-        },
         selectedTab: {
             type: String,
             required: false,
             default: "mtd",
         },
+        filterHeader: {
+            type: String,
+            required: false,
+            default: "Select Filter",
+        },
+        availableFilter: {
+            type: Array,
+            required: false,
+            default: [],
+        },
         selectedFilter: {
             type: String,
             required: false,
-            default: "",
+            default: "Total",
         },
     },
     emits: ["filterChange", "tabSwitch"],
     methods: {
         onFilterChange(value: string) {
             this.$emit("filterChange", value);
-            console.log(value);
         },
         onTabSwitch(value: string) {
             this.$emit("tabSwitch", value);

@@ -4,7 +4,7 @@
             <h5 class="mb-0 d-inline-block me-3">{{ title }}</h5>
             <p class="mb-0 d-inline">{{ subtitle }}</p>
         </div>
-        <div class="card-body">
+        <div class="card-body d-flex flex-column gap-5">
             <slot></slot>
         </div>
     </div>

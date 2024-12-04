@@ -26,9 +26,6 @@ export default {
                     name: "Actual",
                     type: "line",
                     data: this.data.map((dataNode) => {
-                        if (dataNode === 0) {
-                            return null;
-                        }
                         return dataNode;
                     }),
                 },
@@ -67,6 +64,9 @@ export default {
                     toolbar: {
                         show: true,
                     },
+                    animations: {
+                        enabled: false,
+                    }
                 },
                 dataLabels: {
                     enabled: true,
@@ -86,9 +86,6 @@ export default {
                     enabled: true,
                     enabledOnSeries: [0],
                     formatter: function (value) {
-                        if (value === null) {
-                            return "";
-                        }
                         return format(value, "0,0.0a")+ self.units; 
                     },
                 },
@@ -102,9 +99,6 @@ export default {
                         },
                         labels: {
                             formatter: function (value) {
-                                if (value === null) {
-                                    return null;
-                                }
                                 return format(value, "0,0.0a") + self.units;
                             },
                         },
