@@ -238,4 +238,5 @@ Route::prefix('control-tower')->group(function () {
     Route::get('/mining_detail', [control_tower_controller::class, 'mining_detail']);
     Route::get('/processing_detail', [control_tower_controller::class, 'processing_detail']);
     Route::get('/waste_detail', [control_tower_controller::class, 'waste_detail']);
+    Route::get('/uoa_detail', [control_tower_controller::class, 'uoa_detail']);
 });

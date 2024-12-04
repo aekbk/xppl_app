@@ -1,13 +1,13 @@
 <template>
     <div class="row justify-content-evenly mb-4">
         <card title="Throughput By Plant">
-            <to-date-table
-                :data="rawThroughputData"
+            <to-date-uoa-table
+                :data="rawUoaData"
                 :sliceAttribute="'plant'"
                 :attributeHeader="'Plants'"
                 :actualAttrName="'throughput_actual'"
                 :planAttrName="'throughput_plan'"
-            ></to-date-table>
+            ></to-date-uoa-table>
 
             <chart-group
                 :selectedTab="selectedByPlantTab"
@@ -29,32 +29,6 @@
                 ></month-line> -->
             </chart-group>
         </card>
-
-        <card title="Throughput By Saleable Grade">
-            <to-date-table
-                :data="rawThroughputData"
-                :sliceAttribute="'input_grade'"
-                :attributeHeader="'Coal Grade'"
-                :actualAttrName="'throughput_actual'"
-                :planAttrName="'throughput_plan'"
-            ></to-date-table>
-
-            <chart-group
-                :selectedTab="selectedByGradeTab"
-                :availableFilter="availableByGradeFilter"
-                :selectedFilter="selectedByGradeFilter"
-                @filterChange="setByGradeSelectedFilter"
-                @tabSwitch="setByGradeSelectedTab"
-            >
-                <h5>Total Throughput SHG</h5>
-                <kpi-chart
-                    :actualData="coalThroughputActualDataByGrade"
-                    :planData="coalThroughputPlanDataByGrade"
-                    :categories="coalThroughputCategoriesByGrade"
-                ></kpi-chart>
-            </chart-group>
-            
-        </card>
     </div>
 </template>
 
@@ -73,6 +47,7 @@ import {
 import { formatDateToDayMonth, formatDateToMonthYear } from "../utils/date";
 import ChartGroup from "../components/chart-group.vue";
 import MonthLine from "../components/month-line.vue";
+import ToDateUoaTable from "../components/to-date-uoa-table.vue";
 
 export default {
     name: "ProcessingDrilldown/Throughput",
@@ -84,7 +59,7 @@ export default {
     components: {
         SummaryStatistic,
         DepartmentSummary,
-        ToDateTable,
+        ToDateUoaTable,
         KpiChart,
         Card,
         ChartGroup,
@@ -93,7 +68,7 @@ export default {
 
     data() {
         return {
-            rawThroughputData: [],
+            rawUoaData: [],
 
             // Input ByPlant filter
             selectedByPlantTab: 'mtd',
@@ -108,7 +83,7 @@ export default {
     computed: {
         // Input screening section
         inputScreeningData() {
-            if (this.rawThroughputData.length === 0) {
+            if (this.rawUoaData.length === 0) {
                 return {
                     daily: [],
                     monthly: [],
@@ -116,8 +91,8 @@ export default {
             }
 
             const filteredData = this.selectedByPlantFilter === "Total"
-                ? this.rawThroughputData
-                : this.rawThroughputData.filter((i) => i.plant === this.selectedByPlantFilter);
+                ? this.rawUoaData
+                : this.rawUoaData.filter((i) => i.plant === this.selectedByPlantFilter);
             return convertToKpiDataByAttr(
                 filteredData,
                 "throughput_plan",
@@ -150,73 +125,21 @@ export default {
             );
         },
         availableByPlantFilter() {
-            return uniq(this.rawThroughputData.map((i) => i.plant));
+            return uniq(this.rawUoaData.map((i) => i.plant));
         },
-
-        // Input grade chart data
-        inputGradeData() {
-            if (this.rawThroughputData.length === 0) {
-                return {
-                    daily: [],
-                    monthly: [],
-                };
-            }
-
-            const filteredData = this.selectedByGradeFilter === "Total"
-                ? this.rawThroughputData
-                : this.rawThroughputData.filter((i) => i.input_grade === this.selectedByGradeFilter);
-            return convertToKpiDataByAttr(
-                filteredData,
-                "throughput_plan",
-                "throughput_actual",
-                "2024-11-01",
-                "2024-11-30"
-            );
-        },
-        coalThroughputActualDataByGrade() {
-            if (this.selectedByGradeTab === 'mtd') {
-                return this.inputGradeData.daily.map((i) => i.actual);
-            }
-            return this.inputGradeData.monthly.map((i) => i.actual);
-        },
-        coalThroughputPlanDataByGrade() {
-            if (this.selectedByGradeTab === 'mtd') {
-                return this.inputGradeData.daily.map((i) => i.plan);
-            }
-            return this.inputGradeData.monthly.map((i) => i.plan);
-        },
-        coalThroughputCategoriesByGrade() {
-            if (this.selectedByGradeTab === 'mtd') {
-                return this.inputGradeData.daily.map((i) =>
-                    formatDateToDayMonth(i.date)
-                );
-            }
-            return this.inputGradeData.monthly.map((i) =>
-                formatDateToMonthYear(i.date)
-            );
-        },
-        availableByGradeFilter() {
-            return uniq(this.rawThroughputData.map((i) => i['input_grade']));
-        }
     },
 
     methods: {
         async fetchProcessingData() {
             const response = await axios.get(
-                "/api/control-tower/processing_detail?start_date=2024-01-01&end_date=2024-12-01",
+                "/api/control-tower/uoa_detail?start_date=2024-01-01&end_date=2024-12-01",
                 {
                     headers: {
                         Authorization: "Bearer " + this.authStore.getToken,
                     },
                 }
             );
-            this.rawThroughputData = response.data.map(i => {
-                return {
-                    ...i,
-                    throughput_actual: i.input_actual / 24,
-                    throughput_plan: i.input_target / 24,
-                };
-            });
+            this.rawUoaData = response.data;
         },
         async fetchData() {
             this.fetchProcessingData();
@@ -228,13 +151,6 @@ export default {
         },
         setByPlantSelectedFilter(value) {
             this.selectedByPlantFilter = value;
-        },
-        
-        setByGradeSelectedTab(value) {
-            this.selectedByGradeTab = value;
-        },
-        setByGradeSelectedFilter(value) {
-            this.selectedByGradeFilter = value;
         },
     },
     created() {

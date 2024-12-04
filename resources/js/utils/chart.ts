@@ -17,17 +17,17 @@ function getDivider(number: number): number {
 }
 
 function calculateRoundedMaxValue(value: number): number {
-  if (value <= 0) {
-      throw new Error("Value must be greater than 0");
-  }
+    if (value <= 0) {
+        throw new Error("Value must be greater than 0");
+    }
 
-  // Determine the order of magnitude of the value
-  const orderOfMagnitude = Math.pow(10, Math.floor(Math.log10(value)));
+    // Determine the order of magnitude of the value
+    const orderOfMagnitude = Math.pow(10, Math.floor(Math.log10(value)));
 
-  // Round up to the nearest significant digit
-  const roundedValue = Math.ceil(value / orderOfMagnitude) * orderOfMagnitude;
+    // Round up to the nearest significant digit
+    const roundedValue = Math.ceil(value / orderOfMagnitude) * orderOfMagnitude;
 
-  return roundedValue;
+    return roundedValue;
 }
 
 export const getYMax = (data: Array<number>) => {
@@ -488,9 +488,9 @@ export function convertToKpiDataByAttr(
     monthlyKpiDataMap.forEach((kpiData) => {
         kpiData.diff = calculateDiff(kpiData.actual, kpiData.plan);
     });
-    
+
     const dailyData =
-        (startDateString && endDateString)
+        startDateString && endDateString
             ? subset(
                   Array.from(dailyKpiDataMap.values()),
                   startDateString,
@@ -546,4 +546,128 @@ export function convertToMonthlyKpiData(
     });
 
     return Array.from(kpiDataMap.values());
+}
+
+interface UtilizationDataItem {
+  year: string;
+  month: string;
+  date: string;
+  plant: string;
+  pit: string;
+  target_run_hrs: string;
+  actual_run_hrs: string;
+  actual_down_hrs: string;
+  actual_standby_hrs: string;
+  target_ma: string;
+  actual_ma: string;
+  target_uoa: string;
+  actual_uoa: string;
+}
+
+interface ProcessedUtilizationDataItem {
+    attr: string;
+    todayTargetRunTime: number;
+    todayActualRunTime: number;
+    todayActualDownTime: number;
+    todayActualStandByTime: number;
+    mtdTargetRunTime: number;
+    mtdActualRunTime: number;
+    mtdActualDownTime: number;
+    mtdActualStandByTime: number;
+    ytdTargetRunTime: number;
+    ytdActualRunTime: number;
+    ytdActualDownTime: number;
+    ytdActualStandByTime: number;
+}
+
+export function transformToToDateUtilizationTableData(
+    rawData: UtilizationDataItem[],
+    currentDate: Date,
+    attr: string,
+): ProcessedUtilizationDataItem[] {
+    // If currentDate is not provided, get the latest date from the data
+    if (!currentDate) {
+        const dates = rawData.map((item) => new Date(item.date));
+        currentDate = new Date(Math.max.apply(null, dates));
+    }
+
+    // Prepare a Map to store data per attribute type
+    const attributeDataMap = new Map<string, any>();
+
+    rawData.forEach((item) => {
+        const attrValue = item[attr];
+        const dataDate = new Date(item.date);
+
+        // Initialize data for contractor if not present
+        if (!attributeDataMap.has(attrValue)) {
+            attributeDataMap.set(attrValue, {
+                attr: attrValue,
+                todayTargetRunTime: 0,
+                todayActualRunTime: 0,
+                todayActualDownTime: 0,
+                todayActualStandByTime: 0,
+                mtdTargetRunTime: 0,
+                mtdActualRunTime: 0,
+                mtdActualDownTime: 0,
+                mtdActualStandByTime: 0,
+                ytdTargetRunTime: 0,
+                ytdActualRunTime: 0,
+                ytdActualDownTime: 0,
+                ytdActualStandByTime: 0,
+            });
+        }
+
+        const attributeData = attributeDataMap.get(attrValue);
+
+        // Convert plan and actual to numbers
+        const actualRunTime = parseFloat(item.actual_run_hrs) || 0;
+        const targetRunTime = parseFloat(item.target_run_hrs) || 0;
+        const actualDownTime = parseFloat(item.actual_down_hrs) || 0;
+        const actualStandByTime = parseFloat(item.actual_standby_hrs) || 0;
+        
+        // If the date matches currentDate, update todayPlan and todayActual
+        if (isSameDate(dataDate, currentDate)) {
+            attributeData.todayTargetRunTime += targetRunTime;
+            attributeData.todayActualRunTime += actualRunTime;
+            attributeData.todayActualDownTime += actualDownTime;
+            attributeData.todayActualStandByTime += actualStandByTime;
+        }
+
+        // If the date is in the same month and year, and before or equal to currentDate, update mtdPlan and mtdActual
+        if (
+            isSameMonthAndYear(dataDate, currentDate) &&
+            dataDate <= currentDate
+        ) {
+            attributeData.mtdTargetRunTime += targetRunTime;
+            attributeData.mtdActualRunTime += actualRunTime;
+            attributeData.mtdActualDownTime += actualDownTime;
+            attributeData.mtdActualStandByTime += actualStandByTime;
+        }
+
+        // If the date is in the same year, and before or equal to currentDate, update ytdPlan and ytdActual
+        if (isSameYear(dataDate, currentDate) && dataDate <= currentDate) {
+            attributeData.ytdTargetRunTime += targetRunTime;
+            attributeData.ytdActualRunTime += actualRunTime;
+            attributeData.ytdActualDownTime += actualDownTime;
+            attributeData.ytdActualStandByTime += actualStandByTime;
+        }
+    });
+
+    // Now compute the plan differences and prepare the result array
+    const result: ProcessedUtilizationDataItem[] = [];
+
+    attributeDataMap.forEach((attrData) => {
+        result.push(attrData);
+    });
+
+    return result;
+}
+
+export function getTableBgCellClass(value: number, upperBound: number, lowerBound: number) {
+    if (value < lowerBound) {
+        return "bg-danger";
+    } else if (value > upperBound) {
+        return "bg-warning";
+    }
+    return "bg-success";
 }
