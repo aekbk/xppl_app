@@ -43,13 +43,15 @@
         </card>
 
         <card title="Total Mining Coal Production By Contractor & Grade">
-        <to-date-table
+        <to-nested-date-table
                 :data="miningData"
-                :sliceAttribute="'contractor'"
-                :attributeHeader="'Con.'"
+                :primarySliceAttribute="'contractor'"
+                :secondarySliceAttribute="'category'"
+                :primaryAttributeHeader="'Cont.'"
+                :secondaryAttributeHeader="'Grade.'"
                 :actualAttrName="'coal_plan_kt'"
                 :planAttrName="'coal_plan_kt'"
-                ></to-date-table>
+                ></to-nested-date-table>
 
         <kpi-chart
                 :actualData="coalProductionActualData"
@@ -72,6 +74,7 @@ import Card from "../components/card.vue";
 import { useAuthStore } from "../stores/auth";
 import { useStore } from "../stores/store";
 import ToDateTable from "../components/to-date-table.vue";
+import ToNestedDateTable from "../components/to-nested-date-table.vue";
 import KpiChart from "../components/kpi-chart.vue";
 import {
     convertToDailyKpiData,
@@ -93,6 +96,7 @@ export default {
         SummaryStatistic,
         DepartmentSummary,
         ToDateTable,
+        ToNestedDateTable,
         KpiChart,
         Card,
         MonthLine,
