@@ -10,20 +10,23 @@
             ></to-date-table>
 
             <chart-group
-                :selectedTab="'mtd'"
-                @filterChange="consoleEvent"
-                @tabSwitch="setSelectedTab"
+                :selectedTab="selectedByPlantTab"
+                :availableFilter="availableByPlantFilter"
+                :selectedFilter="selectedByPlantFilter"
+                @filterChange="setByPlantSelectedFilter"
+                @tabSwitch="setByPlantSelectedTab"
             >
+                <h5>Total Input: {{ selectedByPlantFilter }}</h5>
                 <kpi-chart
-                    :actualData="coalProductionActualData"
-                    :planData="coalProductionPlanData"
-                    :categories="coalProductionCategories"
+                    :actualData="coalProductionActualDataByPlant"
+                    :planData="coalProductionPlanDataByPlant"
+                    :categories="coalProductionCategoriesByPlant"
                 ></kpi-chart>
-
+                <!-- <h5>Mining Coal Production</h5>
                 <month-line
                     :data="coalProductionActualData"
                     :categories="coalProductionCategories"
-                ></month-line>
+                ></month-line> -->
             </chart-group>
         </card>
 
@@ -36,16 +39,27 @@
                 :planAttrName="'input_target'"
             ></to-date-table>
 
-            <kpi-chart
-                :actualData="coalProductionActualData"
-                :planData="coalProductionPlanData"
-                :categories="coalProductionCategories"
-            ></kpi-chart>
+            <chart-group
+                :selectedTab="selectedByGradeTab"
+                :availableFilter="availableByGradeFilter"
+                :selectedFilter="selectedByGradeFilter"
+                @filterChange="setByGradeSelectedFilter"
+                @tabSwitch="setByGradeSelectedTab"
+            >
+                <h5>Total Input SHG</h5>
+                <kpi-chart
+                    :actualData="coalProductionActualDataByGrade"
+                    :planData="coalProductionPlanDataByGrade"
+                    :categories="coalProductionCategoriesByGrade"
+                ></kpi-chart>
+            </chart-group>
+            
         </card>
     </div>
 </template>
 
 <script>
+import { uniq } from "lodash";
 import SummaryStatistic from "../components/summary-statistic.vue";
 import DepartmentSummary from "../components/department-summary.vue";
 import Card from "../components/card.vue";
@@ -81,43 +95,111 @@ export default {
     data() {
         return {
             rawProcessingData: [],
-            processingData: {
-                daily: [],
-                monthly: [],
-            },
 
-            // Kpi chart data
-            coalProductionPlanData: [],
-            coalProductionCategories: [],
+            // Input ByPlant filter
+            selectedByPlantTab: 'mtd',
+            selectedByPlantFilter: 'Total',
 
-            selectedTab: 'mtd',
+            // Input ByGrade filter
+            selectedByGradeTab: 'mtd',
+            selectedByGradeFilter: 'Total',
         };
     },
 
     computed: {
-        coalProductionActualData() {
+        // Input screening section
+        inputScreeningData() {
+            if (this.rawProcessingData.length === 0) {
+                return {
+                    daily: [],
+                    monthly: [],
+                };
+            }
+
+            const filteredData = this.selectedByPlantFilter === "Total"
+                ? this.rawProcessingData
+                : this.rawProcessingData.filter((i) => i.plant === this.selectedByPlantFilter);
+            return convertToKpiDataByAttr(
+                filteredData,
+                "input_target",
+                "input_actual",
+                "2024-11-01",
+                "2024-11-30"
+            );
+        },
+        coalProductionActualDataByPlant() {
             console.log("recalculating coalProductionActualData");
-            if (this.selectedTab === 'mtd') {
-                return this.processingData.daily.map((i) => i.actual);
+            if (this.selectedByPlantTab === 'mtd') {
+                return this.inputScreeningData.daily.map((i) => i.actual);
             }
-            return this.processingData.monthly.map((i) => i.actual);
+            return this.inputScreeningData.monthly.map((i) => i.actual);
         },
-        coalProductionPlanData() {
-            if (this.selectedTab === 'mtd') {
-                return this.processingData.daily.map((i) => i.plan);
+        coalProductionPlanDataByPlant() {
+            if (this.selectedByPlantTab === 'mtd') {
+                return this.inputScreeningData.daily.map((i) => i.plan);
             }
-            return this.processingData.monthly.map((i) => i.plan);
+            return this.inputScreeningData.monthly.map((i) => i.plan);
         },
-        coalProductionCategories() {
-            if (this.selectedTab === 'mtd') {
-                return this.processingData.daily.map((i) =>
+        coalProductionCategoriesByPlant() {
+            if (this.selectedByPlantTab === 'mtd') {
+                return this.inputScreeningData.daily.map((i) =>
                     formatDateToDayMonth(i.date)
                 );
             }
-            return this.processingData.monthly.map((i) =>
+            return this.inputScreeningData.monthly.map((i) =>
                 formatDateToMonthYear(i.date)
             );
         },
+        availableByPlantFilter() {
+            return uniq(this.rawProcessingData.map((i) => i.plant));
+        },
+
+        // Input grade chart data
+        inputGradeData() {
+            if (this.rawProcessingData.length === 0) {
+                return {
+                    daily: [],
+                    monthly: [],
+                };
+            }
+
+            const filteredData = this.selectedByGradeFilter === "Total"
+                ? this.rawProcessingData
+                : this.rawProcessingData.filter((i) => i.input_grade === this.selectedByGradeFilter);
+            return convertToKpiDataByAttr(
+                filteredData,
+                "input_target",
+                "input_actual",
+                "2024-11-01",
+                "2024-11-30"
+            );
+        },
+        coalProductionActualDataByGrade() {
+            console.log("recalculating coalProductionActualData");
+            if (this.selectedByGradeTab === 'mtd') {
+                return this.inputGradeData.daily.map((i) => i.actual);
+            }
+            return this.inputGradeData.monthly.map((i) => i.actual);
+        },
+        coalProductionPlanDataByGrade() {
+            if (this.selectedByGradeTab === 'mtd') {
+                return this.inputGradeData.daily.map((i) => i.plan);
+            }
+            return this.inputGradeData.monthly.map((i) => i.plan);
+        },
+        coalProductionCategoriesByGrade() {
+            if (this.selectedByGradeTab === 'mtd') {
+                return this.inputGradeData.daily.map((i) =>
+                    formatDateToDayMonth(i.date)
+                );
+            }
+            return this.inputGradeData.monthly.map((i) =>
+                formatDateToMonthYear(i.date)
+            );
+        },
+        availableByGradeFilter() {
+            return uniq(this.rawProcessingData.map((i) => i['input_grade']));
+        }
     },
 
     methods: {
@@ -131,19 +213,24 @@ export default {
                 }
             );
             this.rawProcessingData = response.data;
-            this.processingData = convertToKpiDataByAttr(
-                this.rawProcessingData,
-                "input_target",
-                "input_actual",
-                "2024-11-01",
-                "2024-11-30"
-            );
         },
         async fetchData() {
             this.fetchProcessingData();
         },
-        setSelectedTab(value) {
-            this.selectedTab = value;
+
+        setByPlantSelectedTab(value) {
+            console.log(value);
+            this.selectedByPlantTab = value;
+        },
+        setByPlantSelectedFilter(value) {
+            this.selectedByPlantFilter = value;
+        },
+        
+        setByGradeSelectedTab(value) {
+            this.selectedByGradeTab = value;
+        },
+        setByGradeSelectedFilter(value) {
+            this.selectedByGradeFilter = value;
         },
     },
     created() {
