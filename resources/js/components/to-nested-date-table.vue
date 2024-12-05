@@ -196,7 +196,6 @@ export default {
                 this.planAttrName,
                 this.actualAttrName
             );
-            console.log("transformed result", result);
             return result;
         },
     },
