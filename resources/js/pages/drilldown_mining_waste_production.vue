@@ -77,10 +77,6 @@ export default {
             selectedByContractorTab: 'mtd',
             // Waste Production byContractor dropdown/filter
             selectedByContractorFilter: 'Total',
-
-            wasteProductionActualData: [],
-            wasteProductionPlanData: [],
-            wasteProductionCategories: [],
         };
     },
     computed: {
