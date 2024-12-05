@@ -2,29 +2,39 @@
     <!-- Content : Waste Production-->
     <div class="row justify-content-evenly mb-4">
         <card title="Total Mining Waste Production">
-        <to-date-table
-                :data="wasteData"
-                :sliceAttribute="'contractor'"
-                :attributeHeader="'Con.'"
-                :actualAttrName="'waste_actual_kbcm'"
-                :planAttrName="'waste_plan_kbcm'"
-                ></to-date-table>
+            <to-date-table
+                    :data="rawWasteData"
+                    :sliceAttribute="'contractor'"
+                    :attributeHeader="'Con.'"
+                    :actualAttrName="'waste_actual_kbcm'"
+                    :planAttrName="'waste_plan_kbcm'"
+                    ></to-date-table>
 
-        <kpi-chart
-                :actualData="wasteProductionActualData"
-                :planData="wasteProductionPlanData"
-                :categories="wasteProductionCategories"
-                ></kpi-chart>
+            <chart-group
+                :selectedTab="selectedByContractorTab"
+                :availableFilter="availableByContractorFilter"
+                :selectedFilter="selectedByContractorFilter"
+                @filterChange="setByContractorSelectedFilter"
+                @tabSwitch="setByContractorSelectedTab"
+            >
+                <h5>Total Mining Waste Production: {{ selectedByContractorFilter }}</h5>
+                <kpi-chart
+                    :actualData="wasteProductionActualDataByContractor"
+                    :planData="wasteProductionPlanDataByContractor"
+                    :categories="wasteProductionCategoriesByContractor"
+                 ></kpi-chart>
 
-        <month-line
-                :data="wasteBCMPerHourData"
-                :categories="wasteProductionCategories"
+                <month-line
+                    :data="wasteBCMPerHourByContractorData"
+                    :categories="wasteProductionCategoriesByContractor"
                 ></month-line>
+            </chart-group>
         </card>
     </div>
 </template>
 
 <script>
+import { uniq } from "lodash";
 import SummaryStatistic from "../components/summary-statistic.vue";
 import DepartmentSummary from "../components/department-summary.vue";
 import Card from "../components/card.vue";
@@ -36,9 +46,10 @@ import {
     convertToDailyKpiData,
     convertToKpiDataByAttr,
 } from "../utils/chart";
-import { formatDateToDayMonth } from "../utils/date";
+import { formatDateToDayMonth, formatDateToMonthYear } from "../utils/date";
 import { subset } from "../utils/data";
 import { roundToDecimalPlace } from "../utils/number";
+import ChartGroup from "../components/chart-group.vue";
 import MonthLine from "../components/month-line.vue";
 
 export default {
@@ -55,11 +66,17 @@ export default {
         KpiChart,
         Card,
         MonthLine,
+        ChartGroup,
     },
 
     data() {
         return {
-            wasteData: [],
+            rawWasteData: [],
+
+            // Waste Production byContractor toggle
+            selectedByContractorTab: 'mtd',
+            // Waste Production byContractor dropdown/filter
+            selectedByContractorFilter: 'Total',
 
             wasteProductionActualData: [],
             wasteProductionPlanData: [],
@@ -67,8 +84,56 @@ export default {
         };
     },
     computed: {
-        wasteBCMPerHourData() {
-            return this.wasteProductionActualData.map((i) => roundToDecimalPlace(i / 24));
+
+        // function to get the filtered data for the selected contractor from dropdown list
+        // return two types of data: daily and monthly
+        wasteByContractorData() {
+            if (this.rawWasteData.length === 0) {
+                return {
+                    daily: [],
+                    monthly: [],
+                };
+            }
+
+            const filteredData = this.selectedByContractorFilter === 'Total'
+                ? this.rawWasteData
+                : this.rawWasteData.filter((i) => i.contractor === this.selectedByContractorFilter);
+
+            return convertToKpiDataByAttr(filteredData, 'waste_plan_kbcm', 'waste_actual_kbcm', '2024-11-01', '2024-11-30', );
+        },
+
+        // get the actual waste amount for the selected period from toggle tab
+        wasteProductionActualDataByContractor() {
+            if (this.selectedByContractorTab === 'mtd') {
+
+                return this.wasteByContractorData.daily.map((i) => i.actual);
+            }
+            return this.wasteByContractorData.monthly.map((i) => i.actual);
+        },
+
+        // get the plan waste amount for the selected period from toggle tab
+        wasteProductionPlanDataByContractor() {
+            if (this.selectedByContractorTab === 'mtd') {
+                return this.wasteByContractorData.daily.map((i) => i.plan);
+            }
+            return this.wasteByContractorData.monthly.map((i) => i.plan);
+        },
+
+        // get the categories for the selected period from toggle tab
+        wasteProductionCategoriesByContractor() {
+            if (this.selectedByContractorTab === 'mtd') {
+                return this.wasteByContractorData.daily.map((i) => formatDateToDayMonth(i.date));
+            }
+            return this.wasteByContractorData.monthly.map((i) => formatDateToMonthYear(i.date));
+        },
+
+        // function return the list of available contractor for dropdown list
+        availableByContractorFilter() {
+            return uniq(this.rawWasteData.map((i) => i.contractor));
+        },
+
+        wasteBCMPerHourByContractorData() {
+            return this.wasteProductionActualDataByContractor.map((i) => roundToDecimalPlace(i / 24));
         },
     },
 
@@ -82,36 +147,24 @@ export default {
                     },
                 }
             );
-            const novemberData = subset(
-                response.data,
-                "2024-11-01",
-                "2024-11-30"
-            );
-            const kpiData = convertToKpiDataByAttr(novemberData, 'waste_plan_kbcm', 'waste_actual_kbcm').daily;
-            const wasteActualData = kpiData.map((i) => i.actual);
-            const wastePlanData = kpiData.map((i) => i.plan);
-            const wasteCategories = kpiData.map((i) =>
-                formatDateToDayMonth(i.date)
-            );
 
-            this.wasteData = response.data;
-            this.wasteProductionActualData = wasteActualData;
-            this.wasteProductionPlanData = wastePlanData;
-            this.wasteProductionCategories = wasteCategories;
-
-//            this.stripRatioProductionData = wasteActualData.map((item, index) => {
-//                const result = item / this.coalProductionActualData[index];
-//                if (isNaN(result)) {
-//                    return null;
-//                }
-//                return roundToDecimalPlace(result, 2);
-//            });
-
+            this.rawWasteData = response.data;
         },
 
         async fetchData() {
             this.fetchWasteData();
         },
+
+        // event listener for the dropdown list
+        setByContractorSelectedFilter(filter_value) {
+            this.selectedByContractorFilter = filter_value;
+        },
+
+        // event listener for the toggle tab
+        setByContractorSelectedTab(toggle_value) {
+            this.selectedByContractorTab = toggle_value;
+        },
+
     },
     created() {
         this.fetchData();
