@@ -13,6 +13,7 @@ use App\Http\Controllers\safety_controller;
 use App\Http\Controllers\clinic_controller;
 use App\Http\Controllers\geology_controller;
 use App\Http\Controllers\employee_controller;
+use App\Http\Controllers\download_controller;
 
 
 Route::post('register', [user_controller::class, 'register']);
@@ -89,6 +90,17 @@ Route::prefix('sales')->middleware(['auth:api'])->group(function () {
     
     Route::get('/sale-data', [sale_controller::class, 'saleData']);
     Route::get('/sale-year', [sale_controller::class, 'saleYear']);
+
+    Route::get('/file-category', [sale_controller::class, 'fileCategory']);
+    Route::post('/add-filecategory', [sale_controller::class, 'addFileCategory']);
+    Route::get('/files', [sale_controller::class, 'files']);
+    Route::post('/add-file', [sale_controller::class, 'addFile']);
+    Route::post('/upd-file', [sale_controller::class, 'updFile']);
+    Route::post('/del-file', [sale_controller::class, 'delFile']);
+    Route::post('/upd-filecategory', [sale_controller::class, 'updFileCategory']);
+    Route::post('/del-filecategory', [sale_controller::class, 'delFileCategory']);
+
+
     
     
     // Route::get('/export-excel', [sale_controller::class, 'ExportTest']);
@@ -119,6 +131,7 @@ Route::prefix('dashboard-sale')->middleware(['auth:api'])->group(function () {
 Route::prefix('dashboard-sale')->controller(dash_sale_controller::class)->group(function(){
     Route::post('/hide-contract', 'hideContract');
 });
+
 Route::get('/sale-data-export',[sale_controller::class, 'saleDataExport']);
 
 // Production dashboard
@@ -168,6 +181,7 @@ Route::prefix('employee')->middleware(['auth:api'])->group(function () {
 Route::prefix('safety')->middleware(['auth:api'])->group(function () {
     Route::get('/categories', [safety_controller::class, 'category']);
     Route::get('/codes', [safety_controller::class, 'code']);
+    Route::get('/departments', [safety_controller::class, 'department']);
     Route::post('/add-code', [safety_controller::class, 'addCode']);
     Route::post('/upd-code', [safety_controller::class, 'updCode']);
     Route::post('/del-code', [safety_controller::class, 'delCode']);
@@ -181,12 +195,6 @@ Route::prefix('safety')->middleware(['auth:api'])->group(function () {
     Route::post('/del-incident', [safety_controller::class, 'delIncident']);
     Route::post('/del-file', [safety_controller::class, 'delFile']);
 });
-
-Route::prefix('safety')->controller(safety_controller::class)->group(function(){
-    Route::get('/download-incident-file/{file}', 'downloadIncidentFile');
-});
-
-
 
 
 
@@ -202,6 +210,12 @@ Route::prefix('clinic')->middleware(['auth:api'])->group(function () {
 
 
     // Route::get('/mine-year', [production_controller::class, 'mineYear']);
+});
+
+// Download Files
+Route::prefix('downloads')->controller(download_controller::class)->group(function(){
+    Route::get('/sale-file/{file}', 'saleFile');
+    Route::get('/incident-file/{file}', 'incidentFile');
 });
 
   

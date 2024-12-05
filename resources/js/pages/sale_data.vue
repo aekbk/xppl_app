@@ -295,7 +295,7 @@ export default {
         popupParent: document.body,
         minWidth: 80,
         cellClassRules: { 'pointer': 'true' },
-        menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
+        // menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
       },
 
       salesData: [],

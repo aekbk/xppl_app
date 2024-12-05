@@ -165,7 +165,6 @@ export default {
         return this.emails.filter((i) =>
           i.email.substring(0, this.search.trim().length).toLowerCase() === this.search.trim().toLowerCase() ||
           i.name.substring(0, this.search.trim().length).toLowerCase() === this.search.trim().toLowerCase() ||
-          i.surname.substring(0, this.search.trim().length).toLowerCase() === this.search.trim().toLowerCase() ||
           i.username.substring(0, this.search.trim().length).toLowerCase() === this.search.trim().toLowerCase()
         );
       };

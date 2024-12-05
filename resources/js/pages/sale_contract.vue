@@ -175,8 +175,9 @@
                         </td>
                         <td>
                           <div class="d-flex gap-2 justify-content-start">
+                            <a v-if="item.file_type == 'jpg' || item.file_type == 'txt' || item.file_type == 'pdf' || item.file_type == 'jpeg' || item.file_type == 'png'" href="#" class="link-success text-decoration-none fs-14 mt-1" @click="viewFile(item.new_name)"><i class="ri-eye-line"></i></a>
+                            <a v-else href="#" class="link-success text-decoration-none fs-14 pt-1" title="Not available to view" @click="notView"><i class="ri-eye-off-line"></i></a>
                             <a href="#" class="link-success text-decoration-none fs-16" @click="downloadFile(item.new_name)"><i class="ri-download-2-line"></i></a>
-                            <a v-if="item.file_type == 'jpg' || item.file_type == 'txt' || item.file_type == 'pdf' || item.file_type == 'jpeg' || item.file_type == 'png'" href="#" class="link-success text-decoration-none fs-14 mt-1" @click="viewFile(item.new_name)"><i class="ri-eye-fill"></i></a>
                           </div>
                         </td>
                       </tr>
@@ -404,9 +405,9 @@
                             <i v-else-if="store.fileType(item.file_name) == 'xlsx'" class="ri-file-excel-fill text-success"></i>
                             <i v-else-if="store.fileType(item.file_name) == 'pptx'" class="ri-file-ppt-fill text-danger"></i>
                             <i v-else-if="store.fileType(item.file_name) == 'pdf'" class="ri-file-pdf-fill text-danger"></i>
-                            <i v-else-if="store.fileType(item.file_name) == 'jpg'" class="ri-image-2-fill text-success"></i>
-                            <i v-else-if="store.fileType(item.file_name) == 'jpeg'" class="ri-image-2-fill text-success"></i>
-                            <i v-else-if="store.fileType(item.file_name) == 'png'" class="ri-image-2-fill text-success"></i>
+                            <i v-else-if="store.fileType(item.file_name) == 'jpg'" class="ri-image-fill text-success"></i>
+                            <i v-else-if="store.fileType(item.file_name) == 'jpeg'" class="ri-image-fill text-success"></i>
+                            <i v-else-if="store.fileType(item.file_name) == 'png'" class="ri-image-fill text-success"></i>
                             <i v-else-if="store.fileType(item.file_name) == 'zip'" class="ri-folder-zip-line"></i>
                             <i v-else class="ri-file-unknow-fill text-warning"></i>
                           </div>
@@ -426,9 +427,10 @@
                               <i class="ri-more-fill"></i>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end dropdownmenu-secondary" style=''>
-                              <li v-if="item.file_type == 'jpg' || item.file_type == 'txt' || item.file_type == 'pdf' || item.file_type == 'jpeg' || item.file_type == 'png'"><a class="dropdown-item" href="javascript:void(0);" @click="viewFile(item.new_name)"><i class="ri-eye-fill me-2 align-bottom text-muted"></i>View</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);" @click="downloadFile(item.new_name)"><i class="ri-download-2-fill me-2 align-bottom text-muted"></i>Download</a></li>
-                              <li><a class="dropdown-item" href="javascript:void(0);" @click="delFile(item.file_id, item.new_name, index)"><i class="ri-delete-bin-5-fill me-2 align-bottom text-muted"></i>Delete</a></li>
+                              <li v-if="item.file_type == 'jpg' || item.file_type == 'txt' || item.file_type == 'pdf' || item.file_type == 'jpeg' || item.file_type == 'png'"><a class="dropdown-item" href="javascript:void(0);" @click="viewFile(item.new_name)"><i class="ri-eye-line me-2 align-bottom text-muted"></i>View</a></li>
+                              <a v-else href="#" class="link-success text-decoration-none fs-14 pt-1" title="Not available to view" @click="notView"><i class="ri-eye-off-line"></i></a>
+                              <li><a class="dropdown-item" href="javascript:void(0);" @click="downloadFile(item.new_name)"><i class="ri-download-2-line me-2 align-bottom text-muted"></i>Download</a></li>
+                              <li><a class="dropdown-item" href="javascript:void(0);" @click="delFile(item.file_id, item.new_name, index)"><i class="ri-delete-bin-5-line me-2 align-bottom text-muted"></i>Delete</a></li>
                             </ul>
                           </div>
                         </div>
@@ -769,7 +771,6 @@ import { AgGridVue } from 'ag-grid-vue3';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-material.css';
 import 'ag-grid-enterprise';
-import flatpickr from 'flatpickr';
 import { useToastr } from "../toastr.js";
 import { useStore } from '../stores/store.js';
 import { useAuthStore } from '../stores/auth.js';
@@ -896,7 +897,7 @@ export default {
         filterParams: { buttons: ['reset'] },
         minWidth: 100,
         cellClassRules: { 'pointer': 'true' },
-        menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
+        // menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
       },
 
       contractData: [],
@@ -1488,6 +1489,11 @@ export default {
     viewFile(file) {
       window.open(window.location.origin + '/assets/images/contracts/' + file, '_blank');
     },
+
+    notView() {
+      toastr.info("File isn't viewable; please download instead.");
+    },
+
 
     viewContract() {
       this.viewMode = 'view';

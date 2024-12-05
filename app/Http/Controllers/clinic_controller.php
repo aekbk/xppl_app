@@ -9,17 +9,17 @@ use Illuminate\Support\Str;
 class clinic_controller extends Controller
 {
     public function codes() {
-        $codes = DB::select('select * from cn_codes order by category, code');
+        $codes = DB::select('select * from clinic_codes order by category, code');
         return $codes;
     }
 
     public function medicines() {
-        $medicine = DB::select('select * from cn_medicines order by medicine_eng');
+        $medicine = DB::select('select * from clinic_medicines order by medicine_eng');
         return $medicine;        
     }
 
     public function addCode(Request $request){
-        $check = DB::table('cn_codes')
+        $check = DB::table('clinic_codes')
                     ->where('category', $request->category)
                     ->where('code', $request->code);
 
@@ -31,7 +31,7 @@ class clinic_controller extends Controller
             $datetime = now('Asia/Bangkok')->toDateTimeString();
             $username = Str::lower(auth()->user()->username);
 
-            DB::table('cn_codes')
+            DB::table('clinic_codes')
                 ->insert([
                     'category' => $request->category,
                     'code' => $request->code,
@@ -57,7 +57,7 @@ class clinic_controller extends Controller
         $datetime = now('Asia/Bangkok')->toDateTimeString();
         $username = Str::lower(auth()->user()->username);
         
-        DB::table('cn_codes')
+        DB::table('clinic_codes')
             ->where('code_id', $request->code_id)
             ->update([
                 'code' => $request->code,
@@ -78,7 +78,7 @@ class clinic_controller extends Controller
         //     $message = 'ລາຍການນີ້ໄດ້ຖືກນຳໃຊ້ແລ້ວ ທ່ານບໍ່ສາມາດລົບໄດ້!';
         // } else {
       
-            DB::table('cn_codes')
+            DB::table('clinic_codes')
                 ->where('code_id', $request->code_id)
                 ->delete();
 
@@ -94,7 +94,7 @@ class clinic_controller extends Controller
 
     public function addPatient(Request $request){
 
-        $check = DB::table('cn_patients')->where('patient_name', $request->patient_name);
+        $check = DB::table('clinic_patients')->where('patient_name', $request->patient_name);
 
         if ($check->count()){
             $success = false;
@@ -104,7 +104,7 @@ class clinic_controller extends Controller
             $datetime = now("Asia/Bangkok")->toDateTimeString();
             $username = Str::lower(auth()->user()->username);
 
-            $pMax = DB::table('cn_patients')->max('patient_id');
+            $pMax = DB::table('clinic_patients')->max('patient_id');
             $pId = $pMax + 1;
 
             // DB::table('cs_contracts')
