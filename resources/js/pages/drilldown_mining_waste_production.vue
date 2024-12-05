@@ -106,12 +106,8 @@ export default {
         wasteProductionActualDataByContractor() {
             if (this.selectedByContractorTab === 'mtd') {
 
-                const a = this.wasteByContractorData.daily;
-                console.log("a", a.length);
                 return this.wasteByContractorData.daily.map((i) => i.actual);
             }
-            const a = this.wasteByContractorData.monthly;
-            console.log("a", a.length);
             return this.wasteByContractorData.monthly.map((i) => i.actual);
         },
 
