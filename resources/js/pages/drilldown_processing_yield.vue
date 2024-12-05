@@ -5,8 +5,8 @@
                 :data="rawThroughputData"
                 :sliceAttribute="'plant'"
                 :attributeHeader="'Plants'"
-                :actualAttrName="'throughput_actual'"
-                :planAttrName="'throughput_plan'"
+                :actualAttrName="'yield_actual'"
+                :planAttrName="'yield_plan'"
             ></yield-table>
 
             <chart-group
@@ -89,8 +89,8 @@ export default {
                 : this.rawThroughputData.filter((i) => i.plant === this.selectedByPlantFilter);
             return convertToKpiDataByAttr(
                 filteredData,
-                "throughput_plan",
-                "throughput_actual",
+                "yield_plan",
+                "yield_actual",
                 "2024-11-01",
                 "2024-11-30"
             );
@@ -137,8 +137,8 @@ export default {
             this.rawThroughputData = response.data.map(i => {
                 return {
                     ...i,
-                    throughput_actual: i.input_actual / 24,
-                    throughput_plan: i.input_target / 24,
+                    yield_actual: i.output_actual / i.input_actual,
+                    yield_plan: i.output_target / i.input_target,
                 };
             });
         },

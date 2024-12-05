@@ -1,0 +1,19 @@
+/* Ag-Grid */
+.custom-grid {
+    color: #222222 !important;
+
+    .ag-header-viewport {
+        background-color: #eceef3;
+        color: #808080;
+    }
+
+    .bg-danger {
+        background-color: #ff9175 !important;
+    }
+    .bg-success {
+        background-color: #68C9B5 !important;
+    }
+    .bg-warning {
+        background-color: #F4C56E !important;
+    }
+}

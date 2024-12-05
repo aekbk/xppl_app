@@ -5,7 +5,7 @@
                 :data="miningData"
                 :sliceAttribute="'contractor'"
                 :attributeHeader="'Con.'"
-                :actualAttrName="'coal_plan_kt'"
+                :actualAttrName="'coal_actual_kt'"
                 :planAttrName="'coal_plan_kt'"
             ></to-date-table>
 
@@ -26,7 +26,7 @@
                 :data="miningData"
                 :sliceAttribute="'category'"
                 :attributeHeader="'Grade'"
-                :actualAttrName="'coal_plan_kt'"
+                :actualAttrName="'coal_actual_kt'"
                 :planAttrName="'coal_plan_kt'"
             ></to-date-table>
 
@@ -49,7 +49,7 @@
                 :secondarySliceAttribute="'category'"
                 :primaryAttributeHeader="'Cont.'"
                 :secondaryAttributeHeader="'Grade.'"
-                :actualAttrName="'coal_plan_kt'"
+                :actualAttrName="'coal_actual_kt'"
                 :planAttrName="'coal_plan_kt'"
             ></to-nested-date-table>
 

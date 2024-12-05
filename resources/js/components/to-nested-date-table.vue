@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="custom-grid">
         <ag-grid-vue
             style="height: 90vh; width: 100%;"
             class="ag-theme-quartz"

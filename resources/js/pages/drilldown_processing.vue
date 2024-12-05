@@ -8,24 +8,56 @@
                 >
                     <div class="px-4">
                         <div class="row">
-                            <div class="col-xxl-6 align-self-center">
+                            <div class="col-sm-6 align-self-center">
                                 <div class="">
                                     <p class="fs-15 mt-3">
                                         PROCESSING
+
                                         <span class="ms-3 text-muted fs-6"
-                                            >Last updated on </span
-                                        ><span class="text-danger fs-6"
-                                            >November 13, 2024, at
-                                            15:32:06</span
-                                        >
+                                            >Viewing data up to
+                                            <div
+                                                class="col-sm-auto d-inline-block"
+                                            >
+                                                <div class="input-group ms-2">
+                                                    <input
+                                                        type="text"
+                                                        id="select-date"
+                                                        class="form-control flatpickr-input flatpickr-single rounded-start-2 cursor-pointer"
+                                                        placeholder="Select date"
+                                                        v-model="selectDate"
+                                                        @input="onSelectDate()"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-soft-primary disabled"
+                                                        style="
+                                                            border-color: var(
+                                                                --vz-input-border-custom
+                                                            );
+                                                        "
+                                                        @click="refresh()"
+                                                    >
+                                                        <i
+                                                            class="ri-calendar-line align-middle"
+                                                        ></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </span>
                                     </p>
                                 </div>
-                                <div>
-                                    <nav-tabs :navs="navs">
-
-                                    </nav-tabs>
-                                </div>
                             </div>
+                            <div
+                                class="col-sm-6 align-self-center text-end text-muted"
+                            >
+                                Last updated on:
+                                <span class="">{{
+                                    globalParamStore.getLastUpdatedDate
+                                }}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <nav-tabs :navs="navs"> </nav-tabs>
                         </div>
                     </div>
                 </div>
@@ -37,25 +69,28 @@
 </template>
 
 <script>
+import flatpickr from "flatpickr";
 import { RouterView } from "vue-router";
-import SummaryStatistic from "../components/summary-statistic.vue";
-import DepartmentSummary from "../components/department-summary.vue";
 import Card from "../components/card.vue";
+import DepartmentSummary from "../components/department-summary.vue";
+import KpiChart from "../components/kpi-chart.vue";
+import NavTabs from "../components/nav-tabs.vue";
+import SummaryStatistic from "../components/summary-statistic.vue";
+import ToDateTable from "../components/to-date-table.vue";
 import { useAuthStore } from "../stores/auth";
 import { useStore } from "../stores/store";
-import ToDateTable from "../components/to-date-table.vue";
-import KpiChart from "../components/kpi-chart.vue";
 import { convertToDailyKpiData } from "../utils/chart";
-import { formatDateToDayMonth } from "../utils/date";
 import { subset } from "../utils/data";
-import NavTabs from "../components/nav-tabs.vue";
+import { formatDateToDayMonth } from "../utils/date";
+import { useGlobalParamStore } from "../stores/globalParam";
 
 export default {
     name: "ProcessingDrilldown",
     setup() {
         const authStore = useAuthStore();
         const store = useStore();
-        return { authStore, store };
+        const globalParamStore = useGlobalParamStore();
+        return { authStore, store, globalParamStore };
     },
     components: {
         SummaryStatistic,
@@ -69,7 +104,8 @@ export default {
 
     data() {
         return {
-            miningData: [], 
+            miningData: [],
+            selectDate: "",
 
             // Kpi chart data
             coalProductionActualData: [],
@@ -83,10 +119,12 @@ export default {
                 { label: "MA & UoA", to: "/drilldown-processing/ma-uoa" },
             ],
         };
-        
     },
 
     methods: {
+        onSelectDate() {
+            this.globalParamStore.setSelectedDate(new Date(this.selectDate));
+        },
         async fetchMiningData() {
             const response = await axios.get(
                 "/api/control-tower/mining_detail?start_date=2024-01-01&end_date=2024-12-01",
@@ -98,19 +136,39 @@ export default {
             );
             this.miningData = response.data;
 
-            const novemberData = subset(response.data, "2024-11-01", "2024-11-30");
+            const novemberData = subset(
+                response.data,
+                "2024-11-01",
+                "2024-11-30"
+            );
             const kpiData = convertToDailyKpiData(novemberData);
-            this.coalProductionActualData = kpiData.map(i => i.actual);
-            this.coalProductionPlanData = kpiData.map(i => i.plan);
-            this.coalProductionCategories = kpiData.map(i => formatDateToDayMonth(i.date));
+            this.coalProductionActualData = kpiData.map((i) => i.actual);
+            this.coalProductionPlanData = kpiData.map((i) => i.plan);
+            this.coalProductionCategories = kpiData.map((i) =>
+                formatDateToDayMonth(i.date)
+            );
         },
         async fetchData() {
             this.fetchMiningData();
         },
     },
     created() {
-        // Need to decide if we do loading here or in the child components
-        // this.fetchData();
+        
+    },
+
+    mounted() {
+        const self = this;
+        flatpickr(".flatpickr-single", {
+            altInput: true,
+            altFormat: "d-m-Y",
+            defaultDate: '2024-11-30',
+            disable: [
+                function (date) {
+                    // return true to disable
+                    return date > self.globalParamStore.getLastAvailableDateData; 
+                },
+            ],
+        });
     },
 };
 </script>

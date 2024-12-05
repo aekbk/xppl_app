@@ -23,15 +23,9 @@
                     :categories="coalThroughputCategoriesByPlant"
                 ></ma-chart>
                 <uoa-chart
-                    :actualData="coalThroughputActualDataByPlant"
-                    :planData="coalThroughputPlanDataByPlant"
-                    :categories="coalThroughputCategoriesByPlant"
+                    :totalUoa="10"
+                    :totalMa="20"
                 ></uoa-chart>
-                <!-- <h5>Mining Coal Production</h5>
-                <month-line
-                    :data="coalThroughputActualData"
-                    :categories="coalThroughputCategories"
-                ></month-line> -->
             </chart-group>
         </card>
     </div>
@@ -88,7 +82,7 @@ export default {
 
     computed: {
         // Input screening section
-        inputScreeningData() {
+        inputMAData() {
             if (this.rawUoaData.length === 0) {
                 return {
                     daily: [],
@@ -108,25 +102,24 @@ export default {
             );
         },
         coalThroughputActualDataByPlant() {
-            console.log("recalculating coalThroughputActualData");
             if (this.selectedByPlantTab === 'mtd') {
-                return this.inputScreeningData.daily.map((i) => i.actual);
+                return this.inputMAData.daily.map((i) => i.actual);
             }
-            return this.inputScreeningData.monthly.map((i) => i.actual);
+            return this.inputMAData.monthly.map((i) => i.actual);
         },
         coalThroughputPlanDataByPlant() {
             if (this.selectedByPlantTab === 'mtd') {
-                return this.inputScreeningData.daily.map((i) => i.plan);
+                return this.inputMAData.daily.map((i) => i.plan);
             }
-            return this.inputScreeningData.monthly.map((i) => i.plan);
+            return this.inputMAData.monthly.map((i) => i.plan);
         },
         coalThroughputCategoriesByPlant() {
             if (this.selectedByPlantTab === 'mtd') {
-                return this.inputScreeningData.daily.map((i) =>
+                return this.inputMAData.daily.map((i) =>
                     formatDateToDayMonth(i.date)
                 );
             }
-            return this.inputScreeningData.monthly.map((i) =>
+            return this.inputMAData.monthly.map((i) =>
                 formatDateToMonthYear(i.date)
             );
         },

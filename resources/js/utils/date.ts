@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export function isSameDate(date1: Date, date2: Date): boolean {
     return (
         date1.getFullYear() === date2.getFullYear() &&
@@ -31,4 +33,18 @@ export function formatDateToMonthYear(date: Date): string {
     year: "numeric",
   });
   return formatter.format(date);
+}
+
+// Return list key date such as beginning of the year, beginning of the month, end of the year, end of the month, beginning of the next year, beginning of the next month in yyyy-mm-dd format in key pair value
+export function getKeyDateFromSelectedDate(selectedDate: Date) {
+  return {
+    beginningOfYear: moment(selectedDate).startOf('year').format('YYYY-MM-DD'),
+    beginningOfMonth: moment(selectedDate).startOf('month').format('YYYY-MM-DD'),
+    endOfYear: moment(selectedDate).endOf('year').format('YYYY-MM-DD'),
+    endOfMonth: moment(selectedDate).endOf('month').format('YYYY-MM-DD'),
+    beginningOfNextYear: moment(selectedDate).add(1, 'year').startOf('year').format('YYYY-MM-DD'),
+    beginningOfNextMonth: moment(selectedDate).add(1, 'month').startOf('month').format('YYYY-MM-DD'),
+    startOfNextMonth: new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1).toISOString().split('T')[0],
+    startOfNextYear: new Date(selectedDate.getFullYear() + 1, 0, 1).toISOString().split('T')[0],
+  };
 }

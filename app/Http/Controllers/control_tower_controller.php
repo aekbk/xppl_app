@@ -27,7 +27,7 @@ class control_tower_controller extends Controller
                 SUM(coal_actual_kt) AS total_coal_actual_kt,
                 SUM(coal_plan_kt) AS total_coal_plan_kt
             FROM ct_coal_production
-            WHERE date >= ? AND date < ?
+            WHERE date >= ? AND date <= ?
             GROUP BY date
             ORDER BY date;
         ", [$start_date, $end_date]);
@@ -52,7 +52,7 @@ class control_tower_controller extends Controller
         $mining_data = DB::select("
             SELECT *
             FROM ct_coal_production
-            WHERE date >= ? AND date < ?;
+            WHERE date >= ? AND date <== ?;
         ", [$start_date, $end_date]);
 
         // Return the data as JSON response
@@ -75,7 +75,7 @@ class control_tower_controller extends Controller
         $processing_data = DB::select("
             SELECT *
             FROM ct_plant_processing
-            WHERE date >= ? AND date < ?
+            WHERE date >= ? AND date <= ?
         ", [$start_date, $end_date]);
 
         // Return the data as JSON response
@@ -98,7 +98,7 @@ class control_tower_controller extends Controller
         $mining_data = DB::select("
             SELECT *
             FROM ct_waste_production
-            WHERE date >= ? AND date < ?;
+            WHERE date >= ? AND date <= ?;
         ", [$start_date, $end_date]);
 
         // Return the data as JSON response
@@ -121,7 +121,7 @@ class control_tower_controller extends Controller
         $uoa_data = DB::select("
             SELECT *
             FROM ct_plant_utilization
-            WHERE date >= ? AND date < ?;
+            WHERE date >= ? AND date <= ?;
         ", [$start_date, $end_date]);
 
         // Return the data as JSON response

@@ -5,8 +5,8 @@
                 :data="rawThroughputData"
                 :sliceAttribute="'plant'"
                 :attributeHeader="'Plants'"
-                :actualAttrName="'throughput_actual'"
-                :planAttrName="'throughput_plan'"
+                :actualAttrName="'output_actual'"
+                :planAttrName="'output_target'"
             ></to-date-table>
 
             <chart-group
@@ -35,8 +35,8 @@
                 :data="rawThroughputData"
                 :sliceAttribute="'input_grade'"
                 :attributeHeader="'Coal Grade'"
-                :actualAttrName="'throughput_actual'"
-                :planAttrName="'throughput_plan'"
+                :actualAttrName="'output_actual'"
+                :planAttrName="'output_target'"
             ></to-date-table>
 
             <chart-group
@@ -120,8 +120,8 @@ export default {
                 : this.rawThroughputData.filter((i) => i.plant === this.selectedByPlantFilter);
             return convertToKpiDataByAttr(
                 filteredData,
-                "throughput_plan",
-                "throughput_actual",
+                "output_target",
+                "output_actual",
                 "2024-11-01",
                 "2024-11-30"
             );
@@ -167,8 +167,8 @@ export default {
                 : this.rawThroughputData.filter((i) => i.input_grade === this.selectedByGradeFilter);
             return convertToKpiDataByAttr(
                 filteredData,
-                "throughput_plan",
-                "throughput_actual",
+                "output_target",
+                "output_actual",
                 "2024-11-01",
                 "2024-11-30"
             );
@@ -210,13 +210,7 @@ export default {
                     },
                 }
             );
-            this.rawThroughputData = response.data.map(i => {
-                return {
-                    ...i,
-                    throughput_actual: i.input_actual / 24,
-                    throughput_plan: i.input_target / 24,
-                };
-            });
+            this.rawThroughputData = response.data;
         },
         async fetchData() {
             this.fetchProcessingData();

@@ -70,17 +70,19 @@ import KpiChart from "../components/kpi-chart.vue";
 import {
     convertToKpiDataByAttr,
 } from "../utils/chart";
-import { formatDateToDayMonth, formatDateToMonthYear } from "../utils/date";
+import { formatDateToDayMonth, formatDateToMonthYear, getKeyDateFromSelectedDate } from "../utils/date";
 import { subset } from "../utils/data";
 import ChartGroup from "../components/chart-group.vue";
 import MonthLine from "../components/month-line.vue";
+import { useGlobalParamStore } from "../stores/globalParam";
 
 export default {
     name: "ProcessingDrilldown/Input",
     setup() {
         const authStore = useAuthStore();
         const store = useStore();
-        return { authStore, store };
+        const globalParamStore = useGlobalParamStore();
+        return { authStore, store, globalParamStore };
     },
     components: {
         SummaryStatistic,
@@ -201,11 +203,14 @@ export default {
             return uniq(this.rawProcessingData.map((i) => i['input_grade']));
         }
     },
-
+    watch: {
+        'globalParamStore.getSelectedDate': 'fetchData'
+    },
     methods: {
         async fetchProcessingData() {
+            const keyDates = getKeyDateFromSelectedDate(this.globalParamStore.selectedDate);
             const response = await axios.get(
-                "/api/control-tower/processing_detail?start_date=2024-01-01&end_date=2024-12-01",
+                `/api/control-tower/processing_detail?start_date=${keyDates.beginningOfYear}&end_date=${keyDates.endOfMonth}`,
                 {
                     headers: {
                         Authorization: "Bearer " + this.authStore.getToken,

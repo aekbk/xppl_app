@@ -13,7 +13,7 @@
                                     <p class="fs-15 mt-3">
                                         MINING
                                         <span class="ms-3 text-muted fs-6"
-                                            >Last updated on </span
+                                            >Viewing data up to </span
                                         ><span class="text-danger fs-6"
                                             >November 13, 2024, at
                                             15:32:06</span

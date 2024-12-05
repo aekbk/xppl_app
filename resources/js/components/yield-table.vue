@@ -9,8 +9,6 @@
             :rowData="toDateData"
             animateRows="false"
             :defaultColDef="defaultColDef"
-            :groupTotalRow="'bottom'"
-            :grandTotalRow="'bottom'"
             :groupDefaultExpanded="1"
         ></ag-grid-vue>
     </div>
@@ -21,7 +19,7 @@ import { AgGridVue } from "ag-grid-vue3";
 import { format } from "numerable";
 import { transformToToDateTableData } from "../utils/chart";
 
-const NUMBER_FORMAT = "0,0.00"
+const NUMBER_FORMAT = "0,0%"
 
 export default {
     name: "YieldTable",
@@ -71,7 +69,7 @@ export default {
                             headerName: "Plan",
                             field: "todayPlan",
                             sortable: true,
-                            aggFunc: 'sum',
+                            aggFunc: 'avg',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
                                 return params.value ? format(params.value, NUMBER_FORMAT) : "";
@@ -81,7 +79,7 @@ export default {
                             headerName: "Actual",
                             field: "todayActual",
                             sortable: true,
-                            aggFunc: 'sum',
+                            aggFunc: 'avg',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
                                 return params.value ? format(params.value, NUMBER_FORMAT) : "";
@@ -96,7 +94,7 @@ export default {
                             headerName: "MTD Plan",
                             field: "mtdPlan",
                             sortable: true,
-                            aggFunc: 'sum',
+                            aggFunc: 'avg',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
                                 return params.value ? format(params.value, NUMBER_FORMAT) : "";
@@ -106,7 +104,7 @@ export default {
                             headerName: "Actual",
                             field: "mtdActual",
                             sortable: true,
-                            aggFunc: 'sum',
+                            aggFunc: 'avg',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
                                 return params.value ? format(params.value, NUMBER_FORMAT) : "";
@@ -121,7 +119,7 @@ export default {
                             headerName: "YTD Plan",
                             field: "ytdPlan",
                             sortable: true,
-                            aggFunc: 'sum',
+                            aggFunc: 'avg',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
                                 return params.value ? format(params.value, NUMBER_FORMAT) : "";
@@ -131,7 +129,7 @@ export default {
                             headerName: "Actual",
                             field: "ytdActual",
                             sortable: true,
-                            aggFunc: 'sum',
+                            aggFunc: 'avg',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
                                 return params.value ? format(params.value, NUMBER_FORMAT) : "";

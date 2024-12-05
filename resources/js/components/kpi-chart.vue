@@ -1,5 +1,5 @@
 <template>
-    <div v-if="loaded">
+    <div class="custom-grid" v-if="loaded">
         <!-- Should Render -->
         <apexchart
             type="bar"

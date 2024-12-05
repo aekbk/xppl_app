@@ -97,13 +97,13 @@
                 <i class="ri-dashboard-line"></i><span>{{ $t('dashboard') }}</span>
               </a>
               <div class="collapse menu-dropdown" id="dashboard">
-                <div class="ms-3 fs-6 fw-bold text-white">Overall</div>
+                <div class="ms-3 fs-6 fw-bold text-white">Overview</div>
                 <ul class="nav nav-sm flex-column">
                   <li v-if="auth.M01S01 == 1" class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/control-tower">Control Tower</router-link></li>
                   <li v-if="auth.M01S01 == 1" class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/value-chain">Value Chain</router-link></li>
                 </ul>
 
-                <div class="ms-3 mt-4 fs-6 fw-bold text-white">Overall</div>
+                <div class="ms-3 mt-4 fs-6 fw-bold text-white">Drill Down</div>
                 <ul class="nav nav-sm flex-column">
                   <li v-if="auth.M01S01 == 1" class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/drilldown-mining">Mining</router-link></li>
                   <li v-if="auth.M01S01 == 1" class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/drilldown-processing">Processing</router-link></li>
