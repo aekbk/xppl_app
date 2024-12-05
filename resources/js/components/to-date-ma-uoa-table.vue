@@ -16,14 +16,14 @@
 
 <script lang="ts">
 import { AgGridVue } from "ag-grid-vue3";
-import { getTableBgCellClass, transformToToDateUtilizationTableData } from "../utils/chart";
+import { getUOATableBgCellClass, transformToToDateUtilizationTableData } from "../utils/chart";
 import { format } from "numerable";
 
 const NUMBER_FORMAT = "0,0.00"
 const PERCENT_FORMAT = "0%"
 
 export default {
-    name: "ToDateUoaTable",
+    name: "ToDateMaUoaTable",
     components: { AgGridVue },
     props: {
         data: {
@@ -125,7 +125,7 @@ export default {
                             sortable: true,
                             aggFunc: 'avg',
                             cellClass: (params) => {
-                                const tableClass = getTableBgCellClass(params.value, 1, 0.95);
+                                const tableClass = getUOATableBgCellClass(params.value, 0.95, 0.855);
                                 return `${tableClass} text-end`;
                             },
                             valueGetter: (params) => {
@@ -154,7 +154,7 @@ export default {
                             sortable: true,
                             aggFunc: 'avg',
                             cellClass: (params) => {
-                                const tableClass = getTableBgCellClass(params.value, 1, 0.85);
+                                const tableClass = getUOATableBgCellClass(params.value, 1, 0.85);
                                 return `${tableClass} text-end`;
                             },
                             valueGetter: (params) => {
@@ -212,23 +212,11 @@ export default {
                             },
                         },
                         {
-                            headerName: "Target Avail (%)",
-                            sortable: true,
-                            aggFunc: 'avg',
-                            cellClass: 'text-end',
-                            valueGetter: (params) => {
-                                return 0.95;
-                            },
-                            valueFormatter: (params) => {
-                                return format(params.value, PERCENT_FORMAT);
-                            },
-                        },
-                        {
                             headerName: "Actual Avail (%)",
                             sortable: true,
                             aggFunc: 'avg',
                             cellClass: (params) => {
-                                const tableClass = getTableBgCellClass(params.value, 1, 0.95);
+                                const tableClass = getUOATableBgCellClass(params.value, 0.95, 0.855);
                                 return `${tableClass} text-end`;
                             },
                             valueGetter: (params) => {
@@ -241,23 +229,11 @@ export default {
                             },
                         },
                         {
-                            headerName: "Target UoA (%)",
-                            sortable: true,
-                            aggFunc: 'avg',
-                            cellClass: 'text-end',
-                            valueGetter: (params) => {
-                                return .85;
-                            },
-                            valueFormatter: (params) => {
-                                return format(params.value, PERCENT_FORMAT);
-                            },
-                        },
-                        {
                             headerName: "UoA (%)",
                             sortable: true,
                             aggFunc: 'avg',
                             cellClass: (params) => {
-                                const tableClass = getTableBgCellClass(params.value, 1, 0.85);
+                                const tableClass = getUOATableBgCellClass(params.value, 1, 0.85);
                                 return `${tableClass} text-end`;
                             },
                             valueGetter: (params) => {
@@ -332,7 +308,7 @@ export default {
                             sortable: true,
                             aggFunc: 'avg',
                             cellClass: (params) => {
-                                const tableClass = getTableBgCellClass(params.value, 1, 0.95);
+                                const tableClass = getUOATableBgCellClass(params.value, 0.95, 0.855);
                                 return `${tableClass} text-end`;
                             },
                             valueGetter: (params) => {
@@ -361,7 +337,7 @@ export default {
                             sortable: true,
                             aggFunc: 'avg',
                             cellClass: (params) => {
-                                const tableClass = getTableBgCellClass(params.value, 1, 0.85);
+                                const tableClass = getUOATableBgCellClass(params.value, 1, 0.85);
                                 return `${tableClass} text-end`;
                             },
                             valueGetter: (params) => {

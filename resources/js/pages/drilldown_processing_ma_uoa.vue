@@ -1,13 +1,13 @@
 <template>
     <div class="row justify-content-evenly mb-4">
         <card title="Throughput By Plant">
-            <to-date-uoa-table
+            <to-date-ma-uoa-table
                 :data="rawUoaData"
                 :sliceAttribute="'plant'"
                 :attributeHeader="'Plants'"
                 :actualAttrName="'throughput_actual'"
                 :planAttrName="'throughput_plan'"
-            ></to-date-uoa-table>
+            ></to-date-ma-uoa-table>
 
             <chart-group
                 :selectedTab="selectedByPlantTab"
@@ -16,12 +16,17 @@
                 @filterChange="setByPlantSelectedFilter"
                 @tabSwitch="setByPlantSelectedTab"
             >
-                <h5>Total Throughput: {{ selectedByPlantFilter }}</h5>
-                <kpi-chart
+                <h5>Machine Availability</h5>
+                <ma-chart
                     :actualData="coalThroughputActualDataByPlant"
                     :planData="coalThroughputPlanDataByPlant"
                     :categories="coalThroughputCategoriesByPlant"
-                ></kpi-chart>
+                ></ma-chart>
+                <uoa-chart
+                    :actualData="coalThroughputActualDataByPlant"
+                    :planData="coalThroughputPlanDataByPlant"
+                    :categories="coalThroughputCategoriesByPlant"
+                ></uoa-chart>
                 <!-- <h5>Mining Coal Production</h5>
                 <month-line
                     :data="coalThroughputActualData"
@@ -34,20 +39,20 @@
 
 <script>
 import { uniq } from "lodash";
-import SummaryStatistic from "../components/summary-statistic.vue";
-import DepartmentSummary from "../components/department-summary.vue";
 import Card from "../components/card.vue";
+import ChartGroup from "../components/chart-group.vue";
+import DepartmentSummary from "../components/department-summary.vue";
+import MaChart from "../components/ma-chart.vue";
+import MonthLine from "../components/month-line.vue";
+import SummaryStatistic from "../components/summary-statistic.vue";
+import ToDateMaUoaTable from "../components/to-date-ma-uoa-table.vue";
+import UoaChart from "../components/uoa-chart.vue";
 import { useAuthStore } from "../stores/auth";
 import { useStore } from "../stores/store";
-import ToDateTable from "../components/to-date-table.vue";
-import KpiChart from "../components/kpi-chart.vue";
 import {
     convertToKpiDataByAttr,
 } from "../utils/chart";
 import { formatDateToDayMonth, formatDateToMonthYear } from "../utils/date";
-import ChartGroup from "../components/chart-group.vue";
-import MonthLine from "../components/month-line.vue";
-import ToDateUoaTable from "../components/to-date-uoa-table.vue";
 
 export default {
     name: "ProcessingDrilldown/Throughput",
@@ -59,8 +64,9 @@ export default {
     components: {
         SummaryStatistic,
         DepartmentSummary,
-        ToDateUoaTable,
-        KpiChart,
+        ToDateMaUoaTable,
+        UoaChart,
+        MaChart,
         Card,
         ChartGroup,
         MonthLine,
@@ -95,8 +101,8 @@ export default {
                 : this.rawUoaData.filter((i) => i.plant === this.selectedByPlantFilter);
             return convertToKpiDataByAttr(
                 filteredData,
-                "throughput_plan",
-                "throughput_actual",
+                "target_run_hrs",
+                "actual_availability_hrs",
                 "2024-11-01",
                 "2024-11-30"
             );
@@ -139,7 +145,10 @@ export default {
                     },
                 }
             );
-            this.rawUoaData = response.data;
+            this.rawUoaData = response.data.map((i) => ({
+                ...i,
+                actual_availability_hrs: i.actual_run_hrs + i.actual_standby_hrs,
+            }));
         },
         async fetchData() {
             this.fetchProcessingData();

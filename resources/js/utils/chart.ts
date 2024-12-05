@@ -663,11 +663,11 @@ export function transformToToDateUtilizationTableData(
     return result;
 }
 
-export function getTableBgCellClass(value: number, upperBound: number, lowerBound: number) {
-    if (value < lowerBound) {
-        return "bg-danger";
-    } else if (value > upperBound) {
+export function getUOATableBgCellClass(value: number, successBound: number, warningBound: number) {
+    if (value >= successBound) {
+        return "bg-success";
+    } else if (value >= warningBound) {
         return "bg-warning";
     }
-    return "bg-success";
+    return "bg-danger";
 }
