@@ -95,7 +95,7 @@ export default {
                 yaxis: [
                     {
                         title: {
-                            text: "Daily Production (Ktonnes)",
+                            text: self.yAxisTitle,
                         },
                         labels: {
                             formatter: function (value) {
@@ -129,6 +129,11 @@ export default {
             type: String,
             required: false,
             default: `t`,
+        },
+        yAxisTitle: {
+            type: String,
+            required: false,
+            default: "Hourly Production (Ktonnes)",
         },
     },
 };

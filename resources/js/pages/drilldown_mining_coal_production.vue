@@ -23,21 +23,28 @@
                :selectedTab="selectedByContractorAndGradeTab"
                :primaryAvailableFilter="availableByContractorFilter"
                :primarySelectedFilter="selectedByContractorFilter"
+               :primaryDefaultFilter="defaultByContractorFilter"
                :secondaryAvailableFilter="availableByGradeFilter"
                :secondarySelectedFilter="selectedByGradeFilter"
+               :secondaryDefaultFilter="defaultByGradeFilter"
                @primaryFilterChange="setByContractorSelectedFilter"
                @secondaryFilterChange="setByGradeSelectedFilter"
                @tabSwitch="setByContractorAndGradeSelectedTab"
            >
+                <h5>Mining Coal Production: {{ selectedByContractorFilter }}, {{ selectedByGradeFilter }}</h5>
                 <kpi-chart
                     :actualData="miningProductionActualDataByContractorAndGrade"
                     :planData="miningProductionPlanDataByContractorAndGrade"
                     :categories="miningProductionCategoriesByContractorAndGrade"
+                    :leftYAxisTitle="'Weight (Kt)'"
+                    :rightYAxisTitle="'Cum. Weight (Mt)'"
                 ></kpi-chart>
 
+                <h5>Mining Coal Production: {{ selectedByContractorFilter }}, {{ selectedByGradeFilter }}</h5>
                 <month-line
                     :data="tonesPerHourData"
                     :categories="miningProductionCategoriesByContractorAndGrade"
+                    :yAxisTitle="'Hourly Productivity (Kt/hour)'"
                 ></month-line>
            </nested-chart-group>
         </card>
@@ -58,6 +65,7 @@
 
 <script>
 import { uniq } from "lodash";
+import moment from "moment";
 import SummaryStatistic from "../components/summary-statistic.vue";
 import DepartmentSummary from "../components/department-summary.vue";
 import Card from "../components/card.vue";
@@ -113,10 +121,14 @@ export default {
 
             // Coal Production byContractAndGrade toggle 
             selectedByContractorAndGradeTab: 'mtd',
+
             // Coal Production byContractor filter 
-            selectedByContractorFilter: "Total",
+            defaultByContractorFilter: "All Contractors",
+            selectedByContractorFilter: "All Contractors",
+
             // Coal Production byGrade filter 
-            selectedByGradeFilter: "Total",
+            defaultByGradeFilter: "All Grades",
+            selectedByGradeFilter: "All Grades",
         };
     },
     computed: {
@@ -133,12 +145,12 @@ export default {
             }
 
             // filter by contractor first
-            const filteredByContractorData = this.selectedByContractorFilter === "Total"
+            const filteredByContractorData = this.selectedByContractorFilter === this.defaultByContractorFilter 
                 ? this.rawMiningData 
                 : this.rawMiningData.filter((i) => i.contractor === this.selectedByContractorFilter);
 
             // filter by grade next
-            const filteredData = this.selectedByGradeFilter === "Total"
+            const filteredData = this.selectedByGradeFilter === this.defaultByGradeFilter
                 ? filteredByContractorData 
                 : filteredByContractorData.filter((i) => i.category === this.selectedByGradeFilter);
 
@@ -183,9 +195,11 @@ export default {
         },
 
         tonesPerHourData() {
-            return this.miningProductionActualDataByContractorAndGrade.map((i) =>
-                roundToDecimalPlace(i / 24)
-            );
+            if (this.selectedByContractorAndGradeTab === "mtd") {
+                return this.miningByContractorAndGradeData.daily.map((i) => roundToDecimalPlace(i.actual / 24));
+            } else {
+                return this.miningByContractorAndGradeData.monthly.map((i) => roundToDecimalPlace(i.actual / 24 / moment(i.date).daysInMonth()));
+            }
         },
     },
 

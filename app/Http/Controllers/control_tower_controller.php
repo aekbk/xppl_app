@@ -52,7 +52,7 @@ class control_tower_controller extends Controller
         $mining_data = DB::select("
             SELECT *
             FROM ct_coal_production
-            WHERE date >= ? AND date <== ?;
+            WHERE date >= ? AND date <= ?;
         ", [$start_date, $end_date]);
 
         // Return the data as JSON response

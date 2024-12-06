@@ -14,6 +14,7 @@
                 :selectedTab="selectedByContractorTab"
                 :availableFilter="availableByContractorFilter"
                 :selectedFilter="selectedByContractorFilter"
+                :defaultFilter="defaultByContractorFilter"
                 @filterChange="setByContractorSelectedFilter"
                 @tabSwitch="setByContractorSelectedTab"
             >
@@ -22,11 +23,14 @@
                     :actualData="wasteProductionActualDataByContractor"
                     :planData="wasteProductionPlanDataByContractor"
                     :categories="wasteProductionCategoriesByContractor"
+                    :leftYAxisTitle="'Volume (Kbcm)'"
+                    :rightYAxisTitle="'Cum. Volume (Mbcm)'"
                  ></kpi-chart>
 
                 <month-line
                     :data="wasteBCMPerHourByContractorData"
                     :categories="wasteProductionCategoriesByContractor"
+                    :yAxisTitle="'Hourly Productivity (Kbcm/hour)'"
                 ></month-line>
             </chart-group>
         </card>
@@ -35,6 +39,7 @@
 
 <script>
 import { uniq } from "lodash";
+import moment from "moment";
 import SummaryStatistic from "../components/summary-statistic.vue";
 import DepartmentSummary from "../components/department-summary.vue";
 import Card from "../components/card.vue";
@@ -75,8 +80,10 @@ export default {
 
             // Waste Production byContractor toggle
             selectedByContractorTab: 'mtd',
+
             // Waste Production byContractor dropdown/filter
-            selectedByContractorFilter: 'Total',
+            defaultByContractorFilter: 'All Contractor',
+            selectedByContractorFilter: 'All Contractor',
         };
     },
     computed: {
@@ -91,7 +98,7 @@ export default {
                 };
             }
 
-            const filteredData = this.selectedByContractorFilter === 'Total'
+            const filteredData = this.selectedByContractorFilter === this.defaultByContractorFilter
                 ? this.rawWasteData
                 : this.rawWasteData.filter((i) => i.contractor === this.selectedByContractorFilter);
 
@@ -129,7 +136,11 @@ export default {
         },
 
         wasteBCMPerHourByContractorData() {
-            return this.wasteProductionActualDataByContractor.map((i) => roundToDecimalPlace(i / 24));
+            if (this.selectedByContractorTab === "mtd") {
+                return this.wasteByContractorData.daily.map((i) => roundToDecimalPlace(i.actual / 24));
+            } else {
+                return this.wasteByContractorData.monthly.map((i) => roundToDecimalPlace(i.actual / 24 / moment(i.date).daysInMonth()));
+            }
         },
     },
 

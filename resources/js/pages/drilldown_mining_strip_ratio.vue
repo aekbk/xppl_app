@@ -6,15 +6,19 @@
                 :selectedTab="selectedByContractorAndPitTab"
                 :primaryAvailableFilter="availableByContractorFilter"
                 :primarySelectedFilter="selectedByContractorFilter"
+                :primaryDefaultFilter="defaultByContractorFilter"
                 :secondaryAvailableFilter="availableByPitFilter"
                 :secondarySelectedFilter="selectedByPitFilter"
+                :secondaryDefaultFilter="defaultByPitFilter"
                 @primaryFilterChange="setByContractorSelectedFilter"
                 @secondaryFilterChange="setByPitSelectedFilter"
                 @tabSwitch="setByContractorAndPitSelectedTab"
             >
+                <h5>Strip Ratio: {{ selectedByContractorFilter }}, {{ selectedByPitFilter }}</h5>
                 <month-line
                     :data="stripRatioDataByContractorAndPit"
                     :categories="wasteProductionCategoriesByContractorAndPit"
+                    :yAxisTitle="'Strip Ratio'"
                  ></month-line>
             </nested-chart-group>
         </card>
@@ -67,8 +71,11 @@ export default {
             selectedByContractorAndPitTab: "mtd",
 
             // selected filter values for contractor and pit
-            selectedByContractorFilter: "Total",
-            selectedByPitFilter: "Total",
+            defaultByContractorFilter: "All Contractors",
+            selectedByContractorFilter: "All Contractors",
+
+            selectedByPitFilter: "All Pits",
+            defaultByPitFilter: "All Pits",
         };
     },
     computed: {
@@ -85,12 +92,12 @@ export default {
             }
 
             // filter by contractor first
-            const filteredByContractorData = this.selectedByContractorFilter === "Total"
+            const filteredByContractorData = this.selectedByContractorFilter === this.defaultByContractorFilter
                 ? this.rawMiningData
                 : this.rawMiningData.filter((i) => i.contractor === this.selectedByContractorFilter);
 
             // filter by pit next
-            const filteredData = this.selectedByPitFilter === "Total"
+            const filteredData = this.selectedByPitFilter === this.defaultByPitFilter
                 ? filteredByContractorData
                 : filteredByContractorData.filter((i) => i.pit === this.selectedByPitFilter);
 
@@ -123,12 +130,12 @@ export default {
             }
 
             // filter by contractor first
-            const filteredByContractorData = this.selectedByContractorFilter === "Total"
+            const filteredByContractorData = this.selectedByContractorFilter === this.defaultByContractorFilter
                 ? this.rawWasteData
                 : this.rawWasteData.filter((i) => i.contractor === this.selectedByContractorFilter);
 
             // filter by pit next
-            const filteredData = this.selectedByPitFilter === "Total"
+            const filteredData = this.selectedByPitFilter === this.defaultByPitFilter
                 ? filteredByContractorData
                 : filteredByContractorData.filter((i) => i.pit === this.selectedByPitFilter);
 
