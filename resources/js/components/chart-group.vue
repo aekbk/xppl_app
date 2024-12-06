@@ -23,10 +23,10 @@
                         <li>
                             <button
                                 class="dropdown-item"
-                                :class="{ active: selectedFilter === 'Total' }"
-                                @click="onFilterChange('Total')"
+                                :class="{ active: selectedFilter === defaultFilter }"
+                                @click="onFilterChange(defaultFilter)"
                             >
-                                Total
+                                {{ defaultFilter }}
                             </button>
                         </li>
                         <li><hr class="dropdown-divider" /></li>
@@ -118,7 +118,10 @@ export default {
         selectedFilter: {
             type: String,
             required: false,
-            default: "Total",
+        },
+        defaultFilter: {
+            type: String,
+            required: true,
         },
     },
     emits: ["filterChange", "tabSwitch"],
