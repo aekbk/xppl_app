@@ -11,6 +11,7 @@
             :rowData="toDateData"
             animateRows="false"
             :defaultColDef="defaultColDef"
+            :groupDefaultExpanded="1"
         ></ag-grid-vue>
     </div>
 </template>
@@ -65,6 +66,8 @@ export default {
   					field: "primaryAttr", 
   					sortable: true,
   					filter: true,
+                    rowGroup: true,
+                    hide: true,
   				},
   				{
   					headerName: this.secondaryAttributeHeader,
@@ -98,7 +101,7 @@ export default {
                                 return 'bg-success'; // No class for other cases
                             },
                             valueFormatter: (params) => {
-                                return `${params.value.toFixed(2)}%`;
+                                return `${(params.value || 0).toFixed(2)}%`;
                             },
                         },
                     ],
@@ -129,7 +132,7 @@ export default {
                                 return 'bg-success'; // No class for other cases
                             },
                             valueFormatter: (params) => {
-                                return `${params.value.toFixed(2)}%`;
+                                return `${(params.value || 0).toFixed(2)}%`;
                             },
                         },
                         {
@@ -165,7 +168,7 @@ export default {
                                 return 'bg-success'; // No class for other cases
                             },
                             valueFormatter: (params) => {
-                                return `${params.value.toFixed(2)}%`;
+                                return `${(params.value || 0).toFixed(2)}%`;
                             },
                         },
                         {
@@ -196,7 +199,6 @@ export default {
                 this.planAttrName,
                 this.actualAttrName
             );
-            console.log("transformed result", result);
             return result;
         },
     },

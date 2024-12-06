@@ -2,49 +2,49 @@
     <div class="row justify-content-evenly mb-4">
         <card title="Total Mining Coal Production By Contractor">
             <to-date-table
-                :data="miningData"
+                :data="rawMiningData"
                 :sliceAttribute="'contractor'"
                 :attributeHeader="'Con.'"
                 :actualAttrName="'coal_actual_kt'"
                 :planAttrName="'coal_plan_kt'"
             ></to-date-table>
-
-            <kpi-chart
-                :actualData="coalProductionActualData"
-                :planData="coalProductionPlanData"
-                :categories="coalProductionCategories"
-            ></kpi-chart>
-
-            <month-line
-                :data="tonesPerHourData"
-                :categories="coalProductionCategories"
-            ></month-line>
         </card>
 
         <card title="Total Mining Coal Production By Grade">
             <to-date-table
-                :data="miningData"
+                :data="rawMiningData"
                 :sliceAttribute="'category'"
                 :attributeHeader="'Grade'"
                 :actualAttrName="'coal_actual_kt'"
                 :planAttrName="'coal_plan_kt'"
             ></to-date-table>
 
-            <kpi-chart
-                :actualData="coalProductionActualData"
-                :planData="coalProductionPlanData"
-                :categories="coalProductionCategories"
-            ></kpi-chart>
+           <nested-chart-group
+               :selectedTab="selectedByContractorAndGradeTab"
+               :primaryAvailableFilter="availableByContractorFilter"
+               :primarySelectedFilter="selectedByContractorFilter"
+               :secondaryAvailableFilter="availableByGradeFilter"
+               :secondarySelectedFilter="selectedByGradeFilter"
+               @primaryFilterChange="setByContractorSelectedFilter"
+               @secondaryFilterChange="setByGradeSelectedFilter"
+               @tabSwitch="setByContractorAndGradeSelectedTab"
+           >
+                <kpi-chart
+                    :actualData="miningProductionActualDataByContractorAndGrade"
+                    :planData="miningProductionPlanDataByContractorAndGrade"
+                    :categories="miningProductionCategoriesByContractorAndGrade"
+                ></kpi-chart>
 
-            <month-line
-                :data="tonesPerHourData"
-                :categories="coalProductionCategories"
-            ></month-line>
+                <month-line
+                    :data="tonesPerHourData"
+                    :categories="miningProductionCategoriesByContractorAndGrade"
+                ></month-line>
+           </nested-chart-group>
         </card>
 
         <card title="Total Mining Coal Production By Contractor & Grade">
             <to-nested-date-table
-                :data="miningData"
+                :data="rawMiningData"
                 :primarySliceAttribute="'contractor'"
                 :secondarySliceAttribute="'category'"
                 :primaryAttributeHeader="'Cont.'"
@@ -52,22 +52,12 @@
                 :actualAttrName="'coal_actual_kt'"
                 :planAttrName="'coal_plan_kt'"
             ></to-nested-date-table>
-
-            <kpi-chart
-                :actualData="coalProductionActualData"
-                :planData="coalProductionPlanData"
-                :categories="coalProductionCategories"
-            ></kpi-chart>
-
-            <month-line
-                :data="tonesPerHourData"
-                :categories="coalProductionCategories"
-            ></month-line>
         </card>
     </div>
 </template>
 
 <script>
+import { uniq } from "lodash";
 import SummaryStatistic from "../components/summary-statistic.vue";
 import DepartmentSummary from "../components/department-summary.vue";
 import Card from "../components/card.vue";
@@ -77,10 +67,27 @@ import ToDateTable from "../components/to-date-table.vue";
 import ToNestedDateTable from "../components/to-nested-date-table.vue";
 import KpiChart from "../components/kpi-chart.vue";
 import { convertToDailyKpiData, convertToKpiDataByAttr } from "../utils/chart";
-import { formatDateToDayMonth } from "../utils/date";
+import { formatDateToDayMonth, formatDateToMonthYear } from "../utils/date";
 import { subset } from "../utils/data";
 import { roundToDecimalPlace } from "../utils/number";
 import MonthLine from "../components/month-line.vue";
+import NestedChartGroup from "../components/nested-chart-group.vue";
+
+/*
+ Page layout:
+ < table group by Contractor >
+ < table group by Grade >
+ < Contractor dropdown & Grade dropdown & Toggle[mtd/ytd] >
+    < bar chart>
+    < line chart>
+ < table double group by Contractor&Grade >
+
+ Please note that the bar chart and line chart will utilize the same set of two
+ dropdown lists and one toggle button to filter the data. The first dropdown
+ list will filter by Contractor, while the second dropdown list will filter by
+ Grade. The toggle button will allow for switching between MTD and YTD data.
+
+*/
 
 export default {
     name: "MiningDrilldown/Coal-Production",
@@ -97,21 +104,86 @@ export default {
         KpiChart,
         Card,
         MonthLine,
+        NestedChartGroup,
     },
 
     data() {
         return {
-            miningData: [],
+            rawMiningData: [],
 
-            // Kpi chart data
-            coalProductionActualData: [],
-            coalProductionPlanData: [],
-            coalProductionCategories: [],
+            // Coal Production byContractAndGrade toggle 
+            selectedByContractorAndGradeTab: 'mtd',
+            // Coal Production byContractor filter 
+            selectedByContractorFilter: "Total",
+            // Coal Production byGrade filter 
+            selectedByGradeFilter: "Total",
         };
     },
     computed: {
+
+        // function to get filtered data for total mining coal production
+        // filtered by contractor then grade if selected otherwise raw data
+        // returns an object with daily and monthly data
+        miningByContractorAndGradeData() {
+            if (this.rawMiningData.length === 0) {
+                return {
+                    daily: [],
+                    monthly: [],
+                } 
+            }
+
+            // filter by contractor first
+            const filteredByContractorData = this.selectedByContractorFilter === "Total"
+                ? this.rawMiningData 
+                : this.rawMiningData.filter((i) => i.contractor === this.selectedByContractorFilter);
+
+            // filter by grade next
+            const filteredData = this.selectedByGradeFilter === "Total"
+                ? filteredByContractorData 
+                : filteredByContractorData.filter((i) => i.category === this.selectedByGradeFilter);
+
+            return convertToKpiDataByAttr(filteredData, 'coal_plan_kt', 'coal_actual_kt', '2024-11-01', '2024-11-30');
+        },
+
+        // get the actual mining amount for the selected period from toggle tab
+        miningProductionActualDataByContractorAndGrade() {
+            if (this.selectedByContractorAndGradeTab === "mtd") {
+                return this.miningByContractorAndGradeData.daily.map((i) => i.actual);
+            } else {
+                return this.miningByContractorAndGradeData.monthly.map((i) => i.actual);
+            }
+        },
+
+        // get the planned mining amount for the selected period from toggle tab
+        miningProductionPlanDataByContractorAndGrade() {
+            if (this.selectedByContractorAndGradeTab === "mtd") {
+                return this.miningByContractorAndGradeData.daily.map((i) => i.plan);
+            } else {
+                return this.miningByContractorAndGradeData.monthly.map((i) => i.plan);
+            }
+        },
+
+        // get the categories for the selected period from toggle tab
+        miningProductionCategoriesByContractorAndGrade() {
+            if (this.selectedByContractorAndGradeTab === "mtd") {
+                return this.miningByContractorAndGradeData.daily.map((i) => formatDateToDayMonth(i.date));
+            } else {
+                return this.miningByContractorAndGradeData.monthly.map((i) => formatDateToMonthYear(i.date));
+            }
+        },
+
+        // return unique list of available contractor for dropdown menu
+        availableByContractorFilter() {
+            return uniq(this.rawMiningData.map((i) => i.contractor));
+        },
+
+        // return unique list of available grade for dropdown menu
+        availableByGradeFilter() {
+            return uniq(this.rawMiningData.map((i) => i.category));
+        },
+
         tonesPerHourData() {
-            return this.coalProductionActualData.map((i) =>
+            return this.miningProductionActualDataByContractorAndGrade.map((i) =>
                 roundToDecimalPlace(i / 24)
             );
         },
@@ -127,22 +199,25 @@ export default {
                     },
                 }
             );
-            this.miningData = response.data;
-
-            const novemberData = subset(
-                response.data,
-                "2024-11-01",
-                "2024-11-30"
-            );
-            const kpiData = convertToDailyKpiData(novemberData);
-            this.coalProductionActualData = kpiData.map((i) => i.actual);
-            this.coalProductionPlanData = kpiData.map((i) => i.plan);
-            this.coalProductionCategories = kpiData.map((i) =>
-                formatDateToDayMonth(i.date)
-            );
+            this.rawMiningData = response.data;
         },
         async fetchData() {
             this.fetchMiningData();
+        },
+
+        // event listener for contractor dropdown list
+        setByContractorSelectedFilter(contractor_filter_value) {
+            this.selectedByContractorFilter = contractor_filter_value;
+        },
+
+        // event listener for grade dropdown list
+        setByGradeSelectedFilter(grade_filter_value) {
+            this.selectedByGradeFilter = grade_filter_value;
+        },
+
+        // event listener for the toggle tab
+        setByContractorAndGradeSelectedTab(toggle_value) {
+            this.selectedByContractorAndGradeTab = toggle_value;
         },
     },
     created() {
