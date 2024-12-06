@@ -23,8 +23,8 @@
                     :categories="coalThroughputCategoriesByPlant"
                 ></ma-chart>
                 <uoa-chart
-                    :totalUoa="10"
-                    :totalMa="20"
+                    :totalUoa="uoaChartData.totalUoa"
+                    :totalMa="uoaChartData.totalMa"
                 ></uoa-chart>
             </chart-group>
         </card>
@@ -45,6 +45,7 @@ import { useAuthStore } from "../stores/auth";
 import { useStore } from "../stores/store";
 import {
     convertToKpiDataByAttr,
+    transformToToDateUtilizationTableData,
 } from "../utils/chart";
 import { formatDateToDayMonth, formatDateToMonthYear } from "../utils/date";
 
@@ -126,6 +127,36 @@ export default {
         availableByPlantFilter() {
             return uniq(this.rawUoaData.map((i) => i.plant));
         },
+        maUoaData() {
+            return transformToToDateUtilizationTableData(
+                this.rawUoaData,
+                new Date("2024-11-20"), 
+                'plant', 
+            )
+        },
+        uoaChartData() {
+            let filteredData = this.maUoaData;
+            if (this.selectedByPlantFilter !== 'Total') {
+                filteredData = filteredData.filter((i) => i.attr === this.selectedByPlantFilter);
+            }
+            let totalMa = 0;
+            let totalUoa = 0;
+            filteredData.forEach((i) => {
+                const plantMa = this.selectedByPlantTab === 'mtd'
+                    ? i.mtdActualRunTime + i.mtdActualStandByTime
+                    : i.ytdActualRunTime + i.ytdActualStandByTime;
+                const plantUoa = this.selectedByPlantTab === 'mtd'
+                    ? i.mtdActualRunTime
+                    : i.ytdActualRunTime;
+
+                totalMa += plantMa;
+                totalUoa += plantUoa;
+            });
+            return {
+                totalMa,
+                totalUoa,
+            };
+        }
     },
 
     methods: {
@@ -148,7 +179,6 @@ export default {
         },
 
         setByPlantSelectedTab(value) {
-            console.log(value);
             this.selectedByPlantTab = value;
         },
         setByPlantSelectedFilter(value) {

@@ -9,10 +9,12 @@
         ></apexchart>
         <div class="text-center fs-4">
             <div>
-                Total UoA: <span class="fw-bold">{{ totalUoa }} hours</span>
+                Total UoA:
+                <span class="fw-bold">{{ roundedTotalUoa }} hours</span>
             </div>
             <div>
-                Total MA: <span class="fw-bold">{{ totalUoa }} hours</span>
+                Total MA:
+                <span class="fw-bold">{{ roundedTotalMa }} hours</span>
             </div>
         </div>
     </div>
@@ -22,6 +24,7 @@
 import VueApexCharts from "vue3-apexcharts";
 import { getCumulativeData, getYMax } from "../utils/chart";
 import { format } from "numerable";
+import { roundToDecimalPlace } from "../utils/number";
 
 export default {
     name: "UoaChart",
@@ -37,12 +40,9 @@ export default {
                 return [0];
             }
 
-            return [
-                (this.totalUoa/this.totalMa) * 100,
-            ];
+            return [roundToDecimalPlace((this.totalUoa / this.totalMa) * 100)];
         },
         getChartOptions() {
-
             return {
                 chart: {
                     height: 500,
@@ -64,7 +64,7 @@ export default {
                                 show: true, // Show the label name
                                 fontSize: "18px",
                                 offsetY: -16,
-                                fontWeight: 'normal',
+                                fontWeight: "normal",
                             },
                             value: {
                                 offsetY: -60,
@@ -94,6 +94,12 @@ export default {
                 },
                 labels: ["Average Results"],
             };
+        },
+        roundedTotalUoa() {
+            return format(this.totalUoa, "0.00");
+        },
+        roundedTotalMa() {
+            return format(this.totalMa, "0.00");
         },
     },
     props: {
