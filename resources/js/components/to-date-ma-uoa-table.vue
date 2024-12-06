@@ -10,6 +10,9 @@
             animateRows="false"
             :defaultColDef="defaultColDef"
             :groupDefaultExpanded="1"
+            :suppressAggFuncInHeader="true"
+            :grandTotalRow="'bottom'"
+            :autoGroupColumnDef="autoGroupColumnDef"
         ></ag-grid-vue>
     </div>
 </template>
@@ -35,18 +38,14 @@ export default {
             type: String,
             required: true,
         },
-        planAttrName: {
-            type: String,
-            required: true,
-        },
-        actualAttrName: {
-            type: String,
-            required: true,
-        },
         attributeHeader: {
             type: String,
             required: true,
         },
+        toDate: {
+            type: String,
+            false: true,
+        }
     },
     data() {
         return {
@@ -58,15 +57,17 @@ export default {
                     },
                     rowGroup: true,
                     hide: true,
+                    pinned: 'left',
                 },
                 {
                     headerName: this.attributeHeader,
                     field: 'attr',
                     sortable: true,
                     filter: true,
+                    pinned: 'left',
                 },
                 {
-                    headerName: "Today (Kt)",
+                    headerName: this.toDate + " (Kt)",
                     children: [
                         {
                             headerName: "Target Run Time (hrs)",
@@ -74,8 +75,9 @@ export default {
                             sortable: true,
                             aggFunc: 'sum',
                             cellClass: 'text-end',
+                            width: 200,
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return format((params.value || 0), NUMBER_FORMAT)
                             },
                         },
                         {
@@ -85,8 +87,9 @@ export default {
                             aggFunc: 'sum',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return format((params.value || 0), NUMBER_FORMAT)
                             },
+                            suppressAggFuncInHeader: true,
                         },
                         {
                             headerName: "B/Down (hrs)",
@@ -95,7 +98,7 @@ export default {
                             aggFunc: 'sum',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return format((params.value || 0), NUMBER_FORMAT)
                             },
                         },
                         {
@@ -105,13 +108,15 @@ export default {
                             aggFunc: 'sum',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return format((params.value || 0), NUMBER_FORMAT)
                             },
                         },
                         {
                             headerName: "Target Avail (%)",
                             sortable: true,
-                            aggFunc: 'avg',
+                            aggFunc: (params) => {
+                                return 0.95;
+                            },
                             cellClass: 'text-end',
                             valueGetter: (params) => {
                                 return 0.95;
@@ -123,14 +128,35 @@ export default {
                         {
                             headerName: "Actual Avail (%)",
                             sortable: true,
-                            aggFunc: 'avg',
                             cellClass: (params) => {
                                 const tableClass = getUOATableBgCellClass(params.value, 0.95, 0.855);
                                 return `${tableClass} text-end`;
                             },
+                            aggFunc: (params) => {
+                                console.log(params);
+                                const leafNodes = params.rowNode.allLeafChildren;
+
+                                // Calculate total actual availability
+                                const totalActualAvailability = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.todayActualRunTime + childData.todayActualStandByTime || 0); // Safely add values
+                                }, 0);
+
+                                // Calculate total target availability
+                                const totalTargetAvailability = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.todayTargetRunTime || 0); // Safely add values
+                                }, 0);
+
+
+                                return totalTargetAvailability ? (totalActualAvailability / totalTargetAvailability) : 0;
+                            },
                             valueGetter: (params) => {
-                                const targetAvailability = params.data.todayTargetRunTime;
-                                const actualAvailability = params.data.todayActualRunTime + params.data.todayActualStandByTime;
+                                if (params.node.group) {
+                                    return 0;
+                                }
+                                const targetAvailability = (params.data.todayTargetRunTime || 0);
+                                const actualAvailability = (params.data.todayActualRunTime || 0) + (params.data.todayActualStandByTime || 0);
                                 return targetAvailability ? (actualAvailability / targetAvailability) : 0;
                             },
                             valueFormatter: (params) => {
@@ -140,8 +166,10 @@ export default {
                         {
                             headerName: "Target UoA (%)",
                             sortable: true,
-                            aggFunc: 'avg',
                             cellClass: 'text-end',
+                            aggFunc: (params) => {
+                                return .85;
+                            },
                             valueGetter: (params) => {
                                 return .85;
                             },
@@ -152,12 +180,31 @@ export default {
                         {
                             headerName: "UoA (%)",
                             sortable: true,
-                            aggFunc: 'avg',
+                            aggFunc: (params) => {
+                                const leafNodes = params.rowNode.allLeafChildren;
+
+                                // Calculate total actual availability
+                                const totalActualRunTime = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.todayActualRunTime || 0); // Safely add values
+                                }, 0);
+
+                                // Calculate total actual availability
+                                const totalActualAvailability = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.todayActualRunTime + childData.todayActualStandByTime || 0); // Safely add values
+                                }, 0);
+
+                                return totalActualAvailability ? (totalActualRunTime / totalActualAvailability) : 0;
+                            },
                             cellClass: (params) => {
                                 const tableClass = getUOATableBgCellClass(params.value, 1, 0.85);
                                 return `${tableClass} text-end`;
                             },
                             valueGetter: (params) => {
+                                if (params.node.group) {
+                                    return 0;
+                                }
                                 const actualAvailability = params.data.todayActualRunTime + params.data.todayActualStandByTime;
                                 const actualRuntime = params.data.todayActualRunTime;
                                 return actualRuntime / actualAvailability;
@@ -178,8 +225,9 @@ export default {
                             aggFunc: 'sum',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return format((params.value || 0), NUMBER_FORMAT)
                             },
+                            suppressAggFuncInHeader: true,
                         },
                         {
                             headerName: "Run Time (hrs)",
@@ -188,7 +236,7 @@ export default {
                             aggFunc: 'sum',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return format((params.value || 0), NUMBER_FORMAT)
                             },
                         },
                         {
@@ -198,7 +246,7 @@ export default {
                             aggFunc: 'sum',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return format((params.value || 0), NUMBER_FORMAT)
                             },
                         },
                         {
@@ -208,18 +256,37 @@ export default {
                             aggFunc: 'sum',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return format((params.value || 0), NUMBER_FORMAT)
                             },
                         },
                         {
                             headerName: "Actual Avail (%)",
                             sortable: true,
-                            aggFunc: 'avg',
+                            aggFunc: (params) => {
+                                const leafNodes = params.rowNode.allLeafChildren;
+
+                                // Calculate total actual availability
+                                const totalActualAvailability = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.mtdActualRunTime + childData.mtdActualStandByTime || 0); // Safely add values
+                                }, 0);
+
+                                // Calculate total target availability
+                                const totalTargetAvailability = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.mtdTargetRunTime || 0); // Safely add values
+                                }, 0);
+
+                                return totalTargetAvailability ? (totalActualAvailability / totalTargetAvailability) : 0;
+                            },
                             cellClass: (params) => {
                                 const tableClass = getUOATableBgCellClass(params.value, 0.95, 0.855);
                                 return `${tableClass} text-end`;
                             },
                             valueGetter: (params) => {
+                                if (params.node.group) {
+                                    return 0;
+                                }
                                 const targetAvailability = params.data.mtdTargetRunTime;
                                 const actualAvailability = params.data.mtdActualRunTime + params.data.mtdActualStandByTime;
                                 return targetAvailability ? (actualAvailability / targetAvailability) : 0;
@@ -231,12 +298,31 @@ export default {
                         {
                             headerName: "UoA (%)",
                             sortable: true,
-                            aggFunc: 'avg',
+                            aggFunc: (params) => {
+                                const leafNodes = params.rowNode.allLeafChildren;
+
+                                // Calculate total actual availability
+                                const totalActualRunTime = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.mtdActualRunTime || 0); // Safely add values
+                                }, 0);
+
+                                // Calculate total actual availability
+                                const totalActualAvailability = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.mtdActualRunTime + childData.mtdActualStandByTime || 0); // Safely add values
+                                }, 0);
+
+                                return totalActualAvailability ? (totalActualRunTime / totalActualAvailability) : 0;
+                            },
                             cellClass: (params) => {
                                 const tableClass = getUOATableBgCellClass(params.value, 1, 0.85);
                                 return `${tableClass} text-end`;
                             },
                             valueGetter: (params) => {
+                                if (params.node.group) {
+                                    return 0;
+                                }
                                 const actualAvailability = params.data.mtdActualRunTime + params.data.mtdActualStandByTime;
                                 const actualRuntime = params.data.mtdActualRunTime;
                                 return actualRuntime / actualAvailability;
@@ -258,7 +344,7 @@ export default {
                             aggFunc: 'sum',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return format((params.value || 0), NUMBER_FORMAT)
                             },
                         },
                         {
@@ -268,7 +354,7 @@ export default {
                             aggFunc: 'sum',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return format((params.value || 0), NUMBER_FORMAT)
                             },
                         },
                         {
@@ -278,7 +364,7 @@ export default {
                             aggFunc: 'sum',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return format((params.value || 0), NUMBER_FORMAT)
                             },
                         },
                         {
@@ -288,30 +374,37 @@ export default {
                             aggFunc: 'sum',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
-                            },
-                        },
-                        {
-                            headerName: "Target Avail (%)",
-                            sortable: true,
-                            aggFunc: 'avg',
-                            cellClass: 'text-end',
-                            valueGetter: (params) => {
-                                return 0.95;
-                            },
-                            valueFormatter: (params) => {
-                                return format(params.value, PERCENT_FORMAT);
+                                return format((params.value || 0), NUMBER_FORMAT)
                             },
                         },
                         {
                             headerName: "Actual Avail (%)",
                             sortable: true,
-                            aggFunc: 'avg',
+                            aggFunc: (params) => {
+                                const leafNodes = params.rowNode.allLeafChildren;
+
+                                // Calculate total actual availability
+                                const totalActualAvailability = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.ytdActualRunTime + childData.ytdActualStandByTime || 0); // Safely add values
+                                }, 0);
+
+                                // Calculate total target availability
+                                const totalTargetAvailability = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.ytdTargetRunTime || 0); // Safely add values
+                                }, 0);
+
+                                return totalTargetAvailability ? (totalActualAvailability / totalTargetAvailability) : 0;
+                            },
                             cellClass: (params) => {
                                 const tableClass = getUOATableBgCellClass(params.value, 0.95, 0.855);
                                 return `${tableClass} text-end`;
                             },
                             valueGetter: (params) => {
+                                if (params.node.group) {
+                                    return 0;
+                                }
                                 const targetAvailability = params.data.ytdTargetRunTime;
                                 const actualAvailability = params.data.ytdActualRunTime + params.data.ytdActualStandByTime;
                                 return targetAvailability ? (actualAvailability / targetAvailability) : 0;
@@ -321,26 +414,33 @@ export default {
                             },
                         },
                         {
-                            headerName: "Target UoA (%)",
-                            sortable: true,
-                            aggFunc: 'avg',
-                            cellClass: 'text-end',
-                            valueGetter: (params) => {
-                                return .85;
-                            },
-                            valueFormatter: (params) => {
-                                return format(params.value, PERCENT_FORMAT);
-                            },
-                        },
-                        {
                             headerName: "UoA (%)",
                             sortable: true,
-                            aggFunc: 'avg',
+                            aggFunc: (params) => {
+                                const leafNodes = params.rowNode.allLeafChildren;
+
+                                // Calculate total actual availability
+                                const totalActualRunTime = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.ytdActualRunTime || 0); // Safely add values
+                                }, 0);
+
+                                // Calculate total actual availability
+                                const totalActualAvailability = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.ytdActualRunTime + childData.ytdActualStandByTime || 0); // Safely add values
+                                }, 0);
+
+                                return totalActualAvailability ? (totalActualRunTime / totalActualAvailability) : 0;
+                            },
                             cellClass: (params) => {
                                 const tableClass = getUOATableBgCellClass(params.value, 1, 0.85);
                                 return `${tableClass} text-end`;
                             },
                             valueGetter: (params) => {
+                                if (params.node.group) {
+                                    return 0;
+                                }
                                 const actualAvailability = params.data.ytdActualRunTime + params.data.ytdActualStandByTime;
                                 const actualRuntime = params.data.ytdActualRunTime;
                                 return actualRuntime / actualAvailability;
@@ -352,6 +452,10 @@ export default {
                     ],
                 },
             ],
+            autoGroupColumnDef: {
+                cellRenderer: 'agGroupCellRenderer',
+                pinned: 'left',
+            },
             defaultColDef: {
                 flex: 1,
                 minWidth: 120,
@@ -362,7 +466,7 @@ export default {
         toDateData() {
             const result = transformToToDateUtilizationTableData(
                 this.data,
-                new Date("2024-11-20"),
+                new Date(this.toDate),
                 this.sliceAttribute,
             );
             return result;

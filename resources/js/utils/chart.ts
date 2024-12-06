@@ -645,20 +645,24 @@ export function transformToToDateUtilizationTableData(
 
         // If the date is in the same month and year, and before or equal to currentDate, update mtdPlan and mtdActual
         if (
-            isSameMonthAndYear(dataDate, currentDate) &&
-            dataDate <= currentDate
+            isSameMonthAndYear(dataDate, currentDate)
         ) {
+            if (dataDate <= currentDate) {
+                attributeData.mtdActualRunTime += actualRunTime;
+                attributeData.mtdActualDownTime += actualDownTime;
+                attributeData.mtdActualStandByTime += actualStandByTime;
+            }
             attributeData.mtdTargetRunTime += targetRunTime;
-            attributeData.mtdActualRunTime += actualRunTime;
-            attributeData.mtdActualDownTime += actualDownTime;
-            attributeData.mtdActualStandByTime += actualStandByTime;
         }
 
         // If the date is in the same year, and before or equal to currentDate, update ytdPlan and ytdActual
-        if (isSameYear(dataDate, currentDate) && dataDate <= currentDate) {
-            attributeData.ytdTargetRunTime += targetRunTime;
-            attributeData.ytdActualRunTime += actualRunTime;
-            attributeData.ytdActualDownTime += actualDownTime;
+        if (isSameYear(dataDate, currentDate)) {
+            if (dataDate <= currentDate) {
+                attributeData.ytdTargetRunTime += targetRunTime;
+                attributeData.ytdActualRunTime += actualRunTime;
+                attributeData.ytdActualDownTime += actualDownTime;
+            }
+            
             attributeData.ytdActualStandByTime += actualStandByTime;
         }
     });

@@ -12,6 +12,7 @@
             animateRows="false"
             :defaultColDef="defaultColDef"
             :groupDefaultExpanded="1"
+            :suppressAggFuncInHeader="true"
         ></ag-grid-vue>
     </div>
 </template>

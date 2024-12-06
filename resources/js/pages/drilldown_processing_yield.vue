@@ -1,5 +1,5 @@
 <template>
-    <div class="row justify-content-evenly mb-4">
+    <div v-if="!isLoading" class="row justify-content-evenly mb-4">
         <card title="Yield">
             <yield-table
                 :data="rawThroughputData"
@@ -7,6 +7,7 @@
                 :attributeHeader="'Plants'"
                 :actualAttrName="'yield_actual'"
                 :planAttrName="'yield_plan'"
+                :toDate="globalParamStore.getSelectedDate"
             ></yield-table>
 
             <chart-group
@@ -24,6 +25,11 @@
             </chart-group>
         </card>
     </div>
+    <div v-if="isLoading" class="row justify-content-evenly mb-4">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -38,17 +44,19 @@ import KpiChart from "../components/kpi-chart.vue";
 import {
     convertToKpiDataByAttr,
 } from "../utils/chart";
-import { formatDateToDayMonth, formatDateToMonthYear } from "../utils/date";
+import { formatDateToDayMonth, formatDateToMonthYear, getKeyDateFromSelectedDate } from "../utils/date";
 import ChartGroup from "../components/chart-group.vue";
 import MonthLine from "../components/month-line.vue";
 import YieldTable from "../components/yield-table.vue";
+import { useGlobalParamStore } from "../stores/globalParam";
 
 export default {
     name: "ProcessingDrilldown/Throughput",
     setup() {
         const authStore = useAuthStore();
         const store = useStore();
-        return { authStore, store };
+        const globalParamStore = useGlobalParamStore();
+        return { authStore, store, globalParamStore };
     },
     components: {
         SummaryStatistic,
@@ -62,6 +70,7 @@ export default {
 
     data() {
         return {
+            isLoading: false,
             rawThroughputData: [],
 
             // Input ByPlant filter
@@ -76,7 +85,7 @@ export default {
 
     computed: {
         // Input screening section
-        inputScreeningData() {
+        yieldData() {
             if (this.rawThroughputData.length === 0) {
                 return {
                     daily: [],
@@ -87,34 +96,43 @@ export default {
             const filteredData = this.selectedByPlantFilter === "Total"
                 ? this.rawThroughputData
                 : this.rawThroughputData.filter((i) => i.plant === this.selectedByPlantFilter);
+
+            const keyDates = getKeyDateFromSelectedDate(
+                this.globalParamStore.selectedDate
+            );
             return convertToKpiDataByAttr(
                 filteredData,
                 "yield_plan",
                 "yield_actual",
-                "2024-11-01",
-                "2024-11-30"
+                keyDates.beginningOfMonth,
+                keyDates.endOfMonth
             );
         },
         coalThroughputActualDataByPlant() {
-            console.log("recalculating coalThroughputActualData");
             if (this.selectedByPlantTab === 'mtd') {
-                return this.inputScreeningData.daily.map((i) => i.actual);
+                const yieldDailyData = this.yieldData.daily.filter(
+                    (i) => i.date <= this.globalParamStore.selectedDate
+                );
+                return yieldDailyData.map((i) => i.actual);
             }
-            return this.inputScreeningData.monthly.map((i) => i.actual);
+            const yieldMonthlyData = this.yieldData.monthly.filter(
+                    (i) => i.date <= this.globalParamStore.selectedDate
+                );
+            return yieldMonthlyData.map((i) => i.actual);
         },
         coalThroughputPlanDataByPlant() {
             if (this.selectedByPlantTab === 'mtd') {
-                return this.inputScreeningData.daily.map((i) => i.plan);
+                return this.yieldData.daily.map((i) => i.plan);
             }
-            return this.inputScreeningData.monthly.map((i) => i.plan);
+            return this.yieldData.monthly.map((i) => i.plan);
         },
         coalThroughputCategoriesByPlant() {
             if (this.selectedByPlantTab === 'mtd') {
-                return this.inputScreeningData.daily.map((i) =>
+                return this.yieldData.daily.map((i) =>
                     formatDateToDayMonth(i.date)
                 );
             }
-            return this.inputScreeningData.monthly.map((i) =>
+            return this.yieldData.monthly.map((i) =>
                 formatDateToMonthYear(i.date)
             );
         },
@@ -126,8 +144,12 @@ export default {
 
     methods: {
         async fetchProcessingData() {
+            this.isLoading = true;
+            const keyDates = getKeyDateFromSelectedDate(
+                this.globalParamStore.selectedDate
+            );
             const response = await axios.get(
-                "/api/control-tower/processing_detail?start_date=2024-01-01&end_date=2024-12-01",
+                `/api/control-tower/processing_detail?start_date=${keyDates.beginningOfYear}&end_date=${keyDates.endOfYear}`,
                 {
                     headers: {
                         Authorization: "Bearer " + this.authStore.getToken,
@@ -141,6 +163,7 @@ export default {
                     yield_plan: i.output_target / i.input_target,
                 };
             });
+            this.isLoading = false;
         },
         async fetchData() {
             this.fetchProcessingData();

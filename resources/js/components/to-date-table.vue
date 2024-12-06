@@ -9,6 +9,7 @@
             :rowData="toDateData"
             animateRows="false"
             :defaultColDef="defaultColDef"
+            :suppressAggFuncInHeader="true"
         ></ag-grid-vue>
     </div>
 </template>

@@ -1,12 +1,11 @@
 <template>
-    <div class="row justify-content-evenly mb-4">
-        <card title="Throughput By Plant">
+    <div v-if="!isLoading" class="row justify-content-evenly mb-4">
+        <card title="Machine Availability (MA) & Utilisation (UoA)">
             <to-date-ma-uoa-table
                 :data="rawUoaData"
                 :sliceAttribute="'plant'"
                 :attributeHeader="'Plants'"
-                :actualAttrName="'throughput_actual'"
-                :planAttrName="'throughput_plan'"
+                :toDate="globalParamStore.getSelectedDate"
             ></to-date-ma-uoa-table>
 
             <chart-group
@@ -29,6 +28,11 @@
             </chart-group>
         </card>
     </div>
+    <div v-if="isLoading" class="row justify-content-evenly mb-4">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -47,14 +51,16 @@ import {
     convertToKpiDataByAttr,
     transformToToDateUtilizationTableData,
 } from "../utils/chart";
-import { formatDateToDayMonth, formatDateToMonthYear } from "../utils/date";
+import { formatDateToDayMonth, formatDateToMonthYear, getKeyDateFromSelectedDate } from "../utils/date";
+import { useGlobalParamStore } from "../stores/globalParam";
 
 export default {
     name: "ProcessingDrilldown/Throughput",
     setup() {
         const authStore = useAuthStore();
         const store = useStore();
-        return { authStore, store };
+        const globalParamStore = useGlobalParamStore();
+        return { authStore, store, globalParamStore };
     },
     components: {
         SummaryStatistic,
@@ -69,6 +75,7 @@ export default {
 
     data() {
         return {
+            isLoading: false,
             rawUoaData: [],
 
             // Input ByPlant filter
@@ -104,9 +111,15 @@ export default {
         },
         coalThroughputActualDataByPlant() {
             if (this.selectedByPlantTab === 'mtd') {
-                return this.inputMAData.daily.map((i) => i.actual);
+                const filteredDailyData = this.inputMAData.daily.filter(
+                    (i) => i.date <= this.globalParamStore.selectedDate
+                );
+                return filteredDailyData.map((i) => i.actual);
             }
-            return this.inputMAData.monthly.map((i) => i.actual);
+            const filteredMonthlyData = this.inputMAData.monthly.filter(
+                (i) => i.date <= this.globalParamStore.selectedDate
+            );
+            return filteredMonthlyData.map((i) => i.actual);
         },
         coalThroughputPlanDataByPlant() {
             if (this.selectedByPlantTab === 'mtd') {
@@ -159,10 +172,18 @@ export default {
         }
     },
 
+    watch: {
+        "globalParamStore.getSelectedDate": "fetchData",
+    },
+
     methods: {
         async fetchProcessingData() {
+            this.isLoading = true;
+            const keyDates = getKeyDateFromSelectedDate(
+                this.globalParamStore.selectedDate
+            );
             const response = await axios.get(
-                "/api/control-tower/uoa_detail?start_date=2024-01-01&end_date=2024-12-01",
+                `/api/control-tower/uoa_detail?start_date=${keyDates.beginningOfYear}&end_date=${keyDates.endOfYear}`,
                 {
                     headers: {
                         Authorization: "Bearer " + this.authStore.getToken,
@@ -173,6 +194,7 @@ export default {
                 ...i,
                 actual_availability_hrs: i.actual_run_hrs + i.actual_standby_hrs,
             }));
+            this.isLoading = false;
         },
         async fetchData() {
             this.fetchProcessingData();

@@ -7,6 +7,11 @@
         color: #808080;
     }
 
+    .ag-header {
+        background-color: #eceef3;
+        color: #808080;
+    }
+
     .bg-danger {
         background-color: #ff9175 !important;
     }
@@ -15,5 +20,14 @@
     }
     .bg-warning {
         background-color: #F4C56E !important;
+    }
+
+    .ag-row-footer {
+        background-color: #ECEEF3;
+        font-weight: bold;
+    }
+
+    .ag-row-group {
+        font-weight: bold;
     }
 }

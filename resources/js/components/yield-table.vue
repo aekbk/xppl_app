@@ -10,6 +10,7 @@
             animateRows="false"
             :defaultColDef="defaultColDef"
             :groupDefaultExpanded="1"
+            :suppressAggFuncInHeader="true"
         ></ag-grid-vue>
     </div>
 </template>
@@ -46,6 +47,10 @@ export default {
             type: String,
             required: true,
         },
+        toDate: {
+            type: String,
+            false: true,
+        }
     },
     data() {
         return {
@@ -63,13 +68,12 @@ export default {
                     filter: true,
                 },
                 {
-                    headerName: "Today (Kt)",
+                    headerName: this.toDate + " (Kt)",
                     children: [
                         {
                             headerName: "Plan",
                             field: "todayPlan",
                             sortable: true,
-                            aggFunc: 'avg',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
                                 return params.value ? format(params.value, NUMBER_FORMAT) : "";
@@ -79,7 +83,6 @@ export default {
                             headerName: "Actual",
                             field: "todayActual",
                             sortable: true,
-                            aggFunc: 'avg',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
                                 return params.value ? format(params.value, NUMBER_FORMAT) : "";
@@ -94,7 +97,6 @@ export default {
                             headerName: "MTD Plan",
                             field: "mtdPlan",
                             sortable: true,
-                            aggFunc: 'avg',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
                                 return params.value ? format(params.value, NUMBER_FORMAT) : "";
@@ -104,7 +106,6 @@ export default {
                             headerName: "Actual",
                             field: "mtdActual",
                             sortable: true,
-                            aggFunc: 'avg',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
                                 return params.value ? format(params.value, NUMBER_FORMAT) : "";
@@ -119,7 +120,6 @@ export default {
                             headerName: "YTD Plan",
                             field: "ytdPlan",
                             sortable: true,
-                            aggFunc: 'avg',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
                                 return params.value ? format(params.value, NUMBER_FORMAT) : "";
@@ -129,7 +129,6 @@ export default {
                             headerName: "Actual",
                             field: "ytdActual",
                             sortable: true,
-                            aggFunc: 'avg',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
                                 return params.value ? format(params.value, NUMBER_FORMAT) : "";
@@ -148,7 +147,7 @@ export default {
         toDateData() {
             const result = transformToToDateTableData(
                 this.data,
-                new Date("2024-11-20"),
+                new Date(this.toDate),
                 this.sliceAttribute,
                 this.planAttrName,
                 this.actualAttrName
@@ -165,8 +164,5 @@ export default {
 </script>
 
 <style>
-.ag-row-footer {
-    background-color: #ECEEF3;
-    font-weight: bold;
-}
+
 </style>
