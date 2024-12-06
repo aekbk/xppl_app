@@ -1,3 +1,4 @@
+import moment from "moment";
 import { subset } from "./data";
 import { isSameDate, isSameMonthAndYear, isSameYear } from "./date";
 import { roundToDecimalPlace } from "./number";
@@ -94,15 +95,15 @@ interface ProcessedDataItem {
 
 export function transformToToDateTableData(
     rawData: RawDataItem[],
-    currentDate: Date,
+    selectedDate: Date,
     attr: string,
     planAttr: string,
     actualAttr: string
 ): ProcessedDataItem[] {
     // If currentDate is not provided, get the latest date from the data
-    if (!currentDate) {
+    if (!selectedDate) {
         const dates = rawData.map((item) => new Date(item.date));
-        currentDate = new Date(Math.max.apply(null, dates));
+        selectedDate = new Date(Math.max.apply(null, dates));
     }
 
     // Prepare a Map to store data per attribute type
@@ -134,34 +135,43 @@ export function transformToToDateTableData(
         const planDataNode = parseFloat(item[planAttr]) || 0;
 
         // If the date matches currentDate, update todayPlan and todayActual
-        if (isSameDate(dataDate, currentDate)) {
+        if (isSameDate(dataDate, selectedDate)) {
             attributeData.todayPlan += planDataNode;
             attributeData.todayActual += actualDataNode;
         }
 
-        // If the date is in the same month and year, and before or equal to currentDate, update mtdPlan and mtdActual
+        // If the date is in the same month and year, update mtdPlan
         if (
-            isSameMonthAndYear(dataDate, currentDate) &&
-            dataDate <= currentDate
+            isSameMonthAndYear(dataDate, selectedDate)
+            
         ) {
             attributeData.mtdPlan += planDataNode;
-            attributeData.mtdActual += actualDataNode;
+
+            // if date is and before or equal to currentDate, update mtdActual
+            if (dataDate <= selectedDate) {
+                attributeData.mtdActual += actualDataNode;
+            }
         }
 
         // If the date falls within the current month and year, update the monthly plan.
         // Since this is a monthly plan, it may contain future data for the month.
-        if (isSameMonthAndYear(dataDate, currentDate)) {
+        if (isSameMonthAndYear(dataDate, selectedDate)) {
             attributeData.mthPlan += planDataNode;
         }
 
-        // If the date is in the same year, and before or equal to currentDate, update ytdPlan and ytdActual
-        if (isSameYear(dataDate, currentDate) && dataDate <= currentDate) {
+        // If the date is in the same month and year, update ytdPlan
+        if (isSameYear(dataDate, selectedDate)) {
             attributeData.ytdPlan += planDataNode;
-            attributeData.ytdActual += actualDataNode;
+
+            // if date is and before or equal to currentDate, update ytdActual
+            if (dataDate <= selectedDate) {
+                attributeData.ytdActual += actualDataNode;
+            }
+            
         }
 
         // Update the year plan
-        if (isSameYear(dataDate, currentDate)) {
+        if (isSameYear(dataDate, selectedDate)) {
             attributeData.yearPlan += planDataNode;
         }
     });
@@ -448,8 +458,8 @@ export function convertToKpiDataByAttr(
 
     rawData.forEach((item) => {
         const date = new Date(item.date);
-        const dailyKey = date.toISOString();
-        const monthlyKey = `${date.getFullYear()}-${date.getMonth()}`;
+        const dailyKey = moment(date).format("YYYY-MM-DD");
+        const monthlyKey = moment(date).format("YYYY-MM");
 
         if (!dailyKpiDataMap.has(dailyKey)) {
             dailyKpiDataMap.set(dailyKey, {

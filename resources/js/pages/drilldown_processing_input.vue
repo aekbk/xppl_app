@@ -1,5 +1,5 @@
 <template>
-    <div class="row justify-content-evenly mb-4">
+    <div v-if="!isLoading" class="row justify-content-evenly mb-4">
         <card title="Input By Plant">
             <to-date-table
                 :data="rawProcessingData"
@@ -7,6 +7,7 @@
                 :attributeHeader="'Plants'"
                 :actualAttrName="'input_actual'"
                 :planAttrName="'input_target'"
+                :toDate="globalParamStore.getSelectedDate"
             ></to-date-table>
 
             <chart-group
@@ -22,11 +23,6 @@
                     :planData="coalProductionPlanDataByPlant"
                     :categories="coalProductionCategoriesByPlant"
                 ></kpi-chart>
-                <!-- <h5>Mining Coal Production</h5>
-                <month-line
-                    :data="coalProductionActualData"
-                    :categories="coalProductionCategories"
-                ></month-line> -->
             </chart-group>
         </card>
 
@@ -37,6 +33,7 @@
                 :attributeHeader="'Coal Grade'"
                 :actualAttrName="'input_actual'"
                 :planAttrName="'input_target'"
+                :toDate="globalParamStore.getSelectedDate"
             ></to-date-table>
 
             <chart-group
@@ -53,8 +50,12 @@
                     :categories="coalProductionCategoriesByGrade"
                 ></kpi-chart>
             </chart-group>
-            
         </card>
+    </div>
+    <div v-if="isLoading" class="row justify-content-evenly mb-4">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
     </div>
 </template>
 
@@ -67,10 +68,12 @@ import { useAuthStore } from "../stores/auth";
 import { useStore } from "../stores/store";
 import ToDateTable from "../components/to-date-table.vue";
 import KpiChart from "../components/kpi-chart.vue";
+import { convertToKpiDataByAttr } from "../utils/chart";
 import {
-    convertToKpiDataByAttr,
-} from "../utils/chart";
-import { formatDateToDayMonth, formatDateToMonthYear, getKeyDateFromSelectedDate } from "../utils/date";
+    formatDateToDayMonth,
+    formatDateToMonthYear,
+    getKeyDateFromSelectedDate,
+} from "../utils/date";
 import { subset } from "../utils/data";
 import ChartGroup from "../components/chart-group.vue";
 import MonthLine from "../components/month-line.vue";
@@ -96,15 +99,16 @@ export default {
 
     data() {
         return {
+            isLoading: false,
             rawProcessingData: [],
 
             // Input ByPlant filter
-            selectedByPlantTab: 'mtd',
-            selectedByPlantFilter: 'Total',
+            selectedByPlantTab: "mtd",
+            selectedByPlantFilter: "Total",
 
             // Input ByGrade filter
-            selectedByGradeTab: 'mtd',
-            selectedByGradeFilter: 'Total',
+            selectedByGradeTab: "mtd",
+            selectedByGradeFilter: "Total",
         };
     },
 
@@ -118,32 +122,43 @@ export default {
                 };
             }
 
-            const filteredData = this.selectedByPlantFilter === "Total"
-                ? this.rawProcessingData
-                : this.rawProcessingData.filter((i) => i.plant === this.selectedByPlantFilter);
+            const filteredData =
+                this.selectedByPlantFilter === "Total"
+                    ? this.rawProcessingData
+                    : this.rawProcessingData.filter(
+                          (i) => i.plant === this.selectedByPlantFilter
+                      );
+            const keyDates = getKeyDateFromSelectedDate(
+                this.globalParamStore.selectedDate
+            );
             return convertToKpiDataByAttr(
                 filteredData,
                 "input_target",
                 "input_actual",
-                "2024-11-01",
-                "2024-11-30"
+                keyDates.beginningOfMonth,
+                keyDates.endOfMonth
             );
         },
         coalProductionActualDataByPlant() {
-            console.log("recalculating coalProductionActualData");
-            if (this.selectedByPlantTab === 'mtd') {
-                return this.inputScreeningData.daily.map((i) => i.actual);
+            if (this.selectedByPlantTab === "mtd") {
+                const filteredDailyData = this.inputScreeningData.daily.filter(
+                    (i) => i.date <= this.globalParamStore.selectedDate
+                );
+                return filteredDailyData.map((i) => i.actual);
             }
-            return this.inputScreeningData.monthly.map((i) => i.actual);
+            const filteredMonthlyData = this.inputScreeningData.monthly.filter(
+                (i) => i.date <= this.globalParamStore.selectedDate
+            );
+            return filteredMonthlyData.map((i) => i.actual);
         },
         coalProductionPlanDataByPlant() {
-            if (this.selectedByPlantTab === 'mtd') {
+            if (this.selectedByPlantTab === "mtd") {
                 return this.inputScreeningData.daily.map((i) => i.plan);
             }
             return this.inputScreeningData.monthly.map((i) => i.plan);
         },
         coalProductionCategoriesByPlant() {
-            if (this.selectedByPlantTab === 'mtd') {
+            if (this.selectedByPlantTab === "mtd") {
                 return this.inputScreeningData.daily.map((i) =>
                     formatDateToDayMonth(i.date)
                 );
@@ -165,32 +180,43 @@ export default {
                 };
             }
 
-            const filteredData = this.selectedByGradeFilter === "Total"
-                ? this.rawProcessingData
-                : this.rawProcessingData.filter((i) => i.input_grade === this.selectedByGradeFilter);
+            const filteredData =
+                this.selectedByGradeFilter === "Total"
+                    ? this.rawProcessingData
+                    : this.rawProcessingData.filter(
+                          (i) => i.input_grade === this.selectedByGradeFilter
+                      );
+            const keyDates = getKeyDateFromSelectedDate(
+                this.globalParamStore.selectedDate
+            );
             return convertToKpiDataByAttr(
                 filteredData,
                 "input_target",
                 "input_actual",
-                "2024-11-01",
-                "2024-11-30"
+                keyDates.beginningOfMonth,
+                keyDates.endOfMonth
             );
         },
         coalProductionActualDataByGrade() {
-            console.log("recalculating coalProductionActualData");
-            if (this.selectedByGradeTab === 'mtd') {
-                return this.inputGradeData.daily.map((i) => i.actual);
+            if (this.selectedByGradeTab === "mtd") {
+                const dateFilteredData = this.inputGradeData.daily.filter(
+                    (i) => i.date <= this.globalParamStore.selectedDate
+                );
+                return dateFilteredData.map((i) => i.actual);
             }
-            return this.inputGradeData.monthly.map((i) => i.actual);
+            const dateFilteredData = this.inputGradeData.monthly.filter(
+                (i) => i.date <= this.globalParamStore.selectedDate
+            );
+            return dateFilteredData.map((i) => i.actual);
         },
         coalProductionPlanDataByGrade() {
-            if (this.selectedByGradeTab === 'mtd') {
+            if (this.selectedByGradeTab === "mtd") {
                 return this.inputGradeData.daily.map((i) => i.plan);
             }
             return this.inputGradeData.monthly.map((i) => i.plan);
         },
         coalProductionCategoriesByGrade() {
-            if (this.selectedByGradeTab === 'mtd') {
+            if (this.selectedByGradeTab === "mtd") {
                 return this.inputGradeData.daily.map((i) =>
                     formatDateToDayMonth(i.date)
                 );
@@ -200,17 +226,20 @@ export default {
             );
         },
         availableByGradeFilter() {
-            return uniq(this.rawProcessingData.map((i) => i['input_grade']));
-        }
+            return uniq(this.rawProcessingData.map((i) => i["input_grade"]));
+        },
     },
     watch: {
-        'globalParamStore.getSelectedDate': 'fetchData'
+        "globalParamStore.getSelectedDate": "fetchData",
     },
     methods: {
         async fetchProcessingData() {
-            const keyDates = getKeyDateFromSelectedDate(this.globalParamStore.selectedDate);
+            this.isLoading = true;
+            const keyDates = getKeyDateFromSelectedDate(
+                this.globalParamStore.selectedDate
+            );
             const response = await axios.get(
-                `/api/control-tower/processing_detail?start_date=${keyDates.beginningOfYear}&end_date=${keyDates.endOfMonth}`,
+                `/api/control-tower/processing_detail?start_date=${keyDates.beginningOfYear}&end_date=${keyDates.endOfYear}`,
                 {
                     headers: {
                         Authorization: "Bearer " + this.authStore.getToken,
@@ -218,6 +247,7 @@ export default {
                 }
             );
             this.rawProcessingData = response.data;
+            this.isLoading = false;
         },
         async fetchData() {
             this.fetchProcessingData();
@@ -230,7 +260,7 @@ export default {
         setByPlantSelectedFilter(value) {
             this.selectedByPlantFilter = value;
         },
-        
+
         setByGradeSelectedTab(value) {
             this.selectedByGradeTab = value;
         },

@@ -45,6 +45,10 @@ export default {
             type: String,
             required: true,
         },
+        toDate: {
+            type: String,
+            false: true,
+        }
     },
     data() {
         return {
@@ -56,7 +60,7 @@ export default {
                     filter: true,
                 },
                 {
-                    headerName: "Today (Kt)",
+                    headerName: this.toDate + " (Kt)",
                     children: [
                         {
                             headerName: "Plan",
@@ -65,7 +69,7 @@ export default {
                             aggFunc: 'sum',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return format((params.value || 0), NUMBER_FORMAT);
                             },
                         },
                         {
@@ -75,7 +79,7 @@ export default {
                             aggFunc: 'sum',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return format((params.value || 0), NUMBER_FORMAT);
                             },
                         },
                         {
@@ -106,7 +110,7 @@ export default {
                             aggFunc: 'sum',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return format((params.value || 0), NUMBER_FORMAT);
                             },
                         },
                         {
@@ -116,7 +120,7 @@ export default {
                             aggFunc: 'sum',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return format((params.value || 0), NUMBER_FORMAT);
                             },
                         },
                         {
@@ -142,7 +146,7 @@ export default {
                             aggFunc: 'sum',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return format((params.value || 0), NUMBER_FORMAT);
                             },
                         },
                     ],
@@ -157,7 +161,7 @@ export default {
                             aggFunc: 'sum',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return format((params.value || 0), NUMBER_FORMAT);
                             },
                         },
                         {
@@ -167,7 +171,7 @@ export default {
                             aggFunc: 'sum',
                             cellClass: 'text-end',
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return format((params.value || 0), NUMBER_FORMAT);
                             },
                         },
                         {
@@ -209,7 +213,7 @@ export default {
         toDateData() {
             const result = transformToToDateTableData(
                 this.data,
-                new Date("2024-11-20"),
+                new Date(this.toDate),
                 this.sliceAttribute,
                 this.planAttrName,
                 this.actualAttrName
