@@ -65,6 +65,7 @@
 
 <script>
 import { uniq } from "lodash";
+import moment from "moment";
 import SummaryStatistic from "../components/summary-statistic.vue";
 import DepartmentSummary from "../components/department-summary.vue";
 import Card from "../components/card.vue";
@@ -194,9 +195,11 @@ export default {
         },
 
         tonesPerHourData() {
-            return this.miningProductionActualDataByContractorAndGrade.map((i) =>
-                roundToDecimalPlace(i / 24)
-            );
+            if (this.selectedByContractorAndGradeTab === "mtd") {
+                return this.miningByContractorAndGradeData.daily.map((i) => roundToDecimalPlace(i.actual / 24));
+            } else {
+                return this.miningByContractorAndGradeData.monthly.map((i) => roundToDecimalPlace(i.actual / 24 / moment(i.date).daysInMonth()));
+            }
         },
     },
 
