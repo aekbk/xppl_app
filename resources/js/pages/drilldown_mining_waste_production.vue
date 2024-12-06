@@ -14,6 +14,7 @@
                 :selectedTab="selectedByContractorTab"
                 :availableFilter="availableByContractorFilter"
                 :selectedFilter="selectedByContractorFilter"
+                :defaultFilter="defaultByContractorFilter"
                 @filterChange="setByContractorSelectedFilter"
                 @tabSwitch="setByContractorSelectedTab"
             >
@@ -75,8 +76,10 @@ export default {
 
             // Waste Production byContractor toggle
             selectedByContractorTab: 'mtd',
+
             // Waste Production byContractor dropdown/filter
-            selectedByContractorFilter: 'Total',
+            defaultByContractorFilter: 'All Contractor',
+            selectedByContractorFilter: 'All Contractor',
         };
     },
     computed: {
@@ -91,7 +94,7 @@ export default {
                 };
             }
 
-            const filteredData = this.selectedByContractorFilter === 'Total'
+            const filteredData = this.selectedByContractorFilter === this.defaultByContractorFilter
                 ? this.rawWasteData
                 : this.rawWasteData.filter((i) => i.contractor === this.selectedByContractorFilter);
 
