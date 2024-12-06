@@ -28,6 +28,7 @@
                 <month-line
                     :data="wasteBCMPerHourByContractorData"
                     :categories="wasteProductionCategoriesByContractor"
+                    :yAxisTitle="'Hourly Productivity (Kbcm/hour)'"
                 ></month-line>
             </chart-group>
         </card>

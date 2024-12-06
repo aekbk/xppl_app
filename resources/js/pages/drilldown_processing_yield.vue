@@ -21,6 +21,7 @@
                 <month-line
                     :data="coalThroughputActualDataByPlant"
                     :categories="coalThroughputCategoriesByPlant"
+                    :yAxisTitle="'Yield (%)'"
                 ></month-line>
             </chart-group>
         </card>

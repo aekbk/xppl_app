@@ -31,15 +31,18 @@
                @secondaryFilterChange="setByGradeSelectedFilter"
                @tabSwitch="setByContractorAndGradeSelectedTab"
            >
+                <h5>Mining Coal Production: {{ selectedByContractorFilter }}, {{ selectedByGradeFilter }}</h5>
                 <kpi-chart
                     :actualData="miningProductionActualDataByContractorAndGrade"
                     :planData="miningProductionPlanDataByContractorAndGrade"
                     :categories="miningProductionCategoriesByContractorAndGrade"
                 ></kpi-chart>
 
+                <h5>Mining Coal Production: {{ selectedByContractorFilter }}, {{ selectedByGradeFilter }}</h5>
                 <month-line
                     :data="tonesPerHourData"
                     :categories="miningProductionCategoriesByContractorAndGrade"
+                    :yAxisTitle="'Hourly Productivity (Kt/hour)'"
                 ></month-line>
            </nested-chart-group>
         </card>

@@ -14,9 +14,11 @@
                 @secondaryFilterChange="setByPitSelectedFilter"
                 @tabSwitch="setByContractorAndPitSelectedTab"
             >
+                <h5>Strip Ratio: {{ selectedByContractorFilter }}, {{ selectedByPitFilter }}</h5>
                 <month-line
                     :data="stripRatioDataByContractorAndPit"
                     :categories="wasteProductionCategoriesByContractorAndPit"
+                    :yAxisTitle="'Strip Ratio'"
                  ></month-line>
             </nested-chart-group>
         </card>
