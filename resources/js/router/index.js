@@ -53,9 +53,9 @@ const routes = [
                 meta: { requiresAuth: true },
             },
             {
-                path: 'throughput',
+                path: 'output',
                 default: true,
-                component: () => import('../pages/drilldown_processing_throughput.vue'),
+                component: () => import('../pages/drilldown_processing_output.vue'),
                 meta: { requiresAuth: true },
             },
             {

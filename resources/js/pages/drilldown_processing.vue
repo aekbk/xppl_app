@@ -114,7 +114,7 @@ export default {
 
             navs: [
                 { label: "Input", to: "/drilldown-processing/input" },
-                { label: "Output", to: "/drilldown-processing/throughput" },
+                { label: "Output", to: "/drilldown-processing/output" },
                 { label: "Yield", to: "/drilldown-processing/yield" },
                 { label: "MA & UoA", to: "/drilldown-processing/ma-uoa" },
             ],
