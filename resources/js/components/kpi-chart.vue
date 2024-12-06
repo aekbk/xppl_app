@@ -89,7 +89,7 @@ export default {
                 yaxis: [
                     {
                         title: {
-                            text: "Daily Production (Ktonnes)",
+                            text: this.leftYAxisTitle,
                         },
                         max: getYMax([...this.actualData, ...this.planData]),
                         min: 0,
@@ -100,7 +100,7 @@ export default {
                     },
                     {
                         title: {
-                            text: "Daily Production (Ktonnes)",
+                            text: this.leftYAxisTitle,
                         },
                         min: 0,
                         max: getYMax([...this.actualData, ...this.planData]),
@@ -114,7 +114,7 @@ export default {
                         opposite: true,
                         show: true,
                         title: {
-                            text: "Monthly Production (Mtonnes)",
+                            text: this.rightYAxisTitle,
                         },
                         forceNiceScale: true,
                         decimalsInFloat: 2,
@@ -128,7 +128,7 @@ export default {
                         opposite: true,
                         show: false,
                         title: {
-                            text: "Monthly Production (Mtonnes)",
+                            text: this.rightYAxisTitle,
                         },
                         forceNiceScale: true,
                         decimalsInFloat: 2,
@@ -167,6 +167,16 @@ export default {
             type: Array<String>,
             required: false,
             default: () => [],
+        },
+        leftYAxisTitle: {
+            type: String,
+            required: false,
+            default: "Daily Production (Ktonnes)",
+        },
+        rightYAxisTitle: {
+            type: String,
+            required: false,
+            default: "Monthly Production (Mtonnes)",
         },
     },
 };
