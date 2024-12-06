@@ -23,8 +23,10 @@
                :selectedTab="selectedByContractorAndGradeTab"
                :primaryAvailableFilter="availableByContractorFilter"
                :primarySelectedFilter="selectedByContractorFilter"
+               :primaryDefaultFilter="defaultByContractorFilter"
                :secondaryAvailableFilter="availableByGradeFilter"
                :secondarySelectedFilter="selectedByGradeFilter"
+               :secondaryDefaultFilter="defaultByGradeFilter"
                @primaryFilterChange="setByContractorSelectedFilter"
                @secondaryFilterChange="setByGradeSelectedFilter"
                @tabSwitch="setByContractorAndGradeSelectedTab"
@@ -113,10 +115,14 @@ export default {
 
             // Coal Production byContractAndGrade toggle 
             selectedByContractorAndGradeTab: 'mtd',
+
             // Coal Production byContractor filter 
-            selectedByContractorFilter: "Total",
+            defaultByContractorFilter: "All Contractors",
+            selectedByContractorFilter: "All Contractors",
+
             // Coal Production byGrade filter 
-            selectedByGradeFilter: "Total",
+            defaultByGradeFilter: "All Grades",
+            selectedByGradeFilter: "All Grades",
         };
     },
     computed: {
@@ -133,12 +139,12 @@ export default {
             }
 
             // filter by contractor first
-            const filteredByContractorData = this.selectedByContractorFilter === "Total"
+            const filteredByContractorData = this.selectedByContractorFilter === this.defaultByContractorFilter 
                 ? this.rawMiningData 
                 : this.rawMiningData.filter((i) => i.contractor === this.selectedByContractorFilter);
 
             // filter by grade next
-            const filteredData = this.selectedByGradeFilter === "Total"
+            const filteredData = this.selectedByGradeFilter === this.defaultByGradeFilter
                 ? filteredByContractorData 
                 : filteredByContractorData.filter((i) => i.category === this.selectedByGradeFilter);
 

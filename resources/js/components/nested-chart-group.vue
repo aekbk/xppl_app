@@ -24,10 +24,10 @@
                         <li>
                             <button
                                 class="dropdown-item"
-                                :class="{ active: primarySelectedFilter === 'Total' }"
-                                @click="onPrimaryFilterChange('Total')"
+                                :class="{ active: primarySelectedFilter === primaryDefaultFilter }"
+                                @click="onPrimaryFilterChange(primaryDefaultFilter)"
                             >
-                                Total
+                                {{ primaryDefaultFilter }}
                             </button>
                         </li>
                         <li><hr class="dropdown-divider" /></li>
@@ -63,10 +63,10 @@
                         <li>
                             <button
                                 class="dropdown-item"
-                                :class="{ active: secondarySelectedFilter === 'Total' }"
-                                @click="onSecondaryFilterChange('Total')"
+                                :class="{ active: secondarySelectedFilter === secondaryDefaultFilter }"
+                                @click="onSecondaryFilterChange(secondaryDefaultFilter)"
                             >
-                                Total
+                                {{ secondaryDefaultFilter }}
                             </button>
                         </li>
                         <li><hr class="dropdown-divider" /></li>
@@ -172,7 +172,10 @@ export default {
         primarySelectedFilter: {
             type: String,
             required: false,
-            default: "Total",
+        },
+        primaryDefaultFilter: {
+            type: String,
+            required: true,
         },
         secondaryAvailableFilter: {
             type: Array,
@@ -182,9 +185,11 @@ export default {
         secondarySelectedFilter: {
             type: String,
             required: false,
-            default: "Total",
         },
-
+        secondaryDefaultFilter: {
+            type: String,
+            required: true,
+        },
     },
     emits: ["primaryFilterChange", "secondaryFilterChange", "tabSwitch"],
     methods: {
