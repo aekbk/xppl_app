@@ -72,8 +72,142 @@ export default {
         };
     },
     computed: {
-        stripRatioData() {
-            return this.stripRatioProductionData;
+        /**
+         * Mining data filtered by contractor and pit
+         * @returns {Object} - Object with daily and monthly data
+         */
+        miningByContractorAndPitData(){
+            if (this.rawMiningData.length === 0) {
+                return {
+                    daily: [],
+                    monthly: [],
+                };
+            }
+
+            // filter by contractor first
+            const filteredByContractorData = this.selectedByContractorFilter === "Total"
+                ? this.rawMiningData
+                : this.rawMiningData.filter((i) => i.contractor === this.selectedByContractorFilter);
+
+            // filter by pit next
+            const filteredData = this.selectedByPitFilter === "Total"
+                ? filteredByContractorData
+                : filteredByContractorData.filter((i) => i.pit === this.selectedByPitFilter);
+
+            return convertToKpiDataByAttr(filteredData, 'coal_plan_kt', 'coal_actual_kt', '2024-11-01', '2024-11-30');
+        },
+
+        /**
+         * Get the actual mining amount for the selected period from toggle tab
+         * @returns {Array} - Array of actual mining amount
+         */
+        miningProductionActualDataByContractorAndPit() {
+            if (this.selectedByContractorAndPitTab === "mtd") {
+                return this.miningByContractorAndPitData.daily.map((i) => i.actual);
+            } else {
+                return this.miningByContractorAndPitData.monthly.map((i) => i.actual);
+            }
+        },
+
+
+        /*
+         * Waste data filtered by contractor and pit
+         * @returns {object} - Object with daily and monthly data
+         */
+        wasteByContractorAndPitData(){
+            if (this.rawWasteData.length === 0) {
+                return {
+                    daily: [],
+                    monthly: [],
+                };
+            }
+
+            // filter by contractor first
+            const filteredByContractorData = this.selectedByContractorFilter === "Total"
+                ? this.rawWasteData
+                : this.rawWasteData.filter((i) => i.contractor === this.selectedByContractorFilter);
+
+            // filter by pit next
+            const filteredData = this.selectedByPitFilter === "Total"
+                ? filteredByContractorData
+                : filteredByContractorData.filter((i) => i.pit === this.selectedByPitFilter);
+
+            return convertToKpiDataByAttr(filteredData, 'waste_plan_kbcm', 'waste_actual_kbcm', '2024-11-01', '2024-11-30');
+        },
+
+        /**
+         * Get the actual waste amount for the selected period from toggle tab
+         * @returns {Array} - Array of actual waste amount
+         */
+        wasteProductionActualDataByContractorAndPit() {
+            if (this.selectedByContractorAndPitTab === "mtd") {
+                return this.wasteByContractorAndPitData.daily.map((i) => i.actual);
+            } else {
+                return this.wasteByContractorAndPitData.monthly.map((i) => i.actual);
+            }
+        },
+
+        /**
+         * Get the categories for the waste production data
+         * @returns {Array} - Array of categories
+         */
+        wasteProductionCategoriesByContractorAndPit() {
+            if (this.selectedByContractorAndPitTab === "mtd") {
+                return this.wasteByContractorAndPitData.daily.map((i) => formatDateToDayMonth(i.date));
+            } else {
+                return this.wasteByContractorAndPitData.monthly.map((i) => formatDateToMonthYear(i.date));
+            }
+        },
+
+        /**
+         * Compute the strip ratio using the actual waste and actual mining data from above
+         * @returns {Array} - Array of strip ratio data
+         * If the waste value is non-zero and the mining value is 0, the strip ratio is considered to be infinity.
+         * In this case, we set the value to null, which will be filtered out when we compute the trend line.
+         * Otherwise, we calculate the strip ratio as usual.
+         * If the result is NaN, we return null to indicate that the data is not valid.
+         */
+        stripRatioDataByContractorAndPit() {
+			const _miningData = this.miningProductionActualDataByContractorAndPit;
+			const _wasteData = this.wasteProductionActualDataByContractorAndPit;
+
+			const results = [];
+
+			_wasteData.forEach((item, index) => {
+				const miningValue = _miningData[index];
+				let result;
+
+				if (item !== 0 && miningValue === 0) {
+					result = null;
+				} else {
+					result = item / miningValue;
+				}
+
+				if (isNaN(result)) {
+					results.push(null);
+				} else {
+					results.push(roundToDecimalPlace(result, 2));
+				}
+			});
+
+			return results;
+        },
+
+
+        /**
+         * Get the available contractor for the dropdown menu
+         * @returns {Array} - Array of contractor names
+         */
+        availableByContractorFilter() {
+            return uniq(this.rawMiningData.map((i) => i.contractor));
+        },
+
+        /**
+         * Get the available pit for the dropdown menu
+         * @returns {Array} - Array of pit names
+         */
+        availableByPitFilter() {
+            return uniq(this.rawMiningData.map((i) => i.pit));
         },
     },
 
