@@ -354,7 +354,6 @@ export default {
       return this.fileFilter;
     },
 
-    // Disable button if file category or description is empty
     cateFormDis() {
       return (this.cateForm.file_category && this.cateForm.descr) ? '' : 'disabled';
     },
@@ -508,10 +507,9 @@ export default {
 
     async updFile() {
       try {
-        const response = await axios.post('api/sales/upd-file', this.fileForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-        const file = await this.getFiles();
-        let item = this.files.filter(e => e.file_category == this.fileForm.file_category);
-        this.fileFilter = item;
+        await axios.post('api/sales/upd-file', this.fileForm, { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+        await this.getFiles();
+        this.fileFilter = this.files.filter(e => e.file_category == this.fileForm.file_category);
         toastr.success('Update successfully.');
         $('#file-modal').modal('hide');
       } catch (error) {

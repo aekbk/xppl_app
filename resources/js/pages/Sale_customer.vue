@@ -454,9 +454,10 @@ export default {
   name: 'XpplAppSaleCustomer',
   components: { AgGridVue },
   setup() {
-    const store = useStore();
-    const authStore = useAuthStore();
-    return { store, authStore };
+    return {
+      store: useStore(),
+      authStore: useAuthStore()
+    };
   },
 
   data() {

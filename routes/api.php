@@ -200,16 +200,20 @@ Route::prefix('safety')->middleware(['auth:api'])->group(function () {
 
 // Clinic
 Route::prefix('clinic')->middleware(['auth:api'])->group(function () {
-    Route::get('/codes', [clinic_controller::class, 'codes']);
-    Route::get('/medicines', [clinic_controller::class, 'medicines']);
+    Route::get('/categories', [clinic_controller::class, 'category']);
+    Route::get('/codes', [clinic_controller::class, 'code']);
     Route::post('/add-code', [clinic_controller::class, 'addCode']);
-    Route::post('/upd-code', [clinic_controller::class, 'updCode']);
-    Route::post('/del-code', [clinic_controller::class, 'delCode']);
+    Route::post('/upd-code', [clinic_controller::class, 'updateCode']);
+    Route::post('/del-code', [clinic_controller::class, 'deleteCode']);
+    
+    Route::get('/medicines', [clinic_controller::class, 'medicine']);
+    Route::post('/add-medicine', [clinic_controller::class, 'addMedicine']);
+    Route::post('/upd-medicine', [clinic_controller::class, 'updateMedicine']);
+    Route::post('/del-medicine', [clinic_controller::class, 'deleteMedicine']);
 
+    // Route::get('/patients', [clinic_controller::class, 'patient']);
     Route::post('/add-patient', [clinic_controller::class, 'addPatient']);
 
-
-    // Route::get('/mine-year', [production_controller::class, 'mineYear']);
 });
 
 // Download Files

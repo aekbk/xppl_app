@@ -607,7 +607,7 @@ export default {
       };
     },
 
-    async onSearch() {
+    onSearch() {
       if (this.search.length > 0) {
         document.getElementById('search-close').classList.remove('d-none');
       } else {
@@ -615,7 +615,7 @@ export default {
       };
     },
 
-    async searchClear() {
+    searchClear() {
       this.search = '';
       document.getElementById('search-close').classList.add('d-none');
     },

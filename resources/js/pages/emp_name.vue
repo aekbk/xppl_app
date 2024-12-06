@@ -39,9 +39,9 @@
     <!-- </div> -->
 
     <div class="card" v-if="viewMode == 'edit'">
-      <!-- <div class="card-header">
+      <div class="card-header">
         Header
-      </div> -->
+      </div>
 
       <div class="card-body">
 

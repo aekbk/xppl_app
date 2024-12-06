@@ -30,61 +30,311 @@
           </div>
         </div>
       </div>
+
+      <ag-grid-vue style="height: calc(100vh - 16rem);" class="ag-theme-material" :columnDefs="columnDefs" :rowData="patientList" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewContract"></ag-grid-vue>
+      <div class="pb-1"></div>
+
+    </div>
+
+
+    <div class="card">
+      <!-- <div class="card-header">
+        Header
+      </div> -->
+
       <div class="card-body">
-        <div class="table-responsive table-card">
-          <table class="table align-middle table-nowrap mb-0">
-            <thead class="table-light text-muted">
-              <tr>
-                <th>Username</th>
-                <th>Name</th>
-                <th>Surname</th>
-                <th>Company</th>
-                <th>Department</th>
-                <th>Position</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- <tr v-for="item in userData.data" :key="item.id">
-                <td>
-                  <div class="d-flex gap-2 align-items-center">
-                    <div v-if="item.avatar" class="flex-shrink-0">
-                      <img :src="'assets/images/users/' + item.avatar" alt="" class="avatar-xs rounded-circle">
+
+        <div class="row">
+          <div class="col-xxl-2">
+            <div class="mt-4 pt-1">
+              <img src="/public/assets/images/users/avatar-8.jpg" alt="" width="180" height="200" class="rounded material-shadow">
+            </div>
+          </div>
+
+          <div class="col-xxl-10">
+            <div class="row mt-4 mt-xxl-0">
+              <div class="col-xl-2">
+                <div class="mb-3">
+                  <label class="form-label">Title <span class="text-danger">*</span></label>
+                  <multiselect :searchable="false" :searchStart="true" placeholder="Select" :options="lkCustomer" />
+                </div>
+              </div>
+              <div class="col-xl-5">
+                <div class="mb-3">
+                  <label class="form-label">Name Eng <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" placeholder="Name english">
+                </div>
+              </div>
+              <div class="col-xl-5">
+                <div class="mb-3">
+                  <label class="form-label">Name Eng <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" placeholder="Name english">
+                </div>
+              </div>
+            </div>
+            <!-- <div class="row">
+              <div class="col-xl-2">
+                <div class="mb-3">
+                  <label class="form-label">Title Lao <span class="text-danger">*</span></label>
+                  <multiselect :searchable="false" :searchStart="true" placeholder="Select" :options="lkCustomer" />
+                </div>
+              </div>
+              <div class="col-xl-5">
+                <div class="mb-3">
+                  <label class="form-label">Name Lao <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" placeholder="Enter name in lao">
+                </div>
+              </div>
+              <div class="col-xl-5">
+                <div class="mb-3">
+                  <label class="form-label">Surname Lao <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" placeholder="Enter surname in lao">
+                </div>
+              </div>
+            </div> -->
+            <div class="row">
+              <div class="col-xl-2">
+                <div class="mb-3">
+                  <label class="form-label">Date Of Birth </label>
+                  <input type="text" class="form-control flatpickr-input flatpickr-single rounded-start-2" placeholder="Select date">
+                </div>
+              </div>
+              <div class="col-xl-5">
+                <div class="mb-3">
+                  <label class="form-label">Phone Number </label>
+                  <input type="text" class="form-control" placeholder="Enter phone number">
+                </div>
+              </div>
+              <div class="col-xl-5">
+                <div class="mb-3">
+                  <label class="form-label">Email Address </label>
+                  <input type="text" class="form-control" placeholder="Enter email Address">
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="col-xl-2">
+            <div class="mb-3">
+              <label class="form-label">Education Level <span class="text-danger">*</span></label>
+              <multiselect :searchable="true" :searchStart="true" placeholder="Select" :options="lkCustomer" />
+            </div>
+          </div>
+          <div class="col-xl-4">
+            <div class="mb-3">
+              <label class="form-label">Education Major </label>
+              <input type="text" class="form-control" placeholder="Enter email Address">
+            </div>
+          </div>
+          <div class="col-xl-6">
+            <div class="mb-3">
+              <label class="form-label">Experience </label>
+              <input type="text" class="form-control" placeholder="Enter email Address">
+            </div>
+          </div>
+
+          <div class="col-xl-3">
+            <div class="mb-3">
+              <label class="form-label">Country <span class="text-danger">*</span></label>
+              <multiselect :searchable="false" :searchStart="true" placeholder="Select" :options="lkCustomer" />
+            </div>
+          </div>
+          <div class="col-xl-3">
+            <div class="mb-3">
+              <label class="form-label">Province </label>
+              <multiselect :searchable="false" :searchStart="true" placeholder="Select" :options="lkCustomer" />
+            </div>
+          </div>
+          <div class="col-xl-3">
+            <div class="mb-3">
+              <label class="form-label">District </label>
+              <multiselect :searchable="false" :searchStart="true" placeholder="Select" :options="lkCustomer" />
+            </div>
+          </div>
+          <div class="col-xl-3">
+            <div class="mb-3">
+              <label class="form-label">Village </label>
+              <multiselect :searchable="false" :searchStart="true" placeholder="Select" :options="lkCustomer" />
+            </div>
+          </div>
+          <div class="col-xl-6">
+            <div class="mb-3">
+              <label class="form-label">Home Address </label>
+              <input type="text" class="form-control" placeholder="Enter email Address">
+            </div>
+          </div>
+          <div class="col-xl-6">
+            <div class="mb-3">
+              <label class="form-label">Remarks </label>
+              <input type="text" class="form-control" placeholder="Enter email Address">
+            </div>
+          </div>
+
+
+
+        </div>
+
+
+
+
+
+
+
+
+        <div class="mt-0">
+          <ul class="nav nav-tabs nav-tabs-custom nav-success mb-3" role="tablist">
+            <li class="nav-item" role="presentation">
+              <a class="nav-link All py-3" data-bs-toggle="tab" id="All" href="#home1" role="tab" aria-selected="false" tabindex="-1">
+                <!-- <i class="ri-store-2-fill me-1 align-bottom"></i>  -->
+                Employee History
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link py-3 Delivered active" data-bs-toggle="tab" id="Delivered" href="#delivered" role="tab" aria-selected="true">
+                <i class="ri-checkbox-circle-line me-1 align-bottom"></i> Delivered
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link py-3 Pickups" data-bs-toggle="tab" id="Pickups" href="#pickups" role="tab" aria-selected="false" tabindex="-1">
+                <i class="ri-truck-line me-1 align-bottom"></i> Pickups <span class="badge bg-danger align-middle ms-1">2</span>
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link py-3 Returns" data-bs-toggle="tab" id="Returns" href="#returns" role="tab" aria-selected="false" tabindex="-1">
+                <i class="ri-arrow-left-right-fill me-1 align-bottom"></i> Returns
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link py-3 Cancelled" data-bs-toggle="tab" id="Cancelled" href="#cancelled" role="tab" aria-selected="false" tabindex="-1">
+                <i class="ri-close-circle-line me-1 align-bottom"></i> Cancelled
+              </a>
+            </li>
+          </ul>
+
+          <div class="table-responsive table-card mb-1">
+            <table class="table table-nowrap align-middle" id="orderTable">
+              <thead class="text-muted table-light">
+                <tr class="text-uppercase">
+                  <th scope="col" style="width: 25px;">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="checkAll" value="option">
                     </div>
-                    <div v-else class="avatar-xs">
-                      <div class="avatar-title rounded bg-success-subtle text-muted rounded-circle text-capitalize fw-medium">{{ avatarText(item.name, item.surname) }}</div>
+                  </th>
+                  <th class="sort" data-sort="id">Order ID</th>
+                  <th class="sort" data-sort="customer_name">Customer</th>
+                  <th class="sort" data-sort="product_name">Product</th>
+                  <th class="sort" data-sort="date">Order Date</th>
+                  <th class="sort" data-sort="amount">Amount</th>
+                  <th class="sort" data-sort="payment">Payment Method</th>
+                  <th class="sort" data-sort="status">Delivery Status</th>
+                  <th class="sort" data-sort="city">Action</th>
+                </tr>
+              </thead>
+              <tbody class="list form-check-all">
+                <tr>
+                  <th scope="row">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" name="checkAll" value="option1">
                     </div>
-                    <div class="flex-grow-1">
-                      <a class="fw-medium link-secondary text-body" href="javascript:void(0)" @click="userSelected(item.username, item.id)">{{ item.username }}</a>
+                  </th>
+                  <td class="id"><a href="apps-ecommerce-order-details.html" class="fw-medium link-primary">#VZ11</a></td>
+                  <td class="customer_name">Diana Kohler</td>
+                  <td class="product_name">Half Sleeve T-Shirts (Blue)</td>
+                  <td class="date">20 Apr,2022 <small class="text-muted">4:05 PM</small></td>
+                  <td class="amount">$874</td>
+                  <td class="payment">Visa</td>
+                  <td class="status"><span class="badge bg-success-subtle text-success text-uppercase">Delivered</span></td>
+                  <td>
+                    <ul class="list-inline hstack gap-2 mb-0">
+                      <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="View">
+                        <a href="apps-ecommerce-order-details.html" class="text-primary d-inline-block">
+                          <i class="ri-eye-fill fs-16"></i>
+                        </a>
+                      </li>
+                      <li class="list-inline-item edit" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Edit">
+                        <a href="#showModal" data-bs-toggle="modal" class="text-primary d-inline-block edit-item-btn">
+                          <i class="ri-pencil-fill fs-16"></i>
+                        </a>
+                      </li>
+                      <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Remove">
+                        <a class="text-danger d-inline-block remove-item-btn" data-bs-toggle="modal" href="#deleteOrder">
+                          <i class="ri-delete-bin-5-fill fs-16"></i>
+                        </a>
+                      </li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" name="checkAll" value="option1">
                     </div>
+                  </th>
+                  <td class="id"><a href="apps-ecommerce-order-details.html" class="fw-medium link-primary">#VZ8</a></td>
+                  <td class="customer_name">Alexis Clarke</td>
+                  <td class="product_name">USB Flash Drive Personalized wi</td>
+                  <td class="date">20 Apr,2022 <small class="text-muted">4:05 PM</small></td>
+                  <td class="amount">$247</td>
+                  <td class="payment">Paypal</td>
+                  <td class="status"><span class="badge bg-success-subtle text-success text-uppercase">Delivered</span></td>
+                  <td>
+                    <ul class="list-inline hstack gap-2 mb-0">
+                      <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="View">
+                        <a href="apps-ecommerce-order-details.html" class="text-primary d-inline-block">
+                          <i class="ri-eye-fill fs-16"></i>
+                        </a>
+                      </li>
+                      <li class="list-inline-item edit" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Edit">
+                        <a href="#showModal" data-bs-toggle="modal" class="text-primary d-inline-block edit-item-btn">
+                          <i class="ri-pencil-fill fs-16"></i>
+                        </a>
+                      </li>
+                      <li class="list-inline-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Remove">
+                        <a class="text-danger d-inline-block remove-item-btn" data-bs-toggle="modal" href="#deleteOrder">
+                          <i class="ri-delete-bin-5-fill fs-16"></i>
+                        </a>
+                      </li>
+                    </ul>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="noresult" style="display: none">
+              <div class="text-center">
+                <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#405189,secondary:#0ab39c" style="width:75px;height:75px"></lord-icon>
+                <h5 class="mt-2">Sorry! No Result Found</h5>
+                <p class="text-muted">We've searched more than 150+ Orders We did not find any orders for you search.</p>
+              </div>
+            </div>
+          </div>
+
+
+
+        </div>
+
+
+        <!-- Modal -->
+        <div class="modal fade flip" id="deleteOrder" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-body p-5 text-center">
+                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#405189,secondary:#f06548" style="width:90px;height:90px"></lord-icon>
+                <div class="mt-4 text-center">
+                  <h4>You are about to delete a order ?</h4>
+                  <p class="text-muted fs-15 mb-4">Deleting your order will remove all of your information from our database.</p>
+                  <div class="hstack gap-2 justify-content-center remove">
+                    <button class="btn btn-link link-success fw-medium text-decoration-none" id="deleteRecord-close" data-bs-dismiss="modal"><i class="ri-close-line me-1 align-middle"></i> Close</button>
+                    <button class="btn btn-danger" id="delete-record">Yes, Delete It</button>
                   </div>
-                </td>
-                <td>{{ item.name }}</td>
-                <td>{{ item.surname }}</td>
-                <td>{{ item.company }}</td>
-                <td>{{ item.department }}</td>
-                <td>{{ item.position }}</td>
-                <td>{{ item.email }}</td>
-                <td>{{ item.phone }}</td>
-                <td>
-                  <button class="btn btn-soft-success btn-icon btn-sm material-shadow-none dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="ri-more-fill bx bx-dots-horizontal align-middle"></i>
-                  </button>
-                  <ul class="dropdown-menu dropdown-menu-end" style="">
-                    <li><a class="dropdown-item" href="javascript:void(0);" @click="userSelected(item.username, item.id)"><i class="ri-lock-unlock-fill align-bottom me-2 text-muted"></i> Authorise</a></li>
-                    <li><a class="dropdown-item disabled" href="javascript:void(0);"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit User</a></li>
-                    <li><a class="dropdown-item disabled" href="javascript:void(0);"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>
-                  </ul>
-                </td>
-              </tr> -->
-            </tbody>
-          </table>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="mt-4">
-          <!-- <pagination :pagination="userData" @paginate="getUsers($event)" :offset="4"></pagination> -->
-        </div>
+        <!--end modal -->
+
+
       </div>
     </div>
 
@@ -403,21 +653,61 @@
 
 <script>
 import axios from 'axios';
-import { useAuthStore } from '../stores/auth';
+import { AgGridVue } from 'ag-grid-vue3';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-material.css';
+import 'ag-grid-enterprise';
+import { useToastr } from '../toastr.js';
+import { useStore } from '../stores/store.js';
+import { useAuthStore } from '../stores/auth.js';
+const toastr = useToastr();
 
 export default {
   name: 'XpplAppClinicTreatment',
+  components: { AgGridVue },
   setup() {
-    const authStore = useAuthStore();
-    return { authStore };
+    return {
+      store: useStore(),
+      authStore: useAuthStore()
+    };
   },
 
   data() {
     return {
+      columnDefs: [
+        { headerName: 'Medicine ID', field: 'medicine_id', minWidth: 80, maxWidth: 100, hide: true },
+        { headerName: 'Medicine Name', field: 'medicine_eng', minWidth: 300, filter: 'agSetColumnFilter' },
+        { headerName: 'ຊື່ລາຍການຢາ', field: 'medicine_lao', minWidth: 200, filter: 'agSetColumnFilter' },
+        { headerName: 'Description', field: 'descr', minWidth: 200, filter: 'agSetColumnFilter' },
+        { headerName: 'Unit ID', field: 'unit_id', hide: true },
+        { headerName: 'Unit', field: 'unit_eng', filter: 'agSetColumnFilter' },
+        { headerName: 'ຫົວໜ່ວຍ', field: 'unit_lao', filter: 'agSetColumnFilter' },
+        {
+          headerName: 'Unit Price (Kip)', field: 'unit_price', minWidth: 80, filter: 'agNumberColumnFilter',
+          valueGetter: p => Number(p.data.unit_price),
+          valueFormatter: p => p.value ? p.value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : ''
+        },
+        {
+          headerName: 'Min Remind', field: 'min_remind', minWidth: 80, filter: 'agNumberColumnFilter',
+          valueGetter: p => Number(p.data.min_remind),
+          valueFormatter: p => p.value ? p.value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : ''
+        },
+        { headerName: 'Created at', field: 'created_at', maxWidth: 150, hide: false, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
+        { headerName: 'Created by', field: 'created_by', maxWidth: 150, hide: false, filter: 'agSetColumnFilter' },
+        { headerName: 'Updated at', field: 'updated_at', maxWidth: 150, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
+        { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
+      ],
 
-      lkSex: ['Male', 'Female', 'LGBTQ'],
-      search: '',
-      contractForm: { row_index: '', contract_id: '', customer_id: null, contract_no: '', contract_appendix: '', signed_date: '', contract_quantity: '', contract_grade_id: null, contract_grade_gar: '', loading_place: '', delivery_place: '', contract_status: null, contract_remark: '' },
+      defaultColDef: {
+        sortable: true,
+        resizable: true,
+        flex: 1,
+        filterParams: { buttons: ['reset'] },
+        minWidth: 100,
+        cellClassRules: { 'pointer': 'true' },
+        // menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
+      },
+
 
 
       codes: [],
@@ -451,6 +741,11 @@ export default {
       lkBloodGLao: [],
       lkSectionLao: [],
       lkDoctorLao: [],
+
+
+      search: '',
+      contractForm: { row_index: '', contract_id: '', customer_id: null, contract_no: '', contract_appendix: '', signed_date: '', contract_quantity: '', contract_grade_id: null, contract_grade_gar: '', loading_place: '', delivery_place: '', contract_status: null, contract_remark: '' },
+
 
       patientForm: { patient_id: '', photo: '', photo_file: '', sex: 'Male', patient_name: '', company: null, department: null, position: null, employee_id: '', age: '', phone: '', blood_group: '', disease: '', drug_allergy: '', note: '' },
       treatmentFrom: { treatment_id: '', date_time: '', medical_type: null, injury_type: null, injury_part: null, work_related: null, temp_c: '', blood_press: '', puls: '', oxigen: '', weight: '', syndrome: '', diagnosis: null, patient_type: null, transfer: null, hospital: null, medic: null },
@@ -754,16 +1049,25 @@ export default {
             });
           };
         };
-
-
-
-
       }).catch((err) => {
         console.log(err);
       });
-    }
+    },
 
 
+
+    onSearch() {
+      this.search ? document.getElementById('search-close').classList.remove('d-none') : document.getElementById('search-close').classList.add('d-none');
+    },
+
+    searchClear() {
+      this.search = '';
+      document.getElementById('search-close').classList.add('d-none');
+    },
+
+    backToMain() {
+      document.getElementById('code-detail').classList.remove('user-chat-show');
+    },
   },
 
   created() {

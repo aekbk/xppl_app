@@ -785,9 +785,10 @@ export default {
   components: { AgGridVue, Test, but },
 
   setup() {
-    const store = useStore();
-    const authStore = useAuthStore();
-    return { store, authStore };
+    return {
+      store: useStore(),
+      authStore: useAuthStore()
+    };
   },
 
   data() {

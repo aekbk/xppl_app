@@ -8,20 +8,19 @@ use Illuminate\Support\Str;
 
 class clinic_controller extends Controller
 {
-    public function codes() {
-        $codes = DB::select('select * from clinic_codes order by category, code');
-        return $codes;
+    public function category() {
+        $category = DB::select('select * from clinic_category order by category');
+        return $category;
     }
-
-    public function medicines() {
-        $medicine = DB::select('select * from clinic_medicines order by medicine_eng');
-        return $medicine;        
+    public function code() {
+        $code = DB::select('select * from clinic_codes order by category, code');
+        return $code;
     }
 
     public function addCode(Request $request){
         $check = DB::table('clinic_codes')
-                    ->where('category', $request->category)
-                    ->where('code', $request->code);
+                ->where('category', $request->category)
+                ->where('code', $request->code);
 
         if ($check->count()){
             $success = false;
@@ -53,7 +52,7 @@ class clinic_controller extends Controller
         return response()->json($response);
     }
 
-    public function updCode(Request $request){
+    public function updateCode(Request $request){
         $datetime = now('Asia/Bangkok')->toDateTimeString();
         $username = Str::lower(auth()->user()->username);
         
@@ -66,30 +65,102 @@ class clinic_controller extends Controller
                 'active' => $request->active,
                 'updated_at' => $datetime,
                 'updated_by' => $username
-            ]);
+        ]);
+
+        // Update other related tables
+        if ($request->code !== $request->code_old && $request->tbl_name) {
+            DB::table($request->tbl_name)
+                ->where($request->col_name, $request->code_old)
+                ->update([$request->col_name => $request->code]);
+        }
     }
 
-    public function delCode(Request $request){
-        // $check = DB::table("cs_codes")
-        //             ->where("code", $request->code);
+    public function deleteCode(Request $request){
+        $check = DB::table($request->tbl_name)->where($request->col_name, $request->code);
+        if ($check->count()) {
+            $success = false;
+            $message = 'This code has already been used; it cannot be deleted.';
+        } else {
 
-        // if ($check->count()){
-        //     $success = false;
-        //     $message = 'ລາຍການນີ້ໄດ້ຖືກນຳໃຊ້ແລ້ວ ທ່ານບໍ່ສາມາດລົບໄດ້!';
-        // } else {
-      
-            DB::table('clinic_codes')
-                ->where('code_id', $request->code_id)
-                ->delete();
+            DB::table('clinic_codes')->where('code_id', $request->code_id)->delete();
 
-        //     $success = true;
-        //     $message = "Delete completed!";
-        // }
-        // $response = [
-        //     'success' => $success,
-        //     'message' => $message
-        // ];
-        // return response()->json($response);
+            $success = true;
+            $message = "Delete completed.";
+        }
+        $response = [
+            'success' => $success,
+            'message' => $message
+        ];
+        return response()->json($response);
+    }
+
+    public function medicine() {
+        $medicine = DB::select('select a.*, b.descr_eng as unit_eng, b.descr_lao as unit_lao from clinic_medicines a, clinic_codes b where b.code_id = a.unit_id order by a.medicine_eng');
+        return $medicine;        
+    }
+
+    public function addMedicine(Request $request){
+        $check = DB::table('clinic_medicines')->where('medicine_eng', $request->medicine_eng);
+        if ($check->count()){
+            $success = false;
+            $message = 'This medicine already exists in the database!';
+        } else {
+
+            DB::table('clinic_medicines')
+                ->insert([
+                    'medicine_eng' => $request->medicine_eng,
+                    'medicine_lao' => $request->medicine_lao,
+                    'descr' => $request->descr,
+                    'unit_id' => $request->unit_id,
+                    'unit_price' => $request->unit_price,
+                    'min_remind' => $request->min_remind,
+                    'created_at' => now('Asia/Bangkok')->toDateTimeString(),
+                    'created_by' => auth()->user()->username,
+                ]);
+
+            $success = true;
+            $message = "Insert completed!";
+        }
+
+        $response = [
+            'success' => $success,
+            'message' => $message
+        ];
+        return response()->json($response);
+    }
+
+    public function updateMedicine(Request $request){
+        DB::table('clinic_medicines')
+            ->where('medicine_id', $request->medicine_id)
+            ->update([
+                'medicine_eng' => $request->medicine_eng,
+                'medicine_lao' => $request->medicine_lao,
+                'descr' => $request->descr,
+                'unit_id' => $request->unit_id,
+                'unit_price' => $request->unit_price,
+                'min_remind' => $request->min_remind,
+                'updated_at' => now('Asia/Bangkok')->toDateTimeString(),
+                'updated_by' => auth()->user()->username,
+        ]);
+    }
+
+    public function deleteMedicine(Request $request){
+        $check = DB::table('clinic_medications')->where('medicine_id', $request->medicine_id);
+        if ($check->count()) {
+            $success = false;
+            $message = 'This medicine has already been used; it cannot be deleted.';
+        } else {
+
+            DB::table('clinic_medicines')->where('medicine_id', $request->medicine_id)->delete();
+
+            $success = true;
+            $message = "Delete completed.";
+        }
+        $response = [
+            'success' => $success,
+            'message' => $message
+        ];
+        return response()->json($response);
     }
 
     public function addPatient(Request $request){
@@ -171,6 +242,9 @@ class clinic_controller extends Controller
         ];
         return response()->json($response);
     }
+
+
+
 
 
 }
