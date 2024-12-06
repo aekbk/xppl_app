@@ -23,6 +23,8 @@
                     :actualData="wasteProductionActualDataByContractor"
                     :planData="wasteProductionPlanDataByContractor"
                     :categories="wasteProductionCategoriesByContractor"
+                    :leftYAxisTitle="'Volume (Kbcm)'"
+                    :rightYAxisTitle="'Cum. Volume (Mbcm)'"
                  ></kpi-chart>
 
                 <month-line

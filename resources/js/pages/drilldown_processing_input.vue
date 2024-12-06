@@ -23,6 +23,8 @@
                     :actualData="coalProductionActualDataByPlant"
                     :planData="coalProductionPlanDataByPlant"
                     :categories="coalProductionCategoriesByPlant"
+                    :leftYAxisTitle="'Weight (Kt)'"
+                    :rightYAxisTitle="'Cum. Weight (Mt)'"
                 ></kpi-chart>
             </chart-group>
         </card>
@@ -50,6 +52,8 @@
                     :actualData="coalProductionActualDataByGrade"
                     :planData="coalProductionPlanDataByGrade"
                     :categories="coalProductionCategoriesByGrade"
+                    :leftYAxisTitle="'Weight (Kt)'"
+                    :rightYAxisTitle="'Cum. Weight (Mt)'"
                 ></kpi-chart>
             </chart-group>
         </card>

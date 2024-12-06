@@ -36,6 +36,8 @@
                     :actualData="miningProductionActualDataByContractorAndGrade"
                     :planData="miningProductionPlanDataByContractorAndGrade"
                     :categories="miningProductionCategoriesByContractorAndGrade"
+                    :leftYAxisTitle="'Weight (Kt)'"
+                    :rightYAxisTitle="'Cum. Weight (Mt)'"
                 ></kpi-chart>
 
                 <h5>Mining Coal Production: {{ selectedByContractorFilter }}, {{ selectedByGradeFilter }}</h5>

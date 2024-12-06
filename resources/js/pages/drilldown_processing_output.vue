@@ -23,6 +23,8 @@
                     :actualData="coalOutputActualDataByPlant"
                     :planData="coalOutputPlanDataByPlant"
                     :categories="coalOutputCategoriesByPlant"
+                    :leftYAxisTitle="'Weight (Kt)'"
+                    :rightYAxisTitle="'Cum. Weight (Mt)'"
                 ></kpi-chart>
                 <!-- <h5>Mining Coal Production</h5>
                 <month-line
@@ -55,6 +57,8 @@
                     :actualData="coalOutputActualDataByGrade"
                     :planData="coalOutputPlanDataByGrade"
                     :categories="coalOutputCategoriesByGrade"
+                    :leftYAxisTitle="'Weight (Kt)'"
+                    :rightYAxisTitle="'Cum. Weight (Mt)'"
                 ></kpi-chart>
             </chart-group>
         </card>
