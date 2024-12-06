@@ -14,6 +14,7 @@
                 :selectedTab="selectedByPlantTab"
                 :availableFilter="availableByPlantFilter"
                 :selectedFilter="selectedByPlantFilter"
+                :defaultFilter="defaultByPlantFilter"
                 @filterChange="setByPlantSelectedFilter"
                 @tabSwitch="setByPlantSelectedTab"
             >
@@ -45,6 +46,7 @@
                 :selectedTab="selectedByGradeTab"
                 :availableFilter="availableByGradeFilter"
                 :selectedFilter="selectedByGradeFilter"
+                :defaultFilter="defaultByGradeFilter"
                 @filterChange="setByGradeSelectedFilter"
                 @tabSwitch="setByGradeSelectedTab"
             >
@@ -108,11 +110,13 @@ export default {
 
             // Input ByPlant filter
             selectedByPlantTab: "mtd",
-            selectedByPlantFilter: "Total",
+            defaultByPlantFilter: "All Plants",
+            selectedByPlantFilter: "All Plants",
 
             // Input ByGrade filter
             selectedByGradeTab: "mtd",
-            selectedByGradeFilter: "Total",
+            defaultByGradeFilter: "All Grades",
+            selectedByGradeFilter: "All Grades",
         };
     },
 
@@ -127,7 +131,7 @@ export default {
             }
 
             const filteredData =
-                this.selectedByPlantFilter === "Total"
+                this.selectedByPlantFilter === this.defaultByPlantFilter
                     ? this.rawOutputData
                     : this.rawOutputData.filter(
                           (i) => i.plant === this.selectedByPlantFilter
@@ -186,7 +190,7 @@ export default {
             }
 
             const filteredData =
-                this.selectedByGradeFilter === "Total"
+                this.selectedByGradeFilter === this.defaultByGradeFilter
                     ? this.rawOutputData
                     : this.rawOutputData.filter(
                           (i) => i.input_grade === this.selectedByGradeFilter

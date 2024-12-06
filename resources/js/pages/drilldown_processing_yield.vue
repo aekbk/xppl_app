@@ -13,6 +13,7 @@
                 :selectedTab="selectedByPlantTab"
                 :availableFilter="availableByPlantFilter"
                 :selectedFilter="selectedByPlantFilter"
+                :defaultFilter="defaultByPlantFilter"
                 @filterChange="setByPlantSelectedFilter"
                 @tabSwitch="setByPlantSelectedTab"
             >
@@ -66,7 +67,8 @@ export default {
 
             // Input ByPlant filter
             selectedByPlantTab: 'mtd',
-            selectedByPlantFilter: 'Total',
+            defaultByPlantFilter: 'All Plants',
+            selectedByPlantFilter: 'All Plants',
 
             // Input ByGrade filter
             selectedByGradeTab: 'mtd',
@@ -84,7 +86,7 @@ export default {
                 };
             }
 
-            const filteredData = this.selectedByPlantFilter === "Total"
+            const filteredData = this.selectedByPlantFilter === this.defaultByPlantFilter
                 ? this.rawThroughputData
                 : this.rawThroughputData.filter((i) => i.plant === this.selectedByPlantFilter);
             return convertToKpiDataByAttr(
