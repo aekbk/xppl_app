@@ -1,6 +1,6 @@
 <template>
     <!-- Content :  Strip Ratio-->
-    <div class="row justify-content-evenly mb-4">
+    <div v-if="!isLoading" class="row justify-content-evenly mb-4">
         <card title="Strip Ratio">
             <nested-chart-group
                 :selectedTab="selectedByContractorAndPitTab"
@@ -23,33 +23,38 @@
             </nested-chart-group>
         </card>
     </div>
+    <div v-if="isLoading" class="row justify-content-evenly mb-4">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
 </template>
 
 <script>
 import { uniq } from "lodash";
-import SummaryStatistic from "../components/summary-statistic.vue";
-import DepartmentSummary from "../components/department-summary.vue";
 import Card from "../components/card.vue";
-import { useAuthStore } from "../stores/auth";
-import { useStore } from "../stores/store";
-import ToDateTable from "../components/to-date-table.vue";
+import DepartmentSummary from "../components/department-summary.vue";
 import KpiChart from "../components/kpi-chart.vue";
-import {
-    convertToDailyKpiData,
-    convertToKpiDataByAttr,
-} from "../utils/chart";
-import { formatDateToDayMonth, formatDateToMonthYear } from "../utils/date";
-import { subset } from "../utils/data";
-import { roundToDecimalPlace } from "../utils/number";
 import MonthLine from "../components/month-line.vue";
 import NestedChartGroup from "../components/nested-chart-group.vue";
+import SummaryStatistic from "../components/summary-statistic.vue";
+import ToDateTable from "../components/to-date-table.vue";
+import { useAuthStore } from "../stores/auth";
+import { useGlobalParamStore } from "../stores/globalParam";
+import { useStore } from "../stores/store";
+import {
+    convertToKpiDataByAttr
+} from "../utils/chart";
+import { formatDateToDayMonth, formatDateToMonthYear } from "../utils/date";
+import { roundToDecimalPlace } from "../utils/number";
 
 export default {
     name: "MiningDrilldown/Strip-Ratio",
     setup() {
         const authStore = useAuthStore();
         const store = useStore();
-        return { authStore, store };
+        const globalParamStore = useGlobalParamStore();
+        return { authStore, store, globalParamStore };
     },
     components: {
         SummaryStatistic,
@@ -63,7 +68,7 @@ export default {
 
     data() {
         return {
-
+            isLoading: false,
             rawMiningData: [],
             rawWasteData: [],
 
@@ -110,9 +115,17 @@ export default {
          */
         miningProductionActualDataByContractorAndPit() {
             if (this.selectedByContractorAndPitTab === "mtd") {
-                return this.miningByContractorAndPitData.daily.map((i) => i.actual);
+                const filteredDailyData =
+                    this.miningByContractorAndPitData.daily.filter(
+                        (i) => i.date <= this.globalParamStore.selectedDate
+                    );
+                return filteredDailyData.map((i) => i.actual);
             } else {
-                return this.miningByContractorAndPitData.monthly.map((i) => i.actual);
+                const filteredMonthlyData =
+                    this.miningByContractorAndPitData.monthly.filter(
+                        (i) => i.date <= this.globalParamStore.selectedDate
+                    );
+                return filteredMonthlyData.map((i) => i.actual);
             }
         },
 
@@ -148,9 +161,17 @@ export default {
          */
         wasteProductionActualDataByContractorAndPit() {
             if (this.selectedByContractorAndPitTab === "mtd") {
-                return this.wasteByContractorAndPitData.daily.map((i) => i.actual);
+                const filteredDailyData =
+                    this.wasteByContractorAndPitData.daily.filter(
+                        (i) => i.date <= this.globalParamStore.selectedDate
+                    );
+                return filteredDailyData.map((i) => i.actual);
             } else {
-                return this.wasteByContractorAndPitData.monthly.map((i) => i.actual);
+                const filteredMonthlyData =
+                    this.wasteByContractorAndPitData.monthly.filter(
+                        (i) => i.date <= this.globalParamStore.selectedDate
+                    );
+                return filteredMonthlyData.map((i) => i.actual);
             }
         },
 
@@ -218,9 +239,13 @@ export default {
         },
     },
 
+    watch: {
+        "globalParamStore.getSelectedDate": "fetchData",
+    },
+
     methods: {
         async fetchStripRatioData() {
-
+            this.isLoading = true;
             // mining data
             const miningResponse = await axios.get(
                 "/api/control-tower/mining_detail?start_date=2024-01-01&end_date=2024-12-01",
@@ -243,7 +268,7 @@ export default {
                 }
             );
             this.rawWasteData = wasteResponse.data;
-
+            this.isLoading = false;
         },
         async fetchData() {
             this.fetchStripRatioData();

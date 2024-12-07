@@ -78,11 +78,10 @@ import NavTabs from "../components/nav-tabs.vue";
 import SummaryStatistic from "../components/summary-statistic.vue";
 import ToDateTable from "../components/to-date-table.vue";
 import { useAuthStore } from "../stores/auth";
-import { useStore } from "../stores/store";
-import { convertToDailyKpiData } from "../utils/chart";
-import { subset } from "../utils/data";
-import { formatDateToDayMonth } from "../utils/date";
 import { useGlobalParamStore } from "../stores/globalParam";
+import { useStore } from "../stores/store";
+
+const DEFAULT_DATE = '2024-11-30';
 
 export default {
     name: "ProcessingDrilldown",
@@ -105,7 +104,6 @@ export default {
     data() {
         return {
             miningData: [],
-            selectDate: "",
 
             // Kpi chart data
             coalProductionActualData: [],
@@ -125,32 +123,6 @@ export default {
         onSelectDate() {
             this.globalParamStore.setSelectedDate(new Date(this.selectDate));
         },
-        async fetchMiningData() {
-            const response = await axios.get(
-                "/api/control-tower/mining_detail?start_date=2024-01-01&end_date=2024-12-01",
-                {
-                    headers: {
-                        Authorization: "Bearer " + this.authStore.getToken,
-                    },
-                }
-            );
-            this.miningData = response.data;
-
-            const novemberData = subset(
-                response.data,
-                "2024-11-01",
-                "2024-11-30"
-            );
-            const kpiData = convertToDailyKpiData(novemberData);
-            this.coalProductionActualData = kpiData.map((i) => i.actual);
-            this.coalProductionPlanData = kpiData.map((i) => i.plan);
-            this.coalProductionCategories = kpiData.map((i) =>
-                formatDateToDayMonth(i.date)
-            );
-        },
-        async fetchData() {
-            this.fetchMiningData();
-        },
     },
     created() {
         
@@ -161,7 +133,7 @@ export default {
         flatpickr(".flatpickr-single", {
             altInput: true,
             altFormat: "d-m-Y",
-            defaultDate: '2024-11-30',
+            defaultDate: this.globalParamStore.getSelectedDate || DEFAULT_DATE,
             disable: [
                 function (date) {
                     // return true to disable

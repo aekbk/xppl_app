@@ -56,6 +56,10 @@ export default {
             type: String,
             required: true,
         },
+        toDate: {
+            type: String,
+            false: true,
+        }
     },
     data() {
         return {
@@ -77,7 +81,7 @@ export default {
   					filter: true,
   				},
                 {
-                    headerName: "Today (Kt)",
+                    headerName: this.toDate + " (Kt)",
                     children: [
                         {
                             headerName: "Plan",
@@ -194,7 +198,7 @@ export default {
         toDateData() {
             const result = transformToNestedDateTableData(
                 this.data,
-                new Date("2024-11-20"),
+                new Date(this.toDate),
                 this.primarySliceAttribute,
                 this.secondarySliceAttribute,
                 this.planAttrName,
