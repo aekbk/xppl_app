@@ -56,6 +56,8 @@
                             :mainMetricPlanData="
                                 miningSummary.mainMetricPlanData
                             "
+                            :mainMetricLeftYAxisTitle="miningSummary.mainMetricLeftYAxisTitle"
+                            :mainMetricRightYAxisTitle="miningSummary.mainMetricRightYAxisTitle"
                             :secondaryMetricTitle="
                                 miningSummary.secondaryMetricTitle
                             "
@@ -68,6 +70,8 @@
                             :secondaryMetricCategories="
                                 miningSummary.secondaryMetricCategories
                             "
+                            :secondaryMetricYAxisTitle="miningSummary.secondaryMetricYAxisTitle"
+                            :secondaryMetricUnit="miningSummary.secondaryMetricUnit"
                             :secondarySummaryHeader="
                                 miningSummary.secondarySummaryHeader
                             "
@@ -89,6 +93,8 @@
                             :mainMetricPlanData="
                                 processingSummary.mainMetricPlanData
                             "
+                            :mainMetricLeftYAxisTitle="processingSummary.mainMetricLeftYAxisTitle"
+                            :mainMetricRightYAxisTitle="processingSummary.mainMetricRightYAxisTitle"
                             :secondaryMetricTitle="
                                 processingSummary.secondaryMetricTitle
                             "
@@ -101,6 +107,8 @@
                             :secondaryMetricCategories="
                                 processingSummary.secondaryMetricCategories
                             "
+                            :secondaryMetricYAxisTitle="processingSummary.secondaryMetricYAxisTitle"
+                            :secondaryMetricUnit="processingSummary.secondaryMetricUnit"
                             :secondarySummaryHeader="
                                 processingSummary.secondarySummaryHeader
                             "
@@ -216,9 +224,13 @@ export default {
                 mainMetricPlanData: [],
                 mainMetricCumPlanData: [],
                 mainMetricCumActualData: [],
+                mainMetricLeftYAxisTitle:"Weight (Kt)",
+                mainMetricRightYAxisTitle:"Cum. Weight (Kt)",
                 secondaryMetricTitle: "Yield",
                 secondaryMetricSubtitle: "(MTD)",
                 secondaryMetricStats: [],
+                secondaryMetricYAxisTitle: "Yield (%)",
+                secondaryMetricUnit: "%",
                 secondarySummaryHeader: "MTD Avg",
             },
             salesLogisticsSummary: {
@@ -347,10 +359,14 @@ export default {
                 mainMetricActualData: miningActualData,
                 mainMetricPlanData: miningPlanData,
                 mainMetricCategories: miningCategories,
+                mainMetricLeftYAxisTitle: "Weight (Kt)",
+                mainMetricRightYAxisTitle: "Cum. Weight (Kt)",
                 secondaryMetricTitle: "Strip Ratio",
                 secondaryMetricSubtitle: "(MTD)",
                 secondaryMetricStats: stripRatio,
                 secondaryMetricCategories: miningCategories,
+                secondaryMetricYAxisTitle: "Strip Ratio (Kbcm/Kt)",
+                secondaryMetricUnit: "Kbcm/Kt",
                 secondarySummaryHeader: "MTD Avg", 
             };
         },

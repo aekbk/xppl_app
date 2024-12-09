@@ -53,6 +53,7 @@
                     :data="tonesPerHourData"
                     :categories="miningProductionCategoriesByContractorAndGrade"
                     :yAxisTitle="'Hourly Productivity (Kt/hour)'"
+                    :units="'Kt'"
                 ></month-line>
             </nested-chart-group>
         </card>
