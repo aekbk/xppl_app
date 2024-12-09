@@ -121,8 +121,16 @@ export default {
                         tickAmount: 10,
                         max: getYMax([...cumActual, ...cumPlan]),
                         labels: {
-                            formatter: (value) => format(value, "0,0.0a"), // divide by 1000 to convert to Mt
-                        },
+                            formatter: (value) => {
+                                // value is in Ktonnes
+                                // if we see 1000Ktonnes, we should show 1Mt
+                                if (value >= 1000) {
+                                    return format(value / 1000, "0,0.0a"); // Scale to Mt
+                                } else {
+                                    return format(value, "0,0.0a"); // keep it Kt
+                                }
+                            }
+                       },
                     },
                     {
                         opposite: true,
@@ -135,7 +143,15 @@ export default {
                         tickAmount: 10,
                         max: getYMax([...cumActual, ...cumPlan]),
                         labels: {
-                            formatter: (value) => format(value, "0,0.0a"), // divide by 1000 to convert to Mt
+                            formatter: (value) => {
+                                // value is in Ktonnes
+                                // if we see 1000Ktonnes, we should show 1Mt
+                                if (value >= 1000) {
+                                    return format(value / 1000, "0,0.0a"); // Scale to Mt
+                                } else {
+                                    return format(value, "0,0.0a"); // keep it Kt
+                                }
+                            }
                         },
                     },
                 ],
