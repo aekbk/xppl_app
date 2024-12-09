@@ -91,7 +91,9 @@ export default {
                         title: {
                             // If the value displayed is 1000Ktonnes, it is likely that we are using the year-to-date (YTD) data. 
                             // In this case, the right-hand side (RHS) y-axis title should be used, such as Mtones. It should be noted that the base unit is already in Ktones.
-                            text: getYMax([...this.actualData, ...this.planData]) >= 1000 ? this.rightYAxisTitle : this.leftYAxisTitle,
+                            text: getYMax([...this.actualData, ...this.planData]) >= 1000
+                                ? this.rightYAxisTitle.replace("Cum. ", "")
+                                : this.leftYAxisTitle
                         },
                         max: getYMax([...this.actualData, ...this.planData]),
                         min: 0,
@@ -112,7 +114,9 @@ export default {
                         title: {
                             // If the value displayed is 1000Ktonnes, it is likely that we are using the year-to-date (YTD) data. 
                             // In this case, the right-hand side (RHS) y-axis title should be used, such as Mtones. It should be noted that the base unit is already in Ktones.
-                            text: getYMax([...this.actualData, ...this.planData]) >= 1000 ? this.rightYAxisTitle : this.leftYAxisTitle,
+                            text: getYMax([...this.actualData, ...this.planData]) >= 1000
+                                ? this.rightYAxisTitle.replace("Cum. ", "")
+                                : this.leftYAxisTitle,
                         },
                         min: 0,
                         max: getYMax([...this.actualData, ...this.planData]),
