@@ -23,6 +23,7 @@
                     :data="coalThroughputActualDataByPlant"
                     :categories="coalThroughputCategoriesByPlant"
                     :yAxisTitle="'Yield (%)'"
+                    :units="'%'"
                 ></month-line>
             </chart-group>
         </card>

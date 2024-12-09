@@ -37,6 +37,8 @@
           :actualData="mainMetricActualData"
           :planData="mainMetricPlanData"
           :categories="mainMetricCategories"
+          :leftYAxisTitle="mainMetricLeftYAxisTitle"
+          :rightYAxisTitle="mainMetricRightYAxisTitle"
         ></kpi-chart>
       </div>
 
@@ -58,6 +60,8 @@
         <month-line
           :data="secondaryMetricStats"
           :categories="secondaryMetricCategories"
+          :yAxisTitle="secondaryMetricYAxisTitle"
+          :units="secondaryMetricUnit"
         ></month-line>
       </div>
     </div>
@@ -106,6 +110,16 @@ export default {
       required: false,
       default: [],
     },
+    mainMetricLeftYAxisTitle: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    mainMetricRightYAxisTitle: {
+      type: String,
+      required: false,
+      default: "",
+    },
     secondaryMetricTitle: {
       type: String,
       required: true,
@@ -124,6 +138,16 @@ export default {
       type: Array,
       required: false,
       default: [],
+    },
+    secondaryMetricYAxisTitle: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    secondaryMetricUnit: {
+      type: String,
+      required: false,
+      default: "",
     },
     secondarySummaryHeader: {
       type: String,

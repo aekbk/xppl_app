@@ -19,6 +19,7 @@
                     :data="stripRatioDataByContractorAndPit"
                     :categories="wasteProductionCategoriesByContractorAndPit"
                     :yAxisTitle="'Strip Ratio'"
+                    :units="'Kbcm/Kt'"
                  ></month-line>
             </nested-chart-group>
         </card>

@@ -85,6 +85,12 @@
                                 :mainMetricPlanData="
                                     miningSummary.mainMetricPlanData
                                 "
+                                :mainMetricLeftYAxisTitle="
+                                    miningSummary.mainMetricLeftYAxisTitle
+                                "
+                                :mainMetricRightYAxisTitle="
+                                    miningSummary.mainMetricRightYAxisTitle
+                                "
                                 :secondaryMetricTitle="
                                     miningSummary.secondaryMetricTitle
                                 "
@@ -99,6 +105,12 @@
                                 "
                                 :secondarySummaryHeader="
                                     miningSummary.secondarySummaryHeader
+                                "
+                                :secondaryMetricYAxisTitle="
+                                    miningSummary.secondaryMetricYAxisTitle
+                                "
+                                :secondaryMetricUnit="
+                                    miningSummary.secondaryMetricUnit
                                 "
                             ></department-summary>
                         </div>
@@ -133,6 +145,12 @@
                                 :mainMetricPlanData="
                                     processingSummary.mainMetricPlanData
                                 "
+                                :mainMetricLeftYAxisTitle="
+                                    processingSummary.mainMetricLeftYAxisTitle
+                                "
+                                :mainMetricRightYAxisTitle="
+                                    processingSummary.mainMetricRightYAxisTitle
+                                "
                                 :secondaryMetricTitle="
                                     processingSummary.secondaryMetricTitle
                                 "
@@ -144,6 +162,12 @@
                                 "
                                 :secondaryMetricCategories="
                                     processingSummary.secondaryMetricCategories
+                                "
+                                :secondaryMetricYAxisTitle="
+                                    processingSummary.secondaryMetricYAxisTitle
+                                "
+                                :secondaryMetricUnit="
+                                    processingSummary.secondaryMetricUnit
                                 "
                                 :secondarySummaryHeader="
                                     processingSummary.secondarySummaryHeader
@@ -417,6 +441,8 @@ export default {
                 mainMetricActualData: miningActualData,
                 mainMetricPlanData: miningPlanData,
                 mainMetricCategories: miningCategories,
+                mainMetricLeftYAxisTitle: "Weight (Kt)",
+                mainMetricRightYAxisTitle: "Cum. Weight (Kt)",
                 secondaryMetricTitle: "Strip Ratio",
                 secondaryMetricSubtitle: "(MTD)",
                 secondaryMetricStats: stripRatio,
@@ -469,6 +495,8 @@ export default {
                 title: "Processing",
                 mainMetricTitle: "Total Processing Throughput",
                 mainMetricSubtitle: "(MTD)",
+                mainMetricLeftYAxisTitle: "Weight (Kt)",
+                mainMetricRightYAxisTitle: "Cum. Weight (Kt)",
                 mainMetricActualData: processingOutputActualData,
                 mainMetricPlanData: processingOutputData.map((i) => i.plan),
                 mainMetricCategories: processingOutputData.map((i) =>
@@ -478,6 +506,8 @@ export default {
                 secondaryMetricSubtitle: "(MTD)",
                 secondaryMetricStats: yieldRatio,
                 secondaryMetricCategories: processingCategories,
+                secondaryMetricYAxisTitle: "Yield (%)",
+                secondaryMetricUnit: "%",
                 secondarySummaryHeader: "MTD Avg",
             };
         },
