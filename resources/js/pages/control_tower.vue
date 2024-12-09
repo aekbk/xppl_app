@@ -365,7 +365,7 @@ export default {
                 secondaryMetricSubtitle: "(MTD)",
                 secondaryMetricStats: stripRatio,
                 secondaryMetricCategories: miningCategories,
-                secondaryMetricYAxisTitle: "Strip Ratio (Kbcm/Kt)",
+                secondaryMetricYAxisTitle: "Strip Ratio",
                 secondaryMetricUnit: "Kbcm/Kt",
                 secondarySummaryHeader: "MTD Avg", 
             };
