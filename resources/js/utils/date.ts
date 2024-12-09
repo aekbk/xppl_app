@@ -38,6 +38,7 @@ export function formatDateToMonthYear(date: Date): string {
 // Return list key date such as beginning of the year, beginning of the month, end of the year, end of the month, beginning of the next year, beginning of the next month in yyyy-mm-dd format in key pair value
 export function getKeyDateFromSelectedDate(selectedDate: Date) {
   return {
+    today: moment(selectedDate).format('YYYY-MM-DD'),
     beginningOfYear: moment(selectedDate).startOf('year').format('YYYY-MM-DD'),
     beginningOfMonth: moment(selectedDate).startOf('month').format('YYYY-MM-DD'),
     endOfYear: moment(selectedDate).endOf('year').format('YYYY-MM-DD'),

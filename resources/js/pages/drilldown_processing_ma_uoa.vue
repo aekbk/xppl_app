@@ -149,9 +149,9 @@ export default {
                 'plant', 
             )
         },
-        uoaChartData() {
+        uoaChartData() { 
             let filteredData = this.maUoaData;
-            if (this.selectedByPlantFilter !== 'Total') {
+            if (this.selectedByPlantFilter !== this.defaultByPlantFilter) {
                 filteredData = filteredData.filter((i) => i.attr === this.selectedByPlantFilter);
             }
             let totalMa = 0;
