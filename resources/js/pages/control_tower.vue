@@ -509,7 +509,7 @@ export default {
                 secondaryMetricStats: yieldRatio,
                 secondaryMetricCategories: processingCategories,
                 secondaryMetricYAxisTitle: "Yield (%)",
-                secondaryMetricUnit: "%",
+                secondaryMetricUnit: "",
                 secondarySummaryHeader: "MTD Avg",
             };
         },
