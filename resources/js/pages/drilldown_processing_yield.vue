@@ -24,6 +24,8 @@
                     :categories="coalThroughputCategoriesByPlant"
                     :yAxisTitle="'Yield (%)'"
                     :units="''"
+                    :labelFormat="'0 %'"
+                    :yAxisFormat="'0 %'"
                 ></month-line>
             </chart-group>
         </card>
@@ -37,21 +39,25 @@
 
 <script>
 import { uniq } from "lodash";
-import SummaryStatistic from "../components/summary-statistic.vue";
-import DepartmentSummary from "../components/department-summary.vue";
 import Card from "../components/card.vue";
-import { useAuthStore } from "../stores/auth";
-import { useStore } from "../stores/store";
-import ToDateTable from "../components/to-date-table.vue";
-import KpiChart from "../components/kpi-chart.vue";
-import {
-    convertToKpiDataByAttr,
-} from "../utils/chart";
-import { formatDateToDayMonth, formatDateToMonthYear, getKeyDateFromSelectedDate } from "../utils/date";
 import ChartGroup from "../components/chart-group.vue";
+import DepartmentSummary from "../components/department-summary.vue";
+import KpiChart from "../components/kpi-chart.vue";
 import MonthLine from "../components/month-line.vue";
+import SummaryStatistic from "../components/summary-statistic.vue";
 import YieldTable from "../components/yield-table.vue";
+import { useAuthStore } from "../stores/auth";
 import { useGlobalParamStore } from "../stores/globalParam";
+import { useStore } from "../stores/store";
+import {
+    convertToYieldKpiDataByAttr
+} from "../utils/chart";
+import {
+    formatDateToDayMonth,
+    formatDateToMonthYear,
+    getKeyDateFromSelectedDate,
+} from "../utils/date";
+import { numberOrNull } from "../utils/number";
 
 export default {
     name: "ProcessingDrilldown/Throughput",
@@ -77,13 +83,13 @@ export default {
             rawThroughputData: [],
 
             // Input ByPlant filter
-            selectedByPlantTab: 'mtd',
-            defaultByPlantFilter: 'All Plants',
-            selectedByPlantFilter: 'All Plants',
+            selectedByPlantTab: "mtd",
+            defaultByPlantFilter: "All Plants",
+            selectedByPlantFilter: "All Plants",
 
             // Input ByGrade filter
-            selectedByGradeTab: 'mtd',
-            selectedByGradeFilter: 'Total',
+            selectedByGradeTab: "mtd",
+            selectedByGradeFilter: "Total",
         };
     },
 
@@ -97,41 +103,38 @@ export default {
                 };
             }
 
-            const filteredData = this.selectedByPlantFilter === this.defaultByPlantFilter
-                ? this.rawThroughputData
-                : this.rawThroughputData.filter((i) => i.plant === this.selectedByPlantFilter);
+            const filteredData =
+                this.selectedByPlantFilter === this.defaultByPlantFilter
+                    ? this.rawThroughputData
+                    : this.rawThroughputData.filter(
+                          (i) => i.plant === this.selectedByPlantFilter
+                      );
 
             const keyDates = getKeyDateFromSelectedDate(
                 this.globalParamStore.selectedDate
             );
-            return convertToKpiDataByAttr(
+            return convertToYieldKpiDataByAttr(
                 filteredData,
-                "yield_plan",
-                "yield_actual",
                 keyDates.beginningOfMonth,
                 keyDates.endOfMonth
             );
         },
         coalThroughputActualDataByPlant() {
-            if (this.selectedByPlantTab === 'mtd') {
+            if (this.selectedByPlantTab === "mtd") {
                 const yieldDailyData = this.yieldData.daily.filter(
                     (i) => i.date <= this.globalParamStore.selectedDate
                 );
-                return yieldDailyData.map((i) => i.actual);
+                return yieldDailyData.map(
+                    (i) => numberOrNull(i.outputActual / i.inputActual)
+                );
             }
             const yieldMonthlyData = this.yieldData.monthly.filter(
-                    (i) => i.date <= this.globalParamStore.selectedDate
-                );
-            return yieldMonthlyData.map((i) => i.actual);
-        },
-        coalThroughputPlanDataByPlant() {
-            if (this.selectedByPlantTab === 'mtd') {
-                return this.yieldData.daily.map((i) => i.plan);
-            }
-            return this.yieldData.monthly.map((i) => i.plan);
+                (i) => i.date <= this.globalParamStore.selectedDate
+            );
+            return yieldMonthlyData.map((i) => numberOrNull(i.outputActual / i.inputActual));
         },
         coalThroughputCategoriesByPlant() {
-            if (this.selectedByPlantTab === 'mtd') {
+            if (this.selectedByPlantTab === "mtd") {
                 return this.yieldData.daily.map((i) =>
                     formatDateToDayMonth(i.date)
                 );
@@ -143,7 +146,6 @@ export default {
         availableByPlantFilter() {
             return uniq(this.rawThroughputData.map((i) => i.plant));
         },
-
     },
 
     methods: {
@@ -160,13 +162,7 @@ export default {
                     },
                 }
             );
-            this.rawThroughputData = response.data.map(i => {
-                return {
-                    ...i,
-                    yield_actual: i.output_actual / i.input_actual,
-                    yield_plan: i.output_target / i.input_target,
-                };
-            });
+            this.rawThroughputData = response.data;
             this.isLoading = false;
         },
         async fetchData() {
@@ -174,13 +170,12 @@ export default {
         },
 
         setByPlantSelectedTab(value) {
-            console.log(value);
             this.selectedByPlantTab = value;
         },
         setByPlantSelectedFilter(value) {
             this.selectedByPlantFilter = value;
         },
-        
+
         setByGradeSelectedTab(value) {
             this.selectedByGradeTab = value;
         },

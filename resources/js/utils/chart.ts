@@ -35,13 +35,18 @@ export const getYMax = (data: Array<number>) => {
     return calculateRoundedMaxValue(Math.max(...data));
 };
 
-// Receive Kt and return Mt
+/**
+ * Calculates the cumulative sum of an array of numbers.
+ *
+ * @param data - An array of numbers to calculate the cumulative sum for.
+ * @returns An array of numbers representing the cumulative sum at each index, rounded to 2 decimal places.
+ */
 export const getCumulativeData = (data: Array<number>) => {
     const result: Array<number> = [];
     let sum = 0;
     for (let i = 0; i < data.length; i++) {
         sum += Number(data[i]);
-        result.push(Math.round(sum * 100) / 100);
+        result.push(roundToDecimalPlace(sum, 2));
     }
     return result;
 };
@@ -189,6 +194,139 @@ export function transformToToDateTableData(
     });
 
     return result.map(roundProcessedDataItemNumbers);
+}
+
+interface ProcessedYieldDataItem {
+    attr: string;
+    todayInputPlan: number;
+    todayOutputPlan: number;
+    todayInputActual: number;
+    todayOutputActual: number;
+    mtdInputPlan: number;
+    mtdOutputPlan: number;
+    mtdInputActual: number;
+    mtdOutputActual: number;
+    mthInputPlan: number;
+    mthOutputPlan: number;
+    ytdInputPlan: number;
+    ytdOutputPlan: number;
+    ytdInputActual: number;
+    ytdOutputActual: number;
+    yearInputPlan: number;
+    yearOutputPlan: number;
+}
+
+interface YieldDataItem {
+    date: string;
+    plant: string;
+    plant_target: number;
+    input_actual: number;
+    input_target: number;
+    output_actual: number;
+    output_target: number;
+}
+
+export function transformToYieldTableData(
+    rawData: YieldDataItem[],
+    selectedDate: Date,
+    attr: string,
+    planAttr: string,
+    actualAttr: string
+): ProcessedYieldDataItem[] {
+    // If currentDate is not provided, get the latest date from the data
+    if (!selectedDate) {
+        const dates = rawData.map((item) => new Date(item.date));
+        selectedDate = new Date(Math.max.apply(null, dates));
+    }
+
+    // Prepare a Map to store data per attribute type
+    const attributeDataMap = new Map<string, any>();
+
+    rawData.forEach((item) => {
+        const attrValue = item[attr];
+        const dataDate = new Date(item.date);
+
+        // Initialize data for contractor if not present
+        if (!attributeDataMap.has(attrValue)) {
+            attributeDataMap.set(attrValue, {
+                attr: attrValue,
+                todayInputPlan: 0,
+                todayOutputPlan: 0,
+                todayInputActual: 0,
+                todayOutputActual: 0,
+                mtdInputPlan: 0,
+                mtdOutputPlan: 0,
+                mtdInputActual: 0,
+                mtdOutputActual: 0,
+                mthInputPlan: 0,
+                mthOutputPlan: 0,
+                ytdInputPlan: 0,
+                ytdOutputPlan: 0,
+                ytdInputActual: 0,
+                ytdOutputActual: 0,
+                yearInputPlan: 0,
+                yearOutputPlan: 0,
+            });
+        }
+
+        const attributeData = attributeDataMap.get(attrValue);
+
+        // Convert plan and actual to numbers
+        const actualInputDataNode = item.input_actual;
+        const planInputDataNode = item.input_target;
+        const actualOutputDataNode = item.output_actual;
+        const planOutputDataNode = item.output_target;
+
+        // If the date matches currentDate, update todayPlan and todayActual
+        if (isSameDate(dataDate, selectedDate)) {
+            attributeData.todayInputPlan += planInputDataNode;
+            attributeData.todayOutputPlan += planOutputDataNode;
+            attributeData.todayInputActual += actualInputDataNode;
+            attributeData.todayOutputActual += actualOutputDataNode;
+        }
+
+        // If the date is in the same month and year,
+        // and before or equal to currentDate, update mtdPlan and mtdActual
+        if (
+            isSameMonthAndYear(dataDate, selectedDate) &&
+            dataDate <= selectedDate
+        ) {
+                attributeData.mtdInputPlan += planInputDataNode;
+                attributeData.mtdOutputPlan += planOutputDataNode;
+                attributeData.mtdInputActual += actualInputDataNode;
+                attributeData.mtdOutputActual += actualOutputDataNode;
+        }
+
+        // update the month plan
+        if (isSameMonthAndYear(dataDate, selectedDate)) {
+            attributeData.mthInputPlan += planInputDataNode;
+            attributeData.mthOutputPlan += planOutputDataNode;
+        }
+
+        // If the date is in the same year,
+        // and before or equal to the currentDate, update ytdActual and ytdPlan
+        if (isSameYear(dataDate, selectedDate) && dataDate <= selectedDate) {
+                attributeData.ytdInputPlan += planInputDataNode;
+                attributeData.ytdOutputPlan += planOutputDataNode;
+                attributeData.ytdInputActual += actualInputDataNode;
+                attributeData.ytdOutputActual += actualOutputDataNode;
+        }
+
+        // Update the year plan
+        if (isSameYear(dataDate, selectedDate)) {
+            attributeData.yearInputPlan += planInputDataNode;
+            attributeData.yearOutputPlan += planOutputDataNode;
+        }
+    });
+
+    // Now compute the plan differences and prepare the result array
+    const result: ProcessedYieldDataItem[] = [];
+
+    attributeDataMap.forEach((attrData) => {
+        result.push(attrData);
+    });
+
+    return result;
 }
 
 function calculateDiff(actual: number, plan: number): number {
@@ -494,15 +632,97 @@ export function convertToKpiDataByAttr(
     const dailyData =
         startDateString && endDateString
             ? subset(
-                  Array.from(dailyKpiDataMap.values()),
+                  Array.from(dailyKpiDataMap.values() as any),
                   startDateString,
                   endDateString
               )
             : Array.from(dailyKpiDataMap.values());
 
+    const monthlyData = Array.from(monthlyKpiDataMap.values())
+
     return {
-        daily: dailyData,
-        monthly: Array.from(monthlyKpiDataMap.values()),
+        daily: dailyData as any,
+        monthly: monthlyData,
+    };
+}
+
+interface DailyYieldKpiDataItem {
+    date: Date;
+    inputActual: number;
+    inputPlan: number;
+    outputActual: number;
+    outputPlan: number;
+}
+
+// Convert the raw data to Yield line graph group by date
+export function convertToYieldKpiDataByAttr(
+    rawData: Array<YieldDataItem>,
+    startDateString = "",
+    endDateString = ""
+): KpiDataResult {
+    const dailyKpiDataMap = new Map<string, DailyYieldKpiDataItem>();
+    const monthlyKpiDataMap = new Map<string, DailyYieldKpiDataItem>();
+
+    rawData.forEach((item) => {
+        const date = new Date(item.date);
+        const dailyKey = moment(date).format("YYYY-MM-DD");
+        const monthlyKey = moment(date).format("YYYY-MM");
+
+        if (!dailyKpiDataMap.has(dailyKey)) {
+            dailyKpiDataMap.set(dailyKey, {
+                date,
+                inputActual: 0,
+                inputPlan: 0,
+                outputActual: 0,
+                outputPlan: 0,
+            });
+        }
+        if (!monthlyKpiDataMap.has(monthlyKey)) {
+            monthlyKpiDataMap.set(monthlyKey, {
+                date,
+                inputActual: 0,
+                inputPlan: 0,
+                outputActual: 0,
+                outputPlan: 0,
+            });
+        }
+
+        const dailyKpiData = dailyKpiDataMap.get(dailyKey);
+        const monthlyKpiData = monthlyKpiDataMap.get(monthlyKey);
+
+        // Convert actualDataNode and planDataNode to numbers
+        const actualInputDataNode = item.input_actual;
+        const planInputDataNode = item.input_target;
+        const actualOutputDataNode = item.output_actual;
+        const planOutputDataNode = item.output_target;
+
+        dailyKpiData!.inputActual += actualInputDataNode;
+        dailyKpiData!.inputPlan += planInputDataNode;
+        dailyKpiData!.outputActual += actualOutputDataNode;
+        dailyKpiData!.outputPlan += planOutputDataNode;
+        monthlyKpiData!.inputActual += actualInputDataNode;
+        monthlyKpiData!.inputPlan += planInputDataNode;
+        monthlyKpiData!.outputActual += actualOutputDataNode;
+        monthlyKpiData!.outputPlan += planOutputDataNode;
+    });
+
+    const rawDailyData =
+        startDateString && endDateString
+            ? subset(
+                  Array.from(dailyKpiDataMap.values()) as any,
+                  startDateString,
+                  endDateString
+              )
+            : Array.from(dailyKpiDataMap.values()); 
+
+    const rawMonthlyData = Array.from(monthlyKpiDataMap.values());
+
+    console.log("dailyData", rawDailyData);
+    console.log("monthlyData", rawMonthlyData);
+
+    return {
+        daily: rawDailyData as any,
+        monthly: rawMonthlyData as any,
     };
 }
 

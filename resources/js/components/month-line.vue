@@ -10,9 +10,8 @@
 </template>
 
 <script>
-import VueApexCharts from "vue3-apexcharts";
 import { format } from "numerable";
-import { roundToDecimalPlace } from "../utils/number";
+import VueApexCharts from "vue3-apexcharts";
 
 export default {
     name: "MonthLine",
@@ -89,7 +88,7 @@ export default {
                     enabled: true,
                     enabledOnSeries: [0],
                     formatter: function (value) {
-                        return format(value, "0,0.0a")+ self.units; 
+                        return format(value, self.labelFormat)+ self.units; 
                     },
                 },
                 xaxis: {
@@ -102,7 +101,7 @@ export default {
                         },
                         labels: {
                             formatter: function (value) {
-                                return format(value, "0,0.0a") + self.units;
+                                return format(value, self.yAxisFormat) + self.units;
                             },
                         },
                     },
@@ -137,6 +136,16 @@ export default {
             type: String,
             required: false,
             default: "Hourly Production (Ktonnes)",
+        },
+        labelFormat: {
+            type: String,
+            required: false,
+            default: "0,0.0a",
+        },
+        yAxisFormat: {
+            type: String,
+            required: false,
+            default: "0,0.0a",
         },
     },
 };

@@ -18,9 +18,11 @@
 <script lang="ts">
 import { AgGridVue } from "ag-grid-vue3";
 import { format } from "numerable";
-import { transformToToDateTableData } from "../utils/chart";
+import {
+    transformToYieldTableData,
+} from "../utils/chart";
 
-const NUMBER_FORMAT = "0,0%"
+const NUMBER_FORMAT = "0,0%";
 
 export default {
     name: "YieldTable",
@@ -50,20 +52,28 @@ export default {
         toDate: {
             type: String,
             false: true,
-        }
+        },
     },
     data() {
         return {
-            columnDefs: [
+            defaultColDef: {
+                flex: 1,
+                minWidth: 120,
+            },
+        };
+    },
+    computed: {
+        columnDefs() {
+            return [
                 {
-                    headerName: 'group',
-                    field: 'plant_group',
+                    headerName: "group",
+                    field: "plant_group",
                     rowGroup: true,
                     hide: true,
                 },
                 {
                     headerName: this.attributeHeader,
-                    field: 'attr',
+                    field: "attr",
                     sortable: true,
                     filter: true,
                 },
@@ -71,21 +81,55 @@ export default {
                     headerName: this.toDate + " (Kt)",
                     children: [
                         {
-                            headerName: "Plan",
-                            field: "todayPlan",
+                            headerName: "Today Input Plan",
+                            field: "todayInputPlan",
                             sortable: true,
-                            cellClass: 'text-end',
+                            cellClass: "text-end",
+                            hide: true,
+                        },
+                        {
+                            headerName: "Today Output Plan",
+                            field: "todayOutputPlan",
+                            sortable: true,
+                            cellClass: "text-end",
+                            hide: true,
+                        },
+                        {
+                            headerName: "Plan",
+                            sortable: true,
+                            cellClass: "text-end",
+                            valueGetter: (params) => {
+                                if (params.node.group) {
+                                    return 0;
+                                }
+                                return (
+                                    params.data.todayOutputPlan /
+                                    params.data.todayInputPlan
+                                );
+                            },
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return params.value
+                                    ? format(params.value, NUMBER_FORMAT)
+                                    : "";
                             },
                         },
                         {
                             headerName: "Actual",
-                            field: "todayActual",
                             sortable: true,
-                            cellClass: 'text-end',
+                            cellClass: "text-end",
+                            valueGetter: (params) => {
+                                if (params.node.group) {
+                                    return 0;
+                                }
+                                return (
+                                    params.data.todayOutputActual /
+                                    params.data.todayInputActual
+                                );
+                            },
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return params.value
+                                    ? format(params.value, NUMBER_FORMAT)
+                                    : "";
                             },
                         },
                     ],
@@ -94,21 +138,55 @@ export default {
                     headerName: "MTD (Mt)",
                     children: [
                         {
-                            headerName: "MTD Plan",
-                            field: "mtdPlan",
+                            headerName: "MTD Input Plan",
+                            field: "mtdInputPlan",
                             sortable: true,
-                            cellClass: 'text-end',
+                            cellClass: "text-end",
+                            hide: true,
+                        },
+                        {
+                            headerName: "MTD Output Plan",
+                            field: "mtdOutputPlan",
+                            sortable: true,
+                            cellClass: "text-end",
+                            hide: true,
+                        },
+                        {
+                            headerName: "MTD Plan",
+                            sortable: true,
+                            cellClass: "text-end",
+                            valueGetter: (params) => {
+                                if (params.node.group) {
+                                    return 0;
+                                }
+                                return (
+                                    params.data.mtdOutputPlan /
+                                    params.data.mtdInputPlan
+                                );
+                            },
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return params.value
+                                    ? format(params.value, NUMBER_FORMAT)
+                                    : "";
                             },
                         },
                         {
                             headerName: "Actual",
-                            field: "mtdActual",
                             sortable: true,
-                            cellClass: 'text-end',
+                            cellClass: "text-end",
+                            valueGetter: (params) => {
+                                if (params.node.group) {
+                                    return 0;
+                                }
+                                return (
+                                    params.data.mtdOutputActual /
+                                    params.data.mtdInputActual
+                                );
+                            },
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return params.value
+                                    ? format(params.value, NUMBER_FORMAT)
+                                    : "";
                             },
                         },
                     ],
@@ -116,43 +194,72 @@ export default {
                 {
                     headerName: "YTD (Mt)",
                     children: [
+                    {
+                            headerName: "YTD Input Plan",
+                            field: "ytdInputPlan",
+                            sortable: true,
+                            cellClass: "text-end",
+                            hide: true,
+                        },
+                        {
+                            headerName: "YTD Output Plan",
+                            field: "ytdOutputPlan",
+                            sortable: true,
+                            cellClass: "text-end",
+                            hide: true,
+                        },
                         {
                             headerName: "YTD Plan",
-                            field: "ytdPlan",
                             sortable: true,
-                            cellClass: 'text-end',
+                            cellClass: "text-end",
+                            valueGetter: (params) => {
+                                if (params.node.group) {
+                                    return 0;
+                                }
+                                return (
+                                    params.data.ytdOutputPlan /
+                                    params.data.ytdInputPlan
+                                );
+                            },
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return params.value
+                                    ? format(params.value, NUMBER_FORMAT)
+                                    : "";
                             },
                         },
                         {
                             headerName: "Actual",
-                            field: "ytdActual",
                             sortable: true,
-                            cellClass: 'text-end',
+                            cellClass: "text-end",
+                            valueGetter: (params) => {
+                                if (params.node.group) {
+                                    return 0;
+                                }
+                                return (
+                                    params.data.ytdOutputActual /
+                                    params.data.ytdInputActual
+                                );
+                            },
                             valueFormatter: (params) => {
-                                return params.value ? format(params.value, NUMBER_FORMAT) : "";
+                                return params.value
+                                    ? format(params.value, NUMBER_FORMAT)
+                                    : "";
                             },
                         },
                     ],
                 },
-            ],
-            defaultColDef: {
-                flex: 1,
-                minWidth: 120,
-            },
-        };
-    },
-    computed: {
+            ];
+        },
         toDateData() {
-            const result = transformToToDateTableData(
+            console.log(this.data);
+            const result = transformToYieldTableData(
                 this.data,
                 new Date(this.toDate),
                 this.sliceAttribute,
                 this.planAttrName,
                 this.actualAttrName
             );
-            return result.map(i => {
+            return result.map((i) => {
                 return {
                     ...i,
                     plant_group: i.attr.substring(0, 2),
@@ -163,6 +270,4 @@ export default {
 };
 </script>
 
-<style>
-
-</style>
+<style></style>
