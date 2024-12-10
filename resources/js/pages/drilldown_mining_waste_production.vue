@@ -9,6 +9,9 @@
                 :actualAttrName="'waste_actual_kbcm'"
                 :planAttrName="'waste_plan_kbcm'"
                 :toDate="globalParamStore.getSelectedDate"
+                :dayGroupHeader="globalParamStore.getSelectedDate + ' (Kbcm)'"
+                :mtdGroupHeader="'MTD (Kbcm)'"
+                :ytdGroupHeader="'YTD (Kbcm)'"
             ></to-date-table>
 
             <chart-group
@@ -203,8 +206,11 @@ export default {
     methods: {
         async fetchWasteData() {
             this.isLoading = true;
+            const keyDates = getKeyDateFromSelectedDate(
+                this.globalParamStore.selectedDate
+            );
             const response = await axios.get(
-                "/api/control-tower/waste_detail?start_date=2024-01-01&end_date=2024-12-01",
+                `/api/control-tower/waste_detail?start_date=${keyDates.beginningOfYear}&end_date=${keyDates.endOfYear}`,
                 {
                     headers: {
                         Authorization: "Bearer " + this.authStore.getToken,

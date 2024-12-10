@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <div
-                    class="card rounded-0 mx-n4 mt-n4 border-top sticky-top z-1"
+                    class="card rounded-0 mx-n4 mt-n4 border-top sticky-top z-3"
                     style="top: 70px"
                 >
                     <div class="px-4">
@@ -81,8 +81,6 @@ import { useAuthStore } from "../stores/auth";
 import { useGlobalParamStore } from "../stores/globalParam";
 import { useStore } from "../stores/store";
 
-const DEFAULT_DATE = '2024-11-30';
-
 export default {
     name: "ProcessingDrilldown",
     setup() {
@@ -133,7 +131,7 @@ export default {
         flatpickr(".flatpickr-single", {
             altInput: true,
             altFormat: "d-m-Y",
-            defaultDate: this.globalParamStore.getSelectedDate || DEFAULT_DATE,
+            defaultDate: this.globalParamStore.getSelectedDate,
             disable: [
                 function (date) {
                     // return true to disable

@@ -274,8 +274,11 @@ export default {
     methods: {
         async fetchMiningData() {
             this.isLoading = true;
+            const keyDates = getKeyDateFromSelectedDate(
+                this.globalParamStore.selectedDate
+            );
             const response = await axios.get(
-                "/api/control-tower/mining_detail?start_date=2024-01-01&end_date=2024-12-01",
+                `/api/control-tower/mining_detail?start_date=${keyDates.beginningOfYear}&end_date=${keyDates.endOfYear}`,
                 {
                     headers: {
                         Authorization: "Bearer " + this.authStore.getToken,

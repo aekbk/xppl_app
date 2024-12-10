@@ -51,7 +51,22 @@ export default {
         toDate: {
             type: String,
             false: true,
-        }
+        },
+        dayGroupHeader: {
+            type: String,
+            required: false,
+            default: null,
+        },
+        mtdGroupHeader: {
+            type: String,
+            required: false,
+            default: "MTD (Kt)",
+        },
+        ytdGroupHeader: {
+            type: String,
+            required: false,
+            default: "YTD (Kt)",
+        },
     },
     data() {
         return {
@@ -63,7 +78,7 @@ export default {
                     filter: true,
                 },
                 {
-                    headerName: this.toDate + " (Kt)",
+                    headerName: this.dayGroupHeader || this.toDate + " (Kt)",
                     children: [
                         {
                             headerName: "Plan",
@@ -122,7 +137,7 @@ export default {
                     ],
                 },
                 {
-                    headerName: "MTD (Mt)",
+                    headerName: this.mtdGroupHeader,
                     children: [
                         {
                             headerName: "MTD Plan",
@@ -155,13 +170,13 @@ export default {
                                 // Calculate total actual availability
                                 const totalActual = leafNodes.reduce((acc, childNode) => {
                                     const childData = childNode.data;
-                                    return acc + (childData.todayActual || 0); // Safely add values
+                                    return acc + (childData.mtdActual || 0); // Safely add values
                                 }, 0);
 
                                 // Calculate total target availability
                                 const totalPlan = leafNodes.reduce((acc, childNode) => {
                                     const childData = childNode.data;
-                                    return acc + (childData.todayPlan || 0); // Safely add values
+                                    return acc + (childData.mtdPlan || 0); // Safely add values
                                 }, 0);
 
 
@@ -192,7 +207,7 @@ export default {
                     ],
                 },
                 {
-                    headerName: "YTD (Mt)",
+                    headerName: this.ytdGroupHeader,
                     children: [
                         {
                             headerName: "YTD Plan",
@@ -224,13 +239,13 @@ export default {
                                 // Calculate total actual availability
                                 const totalActual = leafNodes.reduce((acc, childNode) => {
                                     const childData = childNode.data;
-                                    return acc + (childData.todayActual || 0); // Safely add values
+                                    return acc + (childData.ytdActual || 0); // Safely add values
                                 }, 0);
 
                                 // Calculate total target availability
                                 const totalPlan = leafNodes.reduce((acc, childNode) => {
                                     const childData = childNode.data;
-                                    return acc + (childData.todayPlan || 0); // Safely add values
+                                    return acc + (childData.ytdPlan || 0); // Safely add values
                                 }, 0);
 
                                 return totalPlan ? (totalActual / totalPlan) : 0;

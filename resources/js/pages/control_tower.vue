@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <div
-                    class="card rounded-0 mx-n4 mt-n4 border-top sticky-top z-1"
+                    class="card rounded-0 mx-n4 mt-n4 border-top sticky-top z-3"
                     style="top: 70px"
                 >
                     <div class="px-4">
@@ -158,10 +158,10 @@
                                     processingSummary.secondaryMetricSubtitle
                                 "
                                 :secondaryMetricStats="
-                                    coalThroughputActualDataByPlant
+                                    coalOutputActualDataByPlant
                                 "
                                 :secondaryMetricCategories="
-                                    coalThroughputCategoriesByPlant
+                                    coalOutputCategoriesByPlant
                                 "
                                 :secondaryMetricYAxisTitle="
                                     processingSummary.secondaryMetricYAxisTitle
@@ -245,7 +245,7 @@
                             ></department-summary>
                         </div>
                         <div
-                            v-if="isLoadingProcessingData || isLoadingWasteData"
+                            v-if="isLoadingProcessingData || isLoadingSalesLogisticsData"
                             class="row justify-content-evenly mb-4"
                         >
                             <div
@@ -279,8 +279,6 @@ import {
     getKeyDateFromSelectedDate,
 } from "../utils/date";
 import { numberOrNull, roundToDecimalPlace } from "../utils/number";
-
-const DEFAULT_DATE = "2024-11-30";
 
 export default {
     name: "ControlTower",
@@ -378,7 +376,7 @@ export default {
         flatpickr(".flatpickr-single", {
             altInput: true,
             altFormat: "d-m-Y",
-            defaultDate: this.globalParamStore.getSelectedDate || DEFAULT_DATE,
+            defaultDate: this.globalParamStore.getSelectedDate,
             disable: [
                 function (date) {
                     // return true to disable
@@ -527,9 +525,8 @@ export default {
                 "output_target",
                 "output_actual"
             ).daily;
-            // TODO: Fix implementation of labeling. divide by 1000 to convert to Kt for now
             const processingOutputActualData = processingOutputData.map(
-                (i) => i.actual / 1000
+                (i) => i.actual
             );
             const processingCategories = processingOutputData.map((i) =>
                 formatDateToDayMonth(i.date)
@@ -554,14 +551,13 @@ export default {
 
             return {
                 title: "Processing",
-                mainMetricTitle: "Total Processing Throughput",
+                mainMetricTitle: "Total Processing Output",
                 mainMetricSubtitle: "(MTD)",
                 mainMetricLeftYAxisTitle: "Weight (Kt)",
                 mainMetricRightYAxisTitle: "Cum. Weight (Kt)",
                 mainMetricActualData: processingOutputActualData,
-                // TODO: Fix implementation of labeling. divide by 1000 to convert to Kt for now
                 mainMetricPlanData: processingOutputData.map(
-                    (i) => i.plan / 1000
+                    (i) => i.plan
                 ),
                 mainMetricCategories: processingOutputData.map((i) =>
                     formatDateToDayMonth(i.date)
@@ -599,8 +595,7 @@ export default {
                 "output_actual"
             ).daily;
             const processingOutputActualData = processingOutputData.map(
-                // Divide 1000 as the data measured in tonnes
-                (i) => i.actual / 1000
+                (i) => i.actual
             );
 
             // sales over production ratio line chart - bottom part
@@ -655,7 +650,7 @@ export default {
                 keyDates.endOfMonth
             );
         },
-        coalThroughputActualDataByPlant() {
+        coalOutputActualDataByPlant() {
             const yieldDailyData = this.yieldData.daily.filter(
                 (i) => i.date <= this.globalParamStore.selectedDate
             );
@@ -663,7 +658,7 @@ export default {
                 numberOrNull(i.outputActual / i.inputActual)
             );
         },
-        coalThroughputCategoriesByPlant() {
+        coalOutputCategoriesByPlant() {
             return this.yieldData.daily.map((i) =>
                 formatDateToDayMonth(i.date)
             );
