@@ -89,8 +89,8 @@ export default {
                 yaxis: [
                     {
                         title: {
-                            // If the value displayed is 1000Ktonnes, it is likely that we are using the year-to-date (YTD) data. 
-                            // In this case, the right-hand side (RHS) y-axis title should be used, such as Mtones. It should be noted that the base unit is already in Ktones.
+                            // note the base data unit in db is always ktonnes
+                            // if the value >= 1000, we should use RHS y-axis title (Mtonnes) and divide the value by 1000
                             text: getYMax([...this.actualData, ...this.planData]) >= 1000
                                 ? this.rightYAxisTitle.replace("Cum. ", "")
                                 : this.leftYAxisTitle
@@ -112,11 +112,11 @@ export default {
                     },
                     {
                         title: {
-                            // If the value displayed is 1000Ktonnes, it is likely that we are using the year-to-date (YTD) data. 
-                            // In this case, the right-hand side (RHS) y-axis title should be used, such as Mtones. It should be noted that the base unit is already in Ktones.
+                            // note the base data unit in db is always ktonnes
+                            // if the value >= 1000, we should use RHS y-axis title (Mtonnes) and divide the value by 1000
                             text: getYMax([...this.actualData, ...this.planData]) >= 1000
                                 ? this.rightYAxisTitle.replace("Cum. ", "")
-                                : this.leftYAxisTitle,
+                                : this.leftYAxisTitle
                         },
                         min: 0,
                         max: getYMax([...this.actualData, ...this.planData]),
@@ -145,15 +145,7 @@ export default {
                         tickAmount: 10,
                         max: getYMax([...cumActual, ...cumPlan]),
                         labels: {
-                            formatter: (value) => {
-                                // value is in Ktonnes
-                                // if we see 1000Ktonnes, we should show 1Mt
-                                if (value >= 1000) {
-                                    return format(value / 1000, "0,0.0a"); // Scale to Mt
-                                } else {
-                                    return format(value, "0,0.0a"); // keep it Kt
-                                }
-                            }
+                            formatter: (value) => format(value/1000, "0,0.0a"), // divide by 1000 to convert to Mt
                        },
                     },
                     {
@@ -167,15 +159,7 @@ export default {
                         tickAmount: 10,
                         max: getYMax([...cumActual, ...cumPlan]),
                         labels: {
-                            formatter: (value) => {
-                                // value is in Ktonnes
-                                // if we see 1000Ktonnes, we should show 1Mt
-                                if (value >= 1000) {
-                                    return format(value / 1000, "0,0.0a"); // Scale to Mt
-                                } else {
-                                    return format(value, "0,0.0a"); // keep it Kt
-                                }
-                            }
+                            formatter: (value) => format(value/1000, "0,0.0a"), // divide by 1000 to convert to Mt
                         },
                     },
                 ],
