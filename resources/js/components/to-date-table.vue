@@ -220,7 +220,6 @@ export default {
                             sortable: true,
                             aggFunc: (params) => {
                                 const leafNodes = params.rowNode.allLeafChildren;
-                                console.log('params', params);
 
                                 // Calculate total actual availability
                                 const totalActual = leafNodes.reduce((acc, childNode) => {

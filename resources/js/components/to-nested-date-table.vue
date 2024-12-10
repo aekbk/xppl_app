@@ -1,7 +1,7 @@
 <template>
     <div class="custom-grid">
         <ag-grid-vue
-            style="height: 90vh; width: 100%;"
+            style="height: 90vh; width: 100%"
             class="ag-theme-quartz"
             :columnDefs="columnDefs"
             :suppressMenuHide="false"
@@ -24,8 +24,8 @@ import mapValues from "lodash/mapValues";
 import { transformToNestedDateTableData } from "../utils/chart";
 import { format } from "numerable";
 
-const NUMBER_FORMAT = "0,0.00"
-const PERCENT_FORMAT = "0.00%"
+const NUMBER_FORMAT = "0,0.00";
+const PERCENT_FORMAT = "0.00%";
 
 export default {
     name: "ToNestedDateTable",
@@ -63,27 +63,27 @@ export default {
         toDate: {
             type: String,
             false: true,
-        }
+        },
     },
     data() {
         return {
             columnDefs: [
-  				{
+                {
                     // headerName customise text display at the top of column
-  					headerName: this.primaryAttributeHeader, 
+                    headerName: this.primaryAttributeHeader,
                     // field refer to the `keys` in your returned data object; check the `ProcessedNestedDataItem` interface in `utils/chart.ts` script.
-  					field: "primaryAttr", 
-  					sortable: true,
-  					filter: true,
+                    field: "primaryAttr",
+                    sortable: true,
+                    filter: true,
                     rowGroup: true,
                     hide: true,
-  				},
-  				{
-  					headerName: this.secondaryAttributeHeader,
-  					field: "secondaryAttr",
-  					sortable: true,
-  					filter: true,
-  				},
+                },
+                {
+                    headerName: this.secondaryAttributeHeader,
+                    field: "secondaryAttr",
+                    sortable: true,
+                    filter: true,
+                },
                 {
                     headerName: this.toDate + " (Kt)",
                     children: [
@@ -93,7 +93,7 @@ export default {
                             sortable: true,
                             aggFunc: "sum",
                             valueFormatter: (params) => {
-                                return format((params.value || 0), NUMBER_FORMAT);
+                                return format(params.value || 0, NUMBER_FORMAT);
                             },
                         },
                         {
@@ -102,7 +102,7 @@ export default {
                             sortable: true,
                             aggFunc: "sum",
                             valueFormatter: (params) => {
-                                return format((params.value || 0), NUMBER_FORMAT);
+                                return format(params.value || 0, NUMBER_FORMAT);
                             },
                         },
                         {
@@ -110,31 +110,39 @@ export default {
                             field: "todayPlanDiff",
                             sortable: true,
                             aggFunc: (params) => {
-                                const leafNodes = params.rowNode.allLeafChildren;
-                                console.log('params', params);
+                                const leafNodes =
+                                    params.rowNode.allLeafChildren;
+                                console.log("params", params);
 
                                 // Calculate total actual availability
-                                const totalActual = leafNodes.reduce((acc, childNode) => {
-                                    const childData = childNode.data;
-                                    return acc + (childData.todayActual || 0); // Safely add values
-                                }, 0);
+                                const totalActual = leafNodes.reduce(
+                                    (acc, childNode) => {
+                                        const childData = childNode.data;
+                                        return (
+                                            acc + (childData.todayActual || 0)
+                                        ); // Safely add values
+                                    },
+                                    0
+                                );
 
                                 // Calculate total target availability
-                                const totalPlan = leafNodes.reduce((acc, childNode) => {
-                                    const childData = childNode.data;
-                                    return acc + (childData.todayPlan || 0); // Safely add values
-                                }, 0);
+                                const totalPlan = leafNodes.reduce(
+                                    (acc, childNode) => {
+                                        const childData = childNode.data;
+                                        return acc + (childData.todayPlan || 0); // Safely add values
+                                    },
+                                    0
+                                );
 
-
-                                return totalPlan ? (totalActual / totalPlan) : 0;
+                                return totalPlan ? totalActual / totalPlan : 0;
                             },
                             cellClass: (params) => {
-                                if (params.value > 1.10) {
-                                    return "bg-warning"; // Apply this class if value > 100
-                                } else if (params.value < .90) {
-                                    return "bg-danger"; // Apply this class if value < 100
+                                if (params.value > 1.1) {
+                                    return "bg-warning text-end"; // Apply this class if value > 100
+                                } else if (params.value < 0.9) {
+                                    return "bg-danger text-end"; // Apply this class if value < 100
                                 }
-                                return 'bg-success'; // No class for other cases
+                                return "bg-success text-end"; // No class for other cases
                             },
                             valueFormatter: (params) => {
                                 return format(params.value, PERCENT_FORMAT);
@@ -151,7 +159,7 @@ export default {
                             sortable: true,
                             aggFunc: "sum",
                             valueFormatter: (params) => {
-                                return format((params.value || 0), NUMBER_FORMAT);
+                                return format(params.value || 0, NUMBER_FORMAT);
                             },
                         },
                         {
@@ -160,7 +168,7 @@ export default {
                             sortable: true,
                             aggFunc: "sum",
                             valueFormatter: (params) => {
-                                return format((params.value || 0), NUMBER_FORMAT);
+                                return format(params.value || 0, NUMBER_FORMAT);
                             },
                         },
                         {
@@ -168,31 +176,39 @@ export default {
                             field: "mtdPlanDiff",
                             sortable: true,
                             aggFunc: (params) => {
-                                const leafNodes = params.rowNode.allLeafChildren;
-                                console.log('params', params);
+                                const leafNodes =
+                                    params.rowNode.allLeafChildren;
+                                console.log("params", params);
 
                                 // Calculate total actual availability
-                                const totalActual = leafNodes.reduce((acc, childNode) => {
-                                    const childData = childNode.data;
-                                    return acc + (childData.todayActual || 0); // Safely add values
-                                }, 0);
+                                const totalActual = leafNodes.reduce(
+                                    (acc, childNode) => {
+                                        const childData = childNode.data;
+                                        return (
+                                            acc + (childData.todayActual || 0)
+                                        ); // Safely add values
+                                    },
+                                    0
+                                );
 
                                 // Calculate total target availability
-                                const totalPlan = leafNodes.reduce((acc, childNode) => {
-                                    const childData = childNode.data;
-                                    return acc + (childData.todayPlan || 0); // Safely add values
-                                }, 0);
+                                const totalPlan = leafNodes.reduce(
+                                    (acc, childNode) => {
+                                        const childData = childNode.data;
+                                        return acc + (childData.todayPlan || 0); // Safely add values
+                                    },
+                                    0
+                                );
 
-
-                                return totalPlan ? (totalActual / totalPlan) : 0;
+                                return totalPlan ? totalActual / totalPlan : 0;
                             },
                             cellClass: (params) => {
-                                if (params.value > 1.10) {
-                                    return "bg-warning"; // Apply this class if value > 100
-                                } else if (params.value < .90) {
-                                    return "bg-danger"; // Apply this class if value < 100
+                                if (params.value > 1.1) {
+                                    return "bg-warning text-end"; // Apply this class if value > 100
+                                } else if (params.value < 0.9) {
+                                    return "bg-danger text-end"; // Apply this class if value < 100
                                 }
-                                return 'bg-success'; // No class for other cases
+                                return "bg-success text-end"; // No class for other cases
                             },
                             valueFormatter: (params) => {
                                 return format(params.value, PERCENT_FORMAT);
@@ -204,7 +220,7 @@ export default {
                             sortable: true,
                             aggFunc: "sum",
                             valueFormatter: (params) => {
-                                return format((params.value || 0), NUMBER_FORMAT);
+                                return format(params.value || 0, NUMBER_FORMAT);
                             },
                         },
                     ],
@@ -218,7 +234,7 @@ export default {
                             sortable: true,
                             aggFunc: "sum",
                             valueFormatter: (params) => {
-                                return format((params.value || 0), NUMBER_FORMAT);
+                                return format(params.value || 0, NUMBER_FORMAT);
                             },
                         },
                         {
@@ -227,7 +243,7 @@ export default {
                             sortable: true,
                             aggFunc: "sum",
                             valueFormatter: (params) => {
-                                return format(params.value, PERCENT_FORMAT);
+                                return format(params.value, NUMBER_FORMAT);
                             },
                         },
                         {
@@ -235,31 +251,39 @@ export default {
                             field: "ytdPlanDiff",
                             sortable: true,
                             aggFunc: (params) => {
-                                const leafNodes = params.rowNode.allLeafChildren;
-                                console.log('params', params);
+                                const leafNodes =
+                                    params.rowNode.allLeafChildren;
+                                console.log("params", params);
 
                                 // Calculate total actual availability
-                                const totalActual = leafNodes.reduce((acc, childNode) => {
-                                    const childData = childNode.data;
-                                    return acc + (childData.todayActual || 0); // Safely add values
-                                }, 0);
+                                const totalActual = leafNodes.reduce(
+                                    (acc, childNode) => {
+                                        const childData = childNode.data;
+                                        return (
+                                            acc + (childData.todayActual || 0)
+                                        ); // Safely add values
+                                    },
+                                    0
+                                );
 
                                 // Calculate total target availability
-                                const totalPlan = leafNodes.reduce((acc, childNode) => {
-                                    const childData = childNode.data;
-                                    return acc + (childData.todayPlan || 0); // Safely add values
-                                }, 0);
+                                const totalPlan = leafNodes.reduce(
+                                    (acc, childNode) => {
+                                        const childData = childNode.data;
+                                        return acc + (childData.todayPlan || 0); // Safely add values
+                                    },
+                                    0
+                                );
 
-
-                                return totalPlan ? (totalActual / totalPlan) : 0;
+                                return totalPlan ? totalActual / totalPlan : 0;
                             },
                             cellClass: (params) => {
-                                if (params.value > 1.10) {
-                                    return "bg-warning"; // Apply this class if value > 100
-                                } else if (params.value < .90) {
-                                    return "bg-danger"; // Apply this class if value < 100
+                                if (params.value > 1.1) {
+                                    return "bg-warning text-end"; // Apply this class if value > 100
+                                } else if (params.value < 0.9) {
+                                    return "bg-danger text-end"; // Apply this class if value < 100
                                 }
-                                return 'bg-success'; // No class for other cases
+                                return "bg-success text-end"; // No class for other cases
                             },
                             valueFormatter: (params) => {
                                 return format(params.value, PERCENT_FORMAT);
@@ -271,7 +295,7 @@ export default {
                             sortable: true,
                             aggFunc: "sum",
                             valueFormatter: (params) => {
-                                return format((params.value || 0), NUMBER_FORMAT);
+                                return format(params.value || 0, NUMBER_FORMAT);
                             },
                         },
                     ],
@@ -285,7 +309,10 @@ export default {
     },
     computed: {
         nestedGrouping() {
-        	const result = this.groupByAttributes(this.data, [this.primarySliceAttribute, this.secondarySliceAttribute]);
+            const result = this.groupByAttributes(this.data, [
+                this.primarySliceAttribute,
+                this.secondarySliceAttribute,
+            ]);
             return result;
         },
         toDateData() {
@@ -300,10 +327,10 @@ export default {
             return result;
         },
     },
-	methods: {
+    methods: {
         /**
          * Helper function to group data by a variable number of attributes in a nested structure.
-         * Example: Group the data by `Contractor`, followed by `Grade`, and so on. 
+         * Example: Group the data by `Contractor`, followed by `Grade`, and so on.
          *
          * @param {Array} data - The array of objects to group.
          * @param {string[]} attributes - An array of attributes to group by, in order.
@@ -314,8 +341,13 @@ export default {
             if (!Array.isArray(data)) {
                 throw new Error("Invalid input: data must be an array.");
             }
-            if (!Array.isArray(attributes) || attributes.some(attr => typeof attr !== "string")) {
-                throw new Error("Invalid attributes: attributes must be an array of strings.");
+            if (
+                !Array.isArray(attributes) ||
+                attributes.some((attr) => typeof attr !== "string")
+            ) {
+                throw new Error(
+                    "Invalid attributes: attributes must be an array of strings."
+                );
             }
 
             // Base case: if no attributes remain, return the data
@@ -327,10 +359,10 @@ export default {
             const [currentAttribute, ...remainingAttributes] = attributes;
 
             // Group by the current attribute and recurse for remaining attributes
-            return mapValues(groupBy(data, currentAttribute), group =>
+            return mapValues(groupBy(data, currentAttribute), (group) =>
                 this.groupByAttributes(group, remainingAttributes)
             );
         },
-	}
+    },
 };
 </script>
