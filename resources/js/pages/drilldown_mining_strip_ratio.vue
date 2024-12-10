@@ -18,8 +18,8 @@
                 <month-line
                     :data="stripRatioDataByContractorAndPit"
                     :categories="wasteProductionCategoriesByContractorAndPit"
-                    :yAxisTitle="'Strip Ratio'"
-                    :units="'Kbcm/Kt'"
+                    :yAxisTitle="'Strip Ratio (Kbcm/Kt)'"
+                    :units="''"
                  ></month-line>
             </nested-chart-group>
         </card>
