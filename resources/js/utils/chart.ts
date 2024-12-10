@@ -140,34 +140,26 @@ export function transformToToDateTableData(
             attributeData.todayActual += actualDataNode;
         }
 
-        // If the date is in the same month and year, update mtdPlan
+        // If the date is in the same month and year,
+        // and before or equal to currentDate, update mtdPlan and mtdActual
         if (
-            isSameMonthAndYear(dataDate, selectedDate)
-            
+            isSameMonthAndYear(dataDate, selectedDate) &&
+            dataDate <= selectedDate
         ) {
-            attributeData.mtdPlan += planDataNode;
-
-            // if date is and before or equal to currentDate, update mtdActual
-            if (dataDate <= selectedDate) {
                 attributeData.mtdActual += actualDataNode;
-            }
+                attributeData.mtdPlan += planDataNode;
         }
 
-        // If the date falls within the current month and year, update the monthly plan.
-        // Since this is a monthly plan, it may contain future data for the month.
+        // update the month plan
         if (isSameMonthAndYear(dataDate, selectedDate)) {
             attributeData.mthPlan += planDataNode;
         }
 
-        // If the date is in the same month and year, update ytdPlan
-        if (isSameYear(dataDate, selectedDate)) {
-            attributeData.ytdPlan += planDataNode;
-
-            // if date is and before or equal to currentDate, update ytdActual
-            if (dataDate <= selectedDate) {
+        // If the date is in the same year,
+        // and before or equal to the currentDate, update ytdActual and ytdPlan
+        if (isSameYear(dataDate, selectedDate) && dataDate <= selectedDate) {
                 attributeData.ytdActual += actualDataNode;
-            }
-            
+                attributeData.ytdPlan += planDataNode;
         }
 
         // Update the year plan
