@@ -469,10 +469,6 @@ export default {
                 formatDateToDayMonth(i.date)
             );
 
-            // this.processingSummary.mainMetricActualData =
-            // this.processingSummary.mainMetricPlanData = ;
-            // this.processingSummary.mainMetricCategories = ;
-
             // plant processing input - bottom part
             const processingInputData = convertToKpiDataByAttr(
                 this.processingData,
@@ -489,9 +485,6 @@ export default {
                 }
                 return roundToDecimalPlace(result, 2);
             });
-
-            // this.processingSummary.secondaryMetricStats = yieldRatio;
-            // this.processingSummary.secondaryMetricCategories = processingCategories;
 
             return {
                 title: "Processing",
