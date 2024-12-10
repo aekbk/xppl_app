@@ -82,6 +82,29 @@ class control_tower_controller extends Controller
         return response()->json($processing_data);
     }
 
+    public function sales_logistics_detail(Request $request)
+    {
+        // Retrieve query string parameters with default values
+        $start_date = $request->query('start_date');
+        $end_date = $request->query('end_date');
+
+        // Validate the input
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+        ]);
+
+        // Fetch data from the database
+        $sales_logistics_data = DB::select("
+            SELECT *
+            FROM ct_sales_logistics
+            WHERE date >= ? AND date <= ?
+        ", [$start_date, $end_date]);
+
+        // Return the data as JSON response
+        return response()->json($sales_logistics_data);
+    }
+
     public function waste_detail(Request $request)
     {
         // Retrieve query string parameters with default values

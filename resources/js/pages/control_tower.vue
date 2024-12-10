@@ -187,23 +187,65 @@
                         </div>
                     </div>
                     <div class="col-lg-4">
-                        <department-summary
-                            :title="salesLogisticsSummary.title"
-                            :mainMetricTitle="
-                                salesLogisticsSummary.mainMetricTitle
-                            "
-                            :mainMetricSubtitle="
-                                salesLogisticsSummary.mainMetricSubtitle
-                            "
-                            :secondaryMetricTitle="
-                                salesLogisticsSummary.secondaryMetricTitle
-                            "
-                            :secondaryMetricSubtitle="
-                                salesLogisticsSummary.secondaryMetricSubtitle
-                            "
-                        ></department-summary>
-                    </div>
-                </div>
+                        <div
+                            v-if="!(isLoadingMiningData || isLoadingSalesLogisticsData)"
+                        >
+                            <department-summary
+                                :title="salesLogisticsSummary.title"
+                                :mainMetricTitle="salesLogisticsSummary.mainMetricTitle"
+                                :mainMetricSubtitle="
+                                    salesLogisticsSummary.mainMetricSubtitle
+                                "
+                                :mainMetricActualData="
+                                    salesLogisticsSummary.mainMetricActualData
+                                "
+                                :mainMetricCategories="
+                                    salesLogisticsSummary.mainMetricCategories
+                                "
+                                :mainMetricPlanData="
+                                    salesLogisticsSummary.mainMetricPlanData
+                                "
+                                :mainMetricLeftYAxisTitle="
+                                    salesLogisticsSummary.mainMetricLeftYAxisTitle
+                                "
+                                :mainMetricRightYAxisTitle="
+                                    salesLogisticsSummary.mainMetricRightYAxisTitle
+                                "
+                                :secondaryMetricTitle="
+                                    salesLogisticsSummary.secondaryMetricTitle
+                                "
+                                :secondaryMetricSubtitle="
+                                    salesLogisticsSummary.secondaryMetricSubtitle
+                                "
+                                :secondaryMetricStats="
+                                    salesLogisticsSummary.secondaryMetricStats
+                                "
+                                :secondaryMetricCategories="
+                                    salesLogisticsSummary.secondaryMetricCategories
+                                "
+                                :secondarySummaryHeader="
+                                    salesLogisticsSummary.secondarySummaryHeader
+                                "
+                                :secondaryMetricYAxisTitle="
+                                    salesLogisticsSummary.secondaryMetricYAxisTitle
+                                "
+                                :secondaryMetricUnit="
+                                    salesLogisticsSummary.secondaryMetricUnit
+                                "
+                            ></department-summary>
+                        </div>
+                        <div
+                            v-if="isLoadingMiningData || isLoadingWasteData"
+                            class="row justify-content-evenly mb-4"
+                        >
+                            <div
+                                class="spinner-border text-primary"
+                                role="status"
+                            >
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                    </div>                </div>
             </div>
         </div>
     </div>
@@ -298,18 +340,6 @@ export default {
                     },
                 ],
             },
-            salesLogisticsSummary: {
-                title: "Sales & Logistics",
-                mainMetricTitle: "Total Coal Sales Volume",
-                mainMetricSubtitle: "(MTD)",
-                mainMetricActualData: [],
-                mainMetricPlanData: [],
-                mainMetricCumPlanData: [],
-                mainMetricCumActualData: [],
-                secondaryMetricTitle: "Sales over Production Ratio",
-                secondaryMetricSubtitle: "(MTD)",
-                secondaryMetricStats: [],
-            },
             miningData: [],
             isLoadingMiningData: false,
             miningDataLoaded: false,
@@ -321,6 +351,10 @@ export default {
             wasteData: [],
             isLoadingWasteData: false,
             wasteDataLoaded: false,
+
+            salesLogisticsData: [],
+            isLoadingSalesLogisticsData: false,
+            salesLogisticsDataLoaded: false,
         };
     },
 
@@ -402,10 +436,29 @@ export default {
             this.wasteData = response.data;
             this.wasteDataLoaded = true;
         },
+        async fetchSalesLogisticsData() {
+            this.isLoadingSalesLogisticsData = true;
+            const keyDates = getKeyDateFromSelectedDate(
+                this.globalParamStore.selectedDate
+            );
+            const response = await axios.get(
+                `/api/control-tower/sales_logistics_detail?start_date=${keyDates.beginningOfMonth}&end_date=${keyDates.today}`,
+                {
+                    headers: {
+                        Authorization: "Bearer " + this.authStore.getToken,
+                    },
+                }
+            );
+
+            this.salesLogisticsData = response.data;
+            this.isLoadingSalesLogisticsData = false;
+            this.salesLogisticsDataLoaded = true;
+        },
         async fetchData() {
             this.fetchMiningData();
             this.fetchProcessingData();
             this.fetchWasteData();
+            this.fetchSalesLogisticsData();
         },
     },
     created() {
@@ -506,6 +559,60 @@ export default {
                 secondarySummaryHeader: "MTD Avg",
             };
         },
+        salesLogisticsSummary() {
+            // sales & logistics output - top part
+            const salesLogisticsOutputData = convertToKpiDataByAttr(
+                this.salesLogisticsData,
+                "planned_weight_kt",
+                "actual_weight_kt"
+            ).daily;
+            const salesLogisticsOutputActualData = salesLogisticsOutputData.map(
+                (i) => i.actual
+            );
+            const salesLogisticsOutputPlanData = salesLogisticsOutputData.map(
+                (i) => i.plan
+            );
+            const salesLogisticsCategories = salesLogisticsOutputData.map((i) =>
+                formatDateToDayMonth(i.date)
+            );
+
+            // compute actual mined coal amount for sales over production ratio
+            const miningOutputData = convertToKpiDataByAttr(
+                this.miningData,
+                "coal_plan_kt",
+                "coal_actual_kt",
+            ).daily;
+            const miningOutputActualData = miningOutputData.map((i) => i.actual);
+
+            // sales over production ratio line chart - bottom part
+            const salesOverProductionRatio = salesLogisticsOutputActualData.map(
+                (item, index) => {
+                    const result = item / miningOutputActualData[index];
+                    if (isNaN(result)) {
+                        return null;
+                    }
+                    return roundToDecimalPlace(result, 2);
+                }
+            );
+
+            return {
+                title: "Sales & Logistics",
+                mainMetricTitle: "Total Coal Sales Weight",
+                mainMetricSubtitle: "(MTD)",
+                mainMetricActualData: salesLogisticsOutputActualData,
+                mainMetricPlanData: salesLogisticsOutputPlanData,
+                mainMetricCategories: salesLogisticsCategories,
+                mainMetricLeftYAxisTitle: "Weight (Kt)",
+                mainMetricRightYAxisTitle: "Cum. Weight (Mt)",
+                secondaryMetricTitle: "Sales over Production Ratio",
+                secondaryMetricSubtitle: "(MTD)",
+                secondaryMetricStats: salesOverProductionRatio,
+                secondaryMetricCategories: salesLogisticsCategories,
+                secondarySummaryHeader: "MTD Avg",
+                secondaryMetricYAxisTitle: "Sales over Production Ratio (Kt/Kt)",
+                secondaryMetricUnit: "",
+            };
+        }
     },
 };
 </script>
