@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <div
-                    class="card rounded-0 mx-n4 mt-n4 border-top sticky-top"
+                    class="card rounded-0 mx-n4 mt-n4 border-top sticky-top z-1"
                     style="top: 70px"
                 >
                     <div class="px-4">
