@@ -1,6 +1,6 @@
 <template>
     <div v-if="!isLoading" class="row justify-content-evenly mb-4">
-        <card title="Throughput By Plant">
+        <card title="Output By Plant">
             <to-date-table
                 :data="rawOutputData"
                 :sliceAttribute="'plant'"
@@ -18,7 +18,7 @@
                 @filterChange="setByPlantSelectedFilter"
                 @tabSwitch="setByPlantSelectedTab"
             >
-                <h5>Total Throughput: {{ selectedByPlantFilter }}</h5>
+                <h5>Total Output: {{ selectedByPlantFilter }}</h5>
                 <kpi-chart
                     :actualData="coalOutputActualDataByPlant"
                     :planData="coalOutputPlanDataByPlant"
@@ -28,13 +28,13 @@
                 ></kpi-chart>
                 <!-- <h5>Mining Coal Production</h5>
                 <month-line
-                    :data="coalThroughputActualData"
-                    :categories="coalThroughputCategories"
+                    :data="coalOutputActualData"
+                    :categories="coalOutputCategories"
                 ></month-line> -->
             </chart-group>
         </card>
 
-        <card title="Throughput By Saleable Grade">
+        <card title="Output By Saleable Grade">
             <to-date-table
                 :data="rawOutputData"
                 :sliceAttribute="'input_grade'"
@@ -52,7 +52,7 @@
                 @filterChange="setByGradeSelectedFilter"
                 @tabSwitch="setByGradeSelectedTab"
             >
-                <h5>Total Throughput SHG</h5>
+                <h5>Total Output SHG</h5>
                 <kpi-chart
                     :actualData="coalOutputActualDataByGrade"
                     :planData="coalOutputPlanDataByGrade"
@@ -90,7 +90,7 @@ import {
 } from "../utils/date";
 
 export default {
-    name: "ProcessingDrilldown/Throughput",
+    name: "ProcessingDrilldown/Output",
     setup() {
         const authStore = useAuthStore();
         const store = useStore();

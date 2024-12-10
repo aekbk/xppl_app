@@ -858,8 +858,9 @@ export function transformToToDateUtilizationTableData(
                 attributeData.mtdActualRunTime += actualRunTime;
                 attributeData.mtdActualDownTime += actualDownTime;
                 attributeData.mtdActualStandByTime += actualStandByTime;
+                attributeData.mtdTargetRunTime += targetRunTime;
             }
-            attributeData.mtdTargetRunTime += targetRunTime;
+            
         }
 
         // If the date is in the same year, and before or equal to currentDate, update ytdPlan and ytdActual
@@ -868,9 +869,10 @@ export function transformToToDateUtilizationTableData(
                 attributeData.ytdTargetRunTime += targetRunTime;
                 attributeData.ytdActualRunTime += actualRunTime;
                 attributeData.ytdActualDownTime += actualDownTime;
+                attributeData.ytdActualStandByTime += actualStandByTime;
             }
 
-            attributeData.ytdActualStandByTime += actualStandByTime;
+            
         }
     });
 
