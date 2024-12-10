@@ -35,7 +35,7 @@
                     :data="wasteBCMPerHourByContractorData"
                     :categories="wasteProductionCategoriesByContractor"
                     :yAxisTitle="'Hourly Productivity (Kbcm/hour)'"
-                    :units="'Kbcm'"
+                    :units="''"
                 ></month-line>
             </chart-group>
         </card>

@@ -32,26 +32,29 @@ export default {
                 {
                     name: "TrendLine",
                     type: "line",
-					// Compute trendline y = mx + b
-                    data: this.data.filter(item => item != null).map((y, i, arr) => {
-                        const n = arr.length; // Total number of points
-                        const xValues = arr.map((_, idx) => idx); // Use indices as x-values
+                    // Compute trendline y = mx + b
+                    data: (() => {
+                        const filteredData = this.data.filter(item => item != null && item !== 0); // Exclude null and 0 values
+                        const n = filteredData.length; // Total number of valid points
+                        if (n < 2) return Array(this.data.length).fill(null); // Handle cases where there are not enough points
+                        const xValues = filteredData.map((_, idx) => idx); // Use indices of filtered data
 
                         // Compute the means of x and y
                         const xMean = xValues.reduce((sum, x) => sum + x, 0) / n;
-                        const yMean = arr.reduce((sum, val) => sum + val, 0) / n;
+                        const yMean = filteredData.reduce((sum, val) => sum + val, 0) / n;
 
                         // Compute the slope (m) using the least squares formula
-                        const numerator = xValues.reduce((sum, x, k) => sum + (x - xMean) * (arr[k] - yMean), 0);
+                        const numerator = xValues.reduce((sum, x, k) => sum + (x - xMean) * (filteredData[k] - yMean), 0);
                         const denominator = xValues.reduce((sum, x) => sum + (x - xMean) ** 2, 0);
                         const slope = denominator !== 0 ? numerator / denominator : 0; // Avoid division by zero
 
                         // Compute the intercept (b)
                         const intercept = yMean - slope * xMean;
 
-                        // Compute the trendline value for the current index (x = i)
-                        return slope * i + intercept;
-                    }),
+                        // Return trendline values for all indices in the original data
+                        // Modified: Ensure trendline spans all indices
+                        return this.data.map((_, i) => slope * i + intercept);
+                    })(),
                 }
             ];
         },
