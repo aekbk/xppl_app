@@ -331,7 +331,7 @@ export function transformToYieldTableData(
 
 function calculateDiff(actual: number, plan: number): number {
     if (plan === 0) return 0;
-    const diff = (actual / plan) * 100;
+    const diff = (actual / plan);
     return diff;
 }
 

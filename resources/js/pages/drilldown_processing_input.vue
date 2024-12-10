@@ -262,7 +262,6 @@ export default {
         },
 
         setByPlantSelectedTab(value) {
-            console.log(value);
             this.selectedByPlantTab = value;
         },
         setByPlantSelectedFilter(value) {

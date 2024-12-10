@@ -4,8 +4,6 @@
             style="height: 90vh; width: 100%;"
             class="ag-theme-quartz"
             :columnDefs="columnDefs"
-            :rowHeight="30"
-            :headerHeight="31.99"
             :suppressMenuHide="false"
             :suppressCellFocus="true"
             :rowData="toDateData"
@@ -13,6 +11,8 @@
             :defaultColDef="defaultColDef"
             :groupDefaultExpanded="1"
             :suppressAggFuncInHeader="true"
+            :groupRowTotal="true"
+            :grandTotalRow="'bottom'"
         ></ag-grid-vue>
     </div>
 </template>
@@ -22,6 +22,10 @@ import { AgGridVue } from "ag-grid-vue3";
 import groupBy from "lodash/groupBy";
 import mapValues from "lodash/mapValues";
 import { transformToNestedDateTableData } from "../utils/chart";
+import { format } from "numerable";
+
+const NUMBER_FORMAT = "0,0.00"
+const PERCENT_FORMAT = "0.00%"
 
 export default {
     name: "ToNestedDateTable",
@@ -87,26 +91,53 @@ export default {
                             headerName: "Plan",
                             field: "todayPlan",
                             sortable: true,
+                            aggFunc: "sum",
+                            valueFormatter: (params) => {
+                                return format((params.value || 0), NUMBER_FORMAT);
+                            },
                         },
                         {
                             headerName: "Actual",
                             field: "todayActual",
                             sortable: true,
+                            aggFunc: "sum",
+                            valueFormatter: (params) => {
+                                return format((params.value || 0), NUMBER_FORMAT);
+                            },
                         },
                         {
                             headerName: "% Plan Diff",
                             field: "todayPlanDiff",
                             sortable: true,
+                            aggFunc: (params) => {
+                                const leafNodes = params.rowNode.allLeafChildren;
+                                console.log('params', params);
+
+                                // Calculate total actual availability
+                                const totalActual = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.todayActual || 0); // Safely add values
+                                }, 0);
+
+                                // Calculate total target availability
+                                const totalPlan = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.todayPlan || 0); // Safely add values
+                                }, 0);
+
+
+                                return totalPlan ? (totalActual / totalPlan) : 0;
+                            },
                             cellClass: (params) => {
-                                if (params.value > 110) {
+                                if (params.value > 1.10) {
                                     return "bg-warning"; // Apply this class if value > 100
-                                } else if (params.value < 90) {
+                                } else if (params.value < .90) {
                                     return "bg-danger"; // Apply this class if value < 100
                                 }
                                 return 'bg-success'; // No class for other cases
                             },
                             valueFormatter: (params) => {
-                                return `${(params.value || 0).toFixed(2)}%`;
+                                return format(params.value, PERCENT_FORMAT);
                             },
                         },
                     ],
@@ -118,32 +149,63 @@ export default {
                             headerName: "MTD Plan",
                             field: "mtdPlan",
                             sortable: true,
+                            aggFunc: "sum",
+                            valueFormatter: (params) => {
+                                return format((params.value || 0), NUMBER_FORMAT);
+                            },
                         },
                         {
                             headerName: "Actual",
                             field: "mtdActual",
                             sortable: true,
+                            aggFunc: "sum",
+                            valueFormatter: (params) => {
+                                return format((params.value || 0), NUMBER_FORMAT);
+                            },
                         },
                         {
                             headerName: "% Plan Diff",
                             field: "mtdPlanDiff",
                             sortable: true,
+                            aggFunc: (params) => {
+                                const leafNodes = params.rowNode.allLeafChildren;
+                                console.log('params', params);
+
+                                // Calculate total actual availability
+                                const totalActual = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.todayActual || 0); // Safely add values
+                                }, 0);
+
+                                // Calculate total target availability
+                                const totalPlan = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.todayPlan || 0); // Safely add values
+                                }, 0);
+
+
+                                return totalPlan ? (totalActual / totalPlan) : 0;
+                            },
                             cellClass: (params) => {
-                                if (params.value > 110) {
+                                if (params.value > 1.10) {
                                     return "bg-warning"; // Apply this class if value > 100
-                                } else if (params.value < 90) {
+                                } else if (params.value < .90) {
                                     return "bg-danger"; // Apply this class if value < 100
                                 }
                                 return 'bg-success'; // No class for other cases
                             },
                             valueFormatter: (params) => {
-                                return `${(params.value || 0).toFixed(2)}%`;
+                                return format(params.value, PERCENT_FORMAT);
                             },
                         },
                         {
                             headerName: "Month Plan",
                             field: "mthPlan",
                             sortable: true,
+                            aggFunc: "sum",
+                            valueFormatter: (params) => {
+                                return format((params.value || 0), NUMBER_FORMAT);
+                            },
                         },
                     ],
                 },
@@ -154,32 +216,63 @@ export default {
                             headerName: "YTD Plan",
                             field: "ytdPlan",
                             sortable: true,
+                            aggFunc: "sum",
+                            valueFormatter: (params) => {
+                                return format((params.value || 0), NUMBER_FORMAT);
+                            },
                         },
                         {
                             headerName: "Actual",
                             field: "ytdActual",
                             sortable: true,
+                            aggFunc: "sum",
+                            valueFormatter: (params) => {
+                                return format(params.value, PERCENT_FORMAT);
+                            },
                         },
                         {
                             headerName: "% Plan Diff",
                             field: "ytdPlanDiff",
                             sortable: true,
+                            aggFunc: (params) => {
+                                const leafNodes = params.rowNode.allLeafChildren;
+                                console.log('params', params);
+
+                                // Calculate total actual availability
+                                const totalActual = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.todayActual || 0); // Safely add values
+                                }, 0);
+
+                                // Calculate total target availability
+                                const totalPlan = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.todayPlan || 0); // Safely add values
+                                }, 0);
+
+
+                                return totalPlan ? (totalActual / totalPlan) : 0;
+                            },
                             cellClass: (params) => {
-                                if (params.value > 110) {
+                                if (params.value > 1.10) {
                                     return "bg-warning"; // Apply this class if value > 100
-                                } else if (params.value < 90) {
+                                } else if (params.value < .90) {
                                     return "bg-danger"; // Apply this class if value < 100
                                 }
                                 return 'bg-success'; // No class for other cases
                             },
                             valueFormatter: (params) => {
-                                return `${(params.value || 0).toFixed(2)}%`;
+                                return format(params.value, PERCENT_FORMAT);
                             },
                         },
                         {
                             headerName: "Year Plan",
                             field: "yearPlan",
                             sortable: true,
+                            aggFunc: "sum",
+                            valueFormatter: (params) => {
+                                return format((params.value || 0), NUMBER_FORMAT);
+                            },
                         },
                     ],
                 },

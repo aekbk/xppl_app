@@ -8,7 +8,7 @@
                 :toDate="globalParamStore.getSelectedDate"
             ></to-date-ma-uoa-table>
 
-            <chart-group
+            <!-- <chart-group
                 :selectedTab="selectedByPlantTab"
                 :availableFilter="availableByPlantFilter"
                 :selectedFilter="selectedByPlantFilter"
@@ -26,7 +26,7 @@
                     :totalUoa="uoaChartData.totalUoa"
                     :totalMa="uoaChartData.totalMa"
                 ></uoa-chart>
-            </chart-group>
+            </chart-group> -->
         </card>
     </div>
     <div v-if="isLoading" class="row justify-content-evenly mb-4">

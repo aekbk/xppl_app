@@ -2,7 +2,7 @@
     <div v-if="!isLoading" class="row justify-content-evenly mb-4">
         <card title="Yield">
             <yield-table
-                :data="rawThroughputData"
+                :data="rawProcessingData"
                 :sliceAttribute="'plant'"
                 :attributeHeader="'Plants'"
                 :actualAttrName="'yield_actual'"
@@ -80,7 +80,7 @@ export default {
     data() {
         return {
             isLoading: false,
-            rawThroughputData: [],
+            rawProcessingData: [],
 
             // Input ByPlant filter
             selectedByPlantTab: "mtd",

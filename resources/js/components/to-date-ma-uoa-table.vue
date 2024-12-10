@@ -133,7 +133,6 @@ export default {
                                 return `${tableClass} text-end`;
                             },
                             aggFunc: (params) => {
-                                console.log(params);
                                 const leafNodes = params.rowNode.allLeafChildren;
 
                                 // Calculate total actual availability

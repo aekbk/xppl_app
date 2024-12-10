@@ -10,6 +10,7 @@
             animateRows="false"
             :defaultColDef="defaultColDef"
             :suppressAggFuncInHeader="true"
+            :grandTotalRow="'bottom'"
         ></ag-grid-vue>
     </div>
 </template>
@@ -20,6 +21,7 @@ import { transformToToDateTableData } from "../utils/chart";
 import { format } from "numerable";
 
 const NUMBER_FORMAT = "0,0.00"
+const PERCENT_FORMAT = "0.00%"
 
 export default {
     name: "ToDateTable",
@@ -87,16 +89,34 @@ export default {
                             headerName: "% Plan Diff",
                             field: "todayPlanDiff",
                             sortable: true,
+                            aggFunc: (params) => {
+                                const leafNodes = params.rowNode.allLeafChildren;
+
+                                // Calculate total actual availability
+                                const totalActual = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.todayActual || 0); // Safely add values
+                                }, 0);
+
+                                // Calculate total target availability
+                                const totalPlan = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.todayPlan || 0); // Safely add values
+                                }, 0);
+
+
+                                return totalPlan ? (totalActual / totalPlan) : 0;
+                            },
                             cellClass: (params) => {
-                                if (params.value > 110) {
-                                    return "bg-warning"; // Apply this class if value > 100
-                                } else if (params.value < 90) {
-                                    return "bg-danger"; // Apply this class if value < 100
+                                if (params.value > 1.10) {
+                                    return "bg-warning text-end"; // Apply this class if value > 100
+                                } else if (params.value < .90) {
+                                    return "bg-danger text-end"; // Apply this class if value < 100
                                 }
-                                return 'bg-success'; // No class for other cases
+                                return 'bg-success text-end'; // No class for other cases
                             },
                             valueFormatter: (params) => {
-                                return `${params.value.toFixed(2)}%`;
+                                return format(params.value, PERCENT_FORMAT);
                             },
                         },
                     ],
@@ -128,16 +148,35 @@ export default {
                             headerName: "% Plan Diff",
                             field: "mtdPlanDiff",
                             sortable: true,
+                            aggFunc: (params) => {
+                                const leafNodes = params.rowNode.allLeafChildren;
+                                console.log('params', params);
+
+                                // Calculate total actual availability
+                                const totalActual = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.todayActual || 0); // Safely add values
+                                }, 0);
+
+                                // Calculate total target availability
+                                const totalPlan = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.todayPlan || 0); // Safely add values
+                                }, 0);
+
+
+                                return totalPlan ? (totalActual / totalPlan) : 0;
+                            },
                             cellClass: (params) => {
-                                if (params.value > 110) {
-                                    return "bg-warning"; // Apply this class if value > 100
-                                } else if (params.value < 90) {
-                                    return "bg-danger"; // Apply this class if value < 100
+                                if (params.value > 1.10) {
+                                    return "bg-warning text-end"; // Apply this class if value > 100
+                                } else if (params.value < .90) {
+                                    return "bg-danger text-end"; // Apply this class if value < 100
                                 }
-                                return 'bg-success'; // No class for other cases
+                                return 'bg-success text-end'; // No class for other cases
                             },
                             valueFormatter: (params) => {
-                                return `${params.value.toFixed(2)}%`;
+                                return format(params.value, PERCENT_FORMAT);
                             },
                         },
                         {
@@ -179,16 +218,34 @@ export default {
                             headerName: "% Plan Diff",
                             field: "ytdPlanDiff",
                             sortable: true,
+                            aggFunc: (params) => {
+                                const leafNodes = params.rowNode.allLeafChildren;
+                                console.log('params', params);
+
+                                // Calculate total actual availability
+                                const totalActual = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.todayActual || 0); // Safely add values
+                                }, 0);
+
+                                // Calculate total target availability
+                                const totalPlan = leafNodes.reduce((acc, childNode) => {
+                                    const childData = childNode.data;
+                                    return acc + (childData.todayPlan || 0); // Safely add values
+                                }, 0);
+
+                                return totalPlan ? (totalActual / totalPlan) : 0;
+                            },
                             cellClass: (params) => {
-                                if (params.value > 110) {
-                                    return "bg-warning"; // Apply this class if value > 100
-                                } else if (params.value < 90) {
-                                    return "bg-danger"; // Apply this class if value < 100
+                                if (params.value > 1.10) {
+                                    return "bg-warning text-end"; // Apply this class if value > 100
+                                } else if (params.value < .90) {
+                                    return "bg-danger text-end"; // Apply this class if value < 100
                                 }
-                                return 'bg-success'; // No class for other cases
+                                return 'bg-success text-end'; // No class for other cases
                             },
                             valueFormatter: (params) => {
-                                return `${params.value.toFixed(2)}%`;
+                                return format(params.value, PERCENT_FORMAT);
                             },
                         },
                         {
