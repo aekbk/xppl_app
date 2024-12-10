@@ -15,6 +15,52 @@ import VueApexCharts from "vue3-apexcharts";
 import { getCumulativeData, getYMax } from "../utils/chart";
 import { format } from "numerable";
 
+/**
+ * Determines the appropriate scale (K, M, B) and divisor for formatting values.
+ * Assumes that the base data unit is already in thousands (K).
+ *
+ * Example:
+ * - A value of 57.4 represents 57.4K (57,400).
+ * - Values >= 1,000 represent millions (M).
+ * - Values >= 1,000,000 represent billions (B).
+ *
+ * @param value Max value in the dataset (assumed to be in K)
+ * @returns Scale ("K", "M", "B") and divisor for formatting
+ */
+function getScaleAndDivisor(value: number): { scale: string; divisor: number } {
+    if (value >= 1_000_000) {
+        return { scale: "B", divisor: 1_000_000 }; // Billion (B)
+    } else if (value >= 1_000) {
+        return { scale: "M", divisor: 1_000 }; // Million (M)
+    } else {
+        return { scale: "K", divisor: 1 }; // Thousand (K) as default
+    }
+}
+
+/**
+ * Scales and formats a value based on a given divisor.
+ *
+ * @param value Value to format (assumed to be in K)
+ * @param divisor Divisor to scale the value
+ * @returns Formatted string (e.g., 5000Ktones -> 5.0Mtonnes)
+ */
+function scaleAndFormatValue(value: number, divisor: number): string {
+    return format(value / divisor, "0,0.0a");
+}
+
+/**
+ * Adjusts the Y-axis title to match the scale of the largest values.
+ * Replaces the unit (e.g., "K", "M", "B") in the original title based on the scale.
+ *
+ * @param maxValue Max value in the dataset (assumed to be in K)
+ * @param originalTitle Original title (e.g., "Daily Production (Kxxx)")
+ * @returns Adjusted title (e.g., "Daily Production (Mxxx)")
+ */
+function adjustYAxisTitle(maxValue: number, originalTitle: string): string {
+    const { scale } = getScaleAndDivisor(maxValue);
+    return originalTitle.replace(/K|M|B/, scale); // Replace unit with the appropriate scale
+}
+
 export default {
     name: "KpiChart",
     components: {
@@ -51,7 +97,16 @@ export default {
         getChartOptions() {
             const cumPlan = getCumulativeData(this.planData);
             const cumActual = getCumulativeData(this.actualData);
-            const cumMax = Math.max(...cumPlan, ...cumActual);
+            const maxDailyValue = getYMax([...this.actualData, ...this.planData]);
+            const maxCumulativeValue = Math.max(...cumPlan, ...cumActual);
+
+            // Adjust titles based on the maximum values
+            const adjustedLeftTitle = adjustYAxisTitle(maxDailyValue, this.leftYAxisTitle);
+            const adjustedRightTitle = adjustYAxisTitle(maxCumulativeValue, this.rightYAxisTitle);
+
+            // Get scale and divisor for formatting
+            const { divisor: dailyDivisor } = getScaleAndDivisor(maxDailyValue);
+            const { divisor: cumulativeDivisor } = getScaleAndDivisor(maxCumulativeValue);
 
             return {
                 chart: {
@@ -89,48 +144,24 @@ export default {
                 yaxis: [
                     {
                         title: {
-                            // note the base data unit in db is always ktonnes
-                            // if the value >= 1000, we should use RHS y-axis title (Mtonnes) and divide the value by 1000
-                            text: getYMax([...this.actualData, ...this.planData]) >= 1000
-                                ? this.rightYAxisTitle.replace("Cum. ", "")
-                                : this.leftYAxisTitle
+                            text: adjustedLeftTitle,
                         },
                         max: getYMax([...this.actualData, ...this.planData]),
                         min: 0,
                         labels: {
-                            formatter: (value) => {
-                                // value is in Ktonnes
-                                // if we see 1000Ktonnes, we should show 1Mt
-                                if (value >= 1000) {
-                                    return format(value / 1000, "0,0.0a"); // Scale to Mt
-                                } else {
-                                    return format(value, "0,0.0a"); // keep it Kt
-                                }
-                            }
+                            formatter: (value) => scaleAndFormatValue(value, dailyDivisor),
                         },
                         tickAmount: 10,
                     },
                     {
                         title: {
-                            // note the base data unit in db is always ktonnes
-                            // if the value >= 1000, we should use RHS y-axis title (Mtonnes) and divide the value by 1000
-                            text: getYMax([...this.actualData, ...this.planData]) >= 1000
-                                ? this.rightYAxisTitle.replace("Cum. ", "")
-                                : this.leftYAxisTitle
+                            text: adjustedLeftTitle,
                         },
                         min: 0,
                         max: getYMax([...this.actualData, ...this.planData]),
                         show: false,
                         labels: {
-                            formatter: (value) => {
-                                // value is in Ktonnes
-                                // if we see 1000Ktonnes, we should show 1Mt
-                                if (value >= 1000) {
-                                    return format(value / 1000, "0,0.0a"); // Scale to Mt
-                                } else {
-                                    return format(value, "0,0.0a"); // keep it Kt
-                                }
-                            }
+                            formatter: (value) => scaleAndFormatValue(value, dailyDivisor),
                         },
                         tickAmount: 10,
                     },
@@ -138,28 +169,28 @@ export default {
                         opposite: true,
                         show: true,
                         title: {
-                            text: this.rightYAxisTitle,
+                            text: adjustedRightTitle,
                         },
                         forceNiceScale: true,
                         decimalsInFloat: 2,
                         tickAmount: 10,
                         max: getYMax([...cumActual, ...cumPlan]),
                         labels: {
-                            formatter: (value) => format(value/1000, "0,0.0a"), // divide by 1000 to convert to Mt
+                            formatter: (value) => scaleAndFormatValue(value, cumulativeDivisor),
                        },
                     },
                     {
                         opposite: true,
                         show: false,
                         title: {
-                            text: this.rightYAxisTitle,
+                            text: adjustedRightTitle,
                         },
                         forceNiceScale: true,
                         decimalsInFloat: 2,
                         tickAmount: 10,
                         max: getYMax([...cumActual, ...cumPlan]),
                         labels: {
-                            formatter: (value) => format(value/1000, "0,0.0a"), // divide by 1000 to convert to Mt
+                            formatter: (value) => scaleAndFormatValue(value, cumulativeDivisor),
                         },
                     },
                 ],
