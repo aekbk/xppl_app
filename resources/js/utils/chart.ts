@@ -151,8 +151,8 @@ export function transformToToDateTableData(
             isSameMonthAndYear(dataDate, selectedDate) &&
             dataDate <= selectedDate
         ) {
-                attributeData.mtdActual += actualDataNode;
-                attributeData.mtdPlan += planDataNode;
+            attributeData.mtdActual += actualDataNode;
+            attributeData.mtdPlan += planDataNode;
         }
 
         // update the month plan
@@ -163,8 +163,8 @@ export function transformToToDateTableData(
         // If the date is in the same year,
         // and before or equal to the currentDate, update ytdActual and ytdPlan
         if (isSameYear(dataDate, selectedDate) && dataDate <= selectedDate) {
-                attributeData.ytdActual += actualDataNode;
-                attributeData.ytdPlan += planDataNode;
+            attributeData.ytdActual += actualDataNode;
+            attributeData.ytdPlan += planDataNode;
         }
 
         // Update the year plan
@@ -291,10 +291,10 @@ export function transformToYieldTableData(
             isSameMonthAndYear(dataDate, selectedDate) &&
             dataDate <= selectedDate
         ) {
-                attributeData.mtdInputPlan += planInputDataNode;
-                attributeData.mtdOutputPlan += planOutputDataNode;
-                attributeData.mtdInputActual += actualInputDataNode;
-                attributeData.mtdOutputActual += actualOutputDataNode;
+            attributeData.mtdInputPlan += planInputDataNode;
+            attributeData.mtdOutputPlan += planOutputDataNode;
+            attributeData.mtdInputActual += actualInputDataNode;
+            attributeData.mtdOutputActual += actualOutputDataNode;
         }
 
         // update the month plan
@@ -306,10 +306,10 @@ export function transformToYieldTableData(
         // If the date is in the same year,
         // and before or equal to the currentDate, update ytdActual and ytdPlan
         if (isSameYear(dataDate, selectedDate) && dataDate <= selectedDate) {
-                attributeData.ytdInputPlan += planInputDataNode;
-                attributeData.ytdOutputPlan += planOutputDataNode;
-                attributeData.ytdInputActual += actualInputDataNode;
-                attributeData.ytdOutputActual += actualOutputDataNode;
+            attributeData.ytdInputPlan += planInputDataNode;
+            attributeData.ytdOutputPlan += planOutputDataNode;
+            attributeData.ytdInputActual += actualInputDataNode;
+            attributeData.ytdOutputActual += actualOutputDataNode;
         }
 
         // Update the year plan
@@ -638,7 +638,7 @@ export function convertToKpiDataByAttr(
               )
             : Array.from(dailyKpiDataMap.values());
 
-    const monthlyData = Array.from(monthlyKpiDataMap.values())
+    const monthlyData = Array.from(monthlyKpiDataMap.values());
 
     return {
         daily: dailyData as any,
@@ -713,12 +713,9 @@ export function convertToYieldKpiDataByAttr(
                   startDateString,
                   endDateString
               )
-            : Array.from(dailyKpiDataMap.values()); 
+            : Array.from(dailyKpiDataMap.values());
 
     const rawMonthlyData = Array.from(monthlyKpiDataMap.values());
-
-    console.log("dailyData", rawDailyData);
-    console.log("monthlyData", rawMonthlyData);
 
     return {
         daily: rawDailyData as any,
@@ -771,19 +768,19 @@ export function convertToMonthlyKpiData(
 }
 
 interface UtilizationDataItem {
-  year: string;
-  month: string;
-  date: string;
-  plant: string;
-  pit: string;
-  target_run_hrs: string;
-  actual_run_hrs: string;
-  actual_down_hrs: string;
-  actual_standby_hrs: string;
-  target_ma: string;
-  actual_ma: string;
-  target_uoa: string;
-  actual_uoa: string;
+    year: string;
+    month: string;
+    date: string;
+    plant: string;
+    pit: string;
+    target_run_hrs: string;
+    actual_run_hrs: string;
+    actual_down_hrs: string;
+    actual_standby_hrs: string;
+    target_ma: string;
+    actual_ma: string;
+    target_uoa: string;
+    actual_uoa: string;
 }
 
 interface ProcessedUtilizationDataItem {
@@ -805,7 +802,7 @@ interface ProcessedUtilizationDataItem {
 export function transformToToDateUtilizationTableData(
     rawData: UtilizationDataItem[],
     currentDate: Date,
-    attr: string,
+    attr: string
 ): ProcessedUtilizationDataItem[] {
     // If currentDate is not provided, get the latest date from the data
     if (!currentDate) {
@@ -846,7 +843,7 @@ export function transformToToDateUtilizationTableData(
         const targetRunTime = parseFloat(item.target_run_hrs) || 0;
         const actualDownTime = parseFloat(item.actual_down_hrs) || 0;
         const actualStandByTime = parseFloat(item.actual_standby_hrs) || 0;
-        
+
         // If the date matches currentDate, update todayPlan and todayActual
         if (isSameDate(dataDate, currentDate)) {
             attributeData.todayTargetRunTime += targetRunTime;
@@ -856,9 +853,7 @@ export function transformToToDateUtilizationTableData(
         }
 
         // If the date is in the same month and year, and before or equal to currentDate, update mtdPlan and mtdActual
-        if (
-            isSameMonthAndYear(dataDate, currentDate)
-        ) {
+        if (isSameMonthAndYear(dataDate, currentDate)) {
             if (dataDate <= currentDate) {
                 attributeData.mtdActualRunTime += actualRunTime;
                 attributeData.mtdActualDownTime += actualDownTime;
@@ -874,7 +869,7 @@ export function transformToToDateUtilizationTableData(
                 attributeData.ytdActualRunTime += actualRunTime;
                 attributeData.ytdActualDownTime += actualDownTime;
             }
-            
+
             attributeData.ytdActualStandByTime += actualStandByTime;
         }
     });
@@ -889,7 +884,11 @@ export function transformToToDateUtilizationTableData(
     return result;
 }
 
-export function getUOATableBgCellClass(value: number, successBound: number, warningBound: number) {
+export function getUOATableBgCellClass(
+    value: number,
+    successBound: number,
+    warningBound: number
+) {
     if (value >= successBound) {
         return "bg-success";
     } else if (value >= warningBound) {
