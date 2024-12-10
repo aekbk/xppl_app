@@ -158,20 +158,23 @@
                                     processingSummary.secondaryMetricSubtitle
                                 "
                                 :secondaryMetricStats="
-                                    processingSummary.secondaryMetricStats
+                                    coalThroughputActualDataByPlant
                                 "
                                 :secondaryMetricCategories="
-                                    processingSummary.secondaryMetricCategories
+                                    coalThroughputCategoriesByPlant
                                 "
                                 :secondaryMetricYAxisTitle="
                                     processingSummary.secondaryMetricYAxisTitle
                                 "
+                                :secondMetricLabelFormat="'0 %'"
+                                :secondMedtricYAxisFormat="'0 %'"
                                 :secondaryMetricUnit="
                                     processingSummary.secondaryMetricUnit
                                 "
                                 :secondarySummaryHeader="
                                     processingSummary.secondarySummaryHeader
                                 "
+                                :averageFormat="'0 %'"
                             ></department-summary>
                         </div>
                         <div
@@ -188,11 +191,18 @@
                     </div>
                     <div class="col-lg-4">
                         <div
-                            v-if="!(isLoadingMiningData || isLoadingSalesLogisticsData)"
+                            v-if="
+                                !(
+                                    isLoadingProcessingData ||
+                                    isLoadingSalesLogisticsData
+                                )
+                            "
                         >
                             <department-summary
                                 :title="salesLogisticsSummary.title"
-                                :mainMetricTitle="salesLogisticsSummary.mainMetricTitle"
+                                :mainMetricTitle="
+                                    salesLogisticsSummary.mainMetricTitle
+                                "
                                 :mainMetricSubtitle="
                                     salesLogisticsSummary.mainMetricSubtitle
                                 "
@@ -235,7 +245,7 @@
                             ></department-summary>
                         </div>
                         <div
-                            v-if="isLoadingMiningData || isLoadingWasteData"
+                            v-if="isLoadingProcessingData || isLoadingWasteData"
                             class="row justify-content-evenly mb-4"
                         >
                             <div
@@ -245,7 +255,8 @@
                                 <span class="sr-only">Loading...</span>
                             </div>
                         </div>
-                    </div>                </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -258,12 +269,16 @@ import SummaryStatistic from "../components/summary-statistic.vue";
 import { useAuthStore } from "../stores/auth";
 import { useGlobalParamStore } from "../stores/globalParam";
 import { useStore } from "../stores/store";
-import { convertToDailyKpiData, convertToKpiDataByAttr } from "../utils/chart";
+import {
+    convertToDailyKpiData,
+    convertToKpiDataByAttr,
+    convertToYieldKpiDataByAttr,
+} from "../utils/chart";
 import {
     formatDateToDayMonth,
     getKeyDateFromSelectedDate,
 } from "../utils/date";
-import { roundToDecimalPlace } from "../utils/number";
+import { numberOrNull, roundToDecimalPlace } from "../utils/number";
 
 const DEFAULT_DATE = "2024-11-30";
 
@@ -512,11 +527,9 @@ export default {
                 "output_target",
                 "output_actual"
             ).daily;
+            // TODO: Fix implementation of labeling. divide by 1000 to convert to Kt for now
             const processingOutputActualData = processingOutputData.map(
-                (i) => i.actual
-            );
-            const processingOutputPlanData = processingOutputData.map(
-                (i) => i.plan
+                (i) => i.actual / 1000
             );
             const processingCategories = processingOutputData.map((i) =>
                 formatDateToDayMonth(i.date)
@@ -546,7 +559,10 @@ export default {
                 mainMetricLeftYAxisTitle: "Weight (Kt)",
                 mainMetricRightYAxisTitle: "Cum. Weight (Kt)",
                 mainMetricActualData: processingOutputActualData,
-                mainMetricPlanData: processingOutputData.map((i) => i.plan),
+                // TODO: Fix implementation of labeling. divide by 1000 to convert to Kt for now
+                mainMetricPlanData: processingOutputData.map(
+                    (i) => i.plan / 1000
+                ),
                 mainMetricCategories: processingOutputData.map((i) =>
                     formatDateToDayMonth(i.date)
                 ),
@@ -577,18 +593,24 @@ export default {
             );
 
             // compute actual mined coal amount for sales over production ratio
-            const miningOutputData = convertToKpiDataByAttr(
-                this.miningData,
-                "coal_plan_kt",
-                "coal_actual_kt",
+            const processingOutputData = convertToKpiDataByAttr(
+                this.processingData,
+                "output_target",
+                "output_actual"
             ).daily;
-            const miningOutputActualData = miningOutputData.map((i) => i.actual);
+            const processingOutputActualData = processingOutputData.map(
+                // Divide 1000 as the data measured in tonnes
+                (i) => i.actual / 1000
+            );
 
             // sales over production ratio line chart - bottom part
             const salesOverProductionRatio = salesLogisticsOutputActualData.map(
                 (item, index) => {
-                    const result = item / miningOutputActualData[index];
+                    const result = item / processingOutputActualData[index];
                     if (isNaN(result)) {
+                        return null;
+                    }
+                    if (result === Infinity) {
                         return null;
                     }
                     return roundToDecimalPlace(result, 2);
@@ -609,10 +631,43 @@ export default {
                 secondaryMetricStats: salesOverProductionRatio,
                 secondaryMetricCategories: salesLogisticsCategories,
                 secondarySummaryHeader: "MTD Avg",
-                secondaryMetricYAxisTitle: "Sales over Production Ratio (Kt/Kt)",
+                secondaryMetricYAxisTitle:
+                    "Sales over Production Ratio (Kt/Kt)",
                 secondaryMetricUnit: "",
             };
-        }
+        },
+        yieldData() {
+            if (this.processingData.length === 0) {
+                return {
+                    daily: [],
+                    monthly: [],
+                };
+            }
+
+            const filteredData = this.processingData;
+
+            const keyDates = getKeyDateFromSelectedDate(
+                this.globalParamStore.selectedDate
+            );
+            return convertToYieldKpiDataByAttr(
+                filteredData,
+                keyDates.beginningOfMonth,
+                keyDates.endOfMonth
+            );
+        },
+        coalThroughputActualDataByPlant() {
+            const yieldDailyData = this.yieldData.daily.filter(
+                (i) => i.date <= this.globalParamStore.selectedDate
+            );
+            return yieldDailyData.map((i) =>
+                numberOrNull(i.outputActual / i.inputActual)
+            );
+        },
+        coalThroughputCategoriesByPlant() {
+            return this.yieldData.daily.map((i) =>
+                formatDateToDayMonth(i.date)
+            );
+        },
     },
 };
 </script>

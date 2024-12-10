@@ -96,7 +96,7 @@ export default {
     computed: {
         // Input screening section
         yieldData() {
-            if (this.rawThroughputData.length === 0) {
+            if (this.rawProcessingData.length === 0) {
                 return {
                     daily: [],
                     monthly: [],
@@ -105,8 +105,8 @@ export default {
 
             const filteredData =
                 this.selectedByPlantFilter === this.defaultByPlantFilter
-                    ? this.rawThroughputData
-                    : this.rawThroughputData.filter(
+                    ? this.rawProcessingData
+                    : this.rawProcessingData.filter(
                           (i) => i.plant === this.selectedByPlantFilter
                       );
 
@@ -144,7 +144,7 @@ export default {
             );
         },
         availableByPlantFilter() {
-            return uniq(this.rawThroughputData.map((i) => i.plant));
+            return uniq(this.rawProcessingData.map((i) => i.plant));
         },
     },
 
@@ -162,7 +162,7 @@ export default {
                     },
                 }
             );
-            this.rawThroughputData = response.data;
+            this.rawProcessingData = response.data;
             this.isLoading = false;
         },
         async fetchData() {
