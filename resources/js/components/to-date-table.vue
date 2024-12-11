@@ -67,6 +67,11 @@ export default {
             required: false,
             default: "YTD (Kt)",
         },
+        height: {
+            type: String,
+            required: false,
+            default: "500px",
+        },
     },
     data() {
         return {
