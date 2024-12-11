@@ -691,10 +691,10 @@ export function convertToYieldKpiDataByAttr(
         const monthlyKpiData = monthlyKpiDataMap.get(monthlyKey);
 
         // Convert actualDataNode and planDataNode to numbers
-        const actualInputDataNode = item.input_actual;
-        const planInputDataNode = item.input_target;
-        const actualOutputDataNode = item.output_actual;
-        const planOutputDataNode = item.output_target;
+        const actualInputDataNode = parseFloat(String(item.input_actual)) || 0;
+        const planInputDataNode = parseFloat(String(item.input_target)) || 0;
+        const actualOutputDataNode = parseFloat(String(item.output_actual)) || 0;
+        const planOutputDataNode = parseFloat(String(item.output_target)) || 0;
 
         dailyKpiData!.inputActual += actualInputDataNode;
         dailyKpiData!.inputPlan += planInputDataNode;
