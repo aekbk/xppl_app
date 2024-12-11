@@ -1,7 +1,7 @@
 import moment from "moment";
-import { subset } from "./data";
-import { isSameDate, isSameMonthAndYear, isSameYear } from "./date";
-import { roundToDecimalPlace } from "./number";
+import {subset} from "./data";
+import {isSameDate, isSameMonthAndYear, isSameYear} from "./date";
+import {roundToDecimalPlace} from "./number";
 
 function getDivider(number: number): number {
     let absNumber = Math.abs(number); // Handle negative numbers
@@ -331,7 +331,7 @@ export function transformToYieldTableData(
 
 function calculateDiff(actual: number, plan: number): number {
     if (plan === 0) return 0;
-    const diff = (actual / plan);
+    const diff = actual / plan;
     return diff;
 }
 
@@ -632,10 +632,10 @@ export function convertToKpiDataByAttr(
     const dailyData =
         startDateString && endDateString
             ? subset(
-                  Array.from(dailyKpiDataMap.values() as any),
-                  startDateString,
-                  endDateString
-              )
+                Array.from(dailyKpiDataMap.values() as any),
+                startDateString,
+                endDateString
+            )
             : Array.from(dailyKpiDataMap.values());
 
     const monthlyData = Array.from(monthlyKpiDataMap.values());
@@ -693,7 +693,8 @@ export function convertToYieldKpiDataByAttr(
         // Convert actualDataNode and planDataNode to numbers
         const actualInputDataNode = parseFloat(String(item.input_actual)) || 0;
         const planInputDataNode = parseFloat(String(item.input_target)) || 0;
-        const actualOutputDataNode = parseFloat(String(item.output_actual)) || 0;
+        const actualOutputDataNode =
+            parseFloat(String(item.output_actual)) || 0;
         const planOutputDataNode = parseFloat(String(item.output_target)) || 0;
 
         dailyKpiData!.inputActual += actualInputDataNode;
@@ -709,10 +710,10 @@ export function convertToYieldKpiDataByAttr(
     const rawDailyData =
         startDateString && endDateString
             ? subset(
-                  Array.from(dailyKpiDataMap.values()) as any,
-                  startDateString,
-                  endDateString
-              )
+                Array.from(dailyKpiDataMap.values()) as any,
+                startDateString,
+                endDateString
+            )
             : Array.from(dailyKpiDataMap.values());
 
     const rawMonthlyData = Array.from(monthlyKpiDataMap.values());
@@ -860,7 +861,6 @@ export function transformToToDateUtilizationTableData(
                 attributeData.mtdActualStandByTime += actualStandByTime;
                 attributeData.mtdTargetRunTime += targetRunTime;
             }
-            
         }
 
         // If the date is in the same year, and before or equal to currentDate, update ytdPlan and ytdActual
@@ -871,8 +871,6 @@ export function transformToToDateUtilizationTableData(
                 attributeData.ytdActualDownTime += actualDownTime;
                 attributeData.ytdActualStandByTime += actualStandByTime;
             }
-
-            
         }
     });
 
