@@ -134,28 +134,30 @@ export default {
   },
 
   methods: {
-    register() {
+    async register() {
       this.errors = '';
       this.incorrect = '';
       this.check = '';
 
-      axios.post('api/register', {
-        email: this.email,
-        password: this.password,
-        password_confirmation: this.password_confirmation
-      }).then((response) => {
+      try {
+        const response = await axios.post('api/register', {
+          email: this.email,
+          password: this.password,
+          password_confirmation: this.password_confirmation
+        });
+
         if (response.data.success) {
-          localStorage.setItem('remember-me', this.email)
-          this.$router.push('/login')
-          toastr.success('Sign up succesfully!')
+          localStorage.setItem('remember-me', this.email);
+          this.$router.push('/login');
+          toastr.success('Sign up succesfully!');
         } else {
           this.check = response.data.message;
         }
-      }).catch((error) => {
+      } catch (error) {
         if (error.response && error.response.status === 422) {
           this.errors = error.response.data.errors;
         }
-      });
+      }
     },
   },
 };

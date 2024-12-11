@@ -324,15 +324,15 @@ export default {
     async onLoad() {
       this.loading = true;
 
-      const user = await this.getUsers();
+      await this.getUsers();
       const menus = await axios.get('api/auth/code-menu', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
       this.lkpMenu = menus.data;
 
       const subs = await axios.get('api/auth/code-submenu', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
       this.lkpSub = subs.data;
 
-      const autMenus = await this.getAuthMenu();
-      const autSubs = await this.getAuthSub();
+      await this.getAuthMenu();
+      await this.getAuthSub();
 
       this.loading = false;
     },

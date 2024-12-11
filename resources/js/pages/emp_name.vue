@@ -39,12 +39,11 @@
     <!-- </div> -->
 
     <div class="card" v-if="viewMode == 'edit'">
-      <!-- <div class="card-header">
+      <div class="card-header">
         Header
-      </div> -->
+      </div>
 
       <div class="card-body">
-
         <div class="row">
           <div class="col-xxl-2">
             <div class="mt-4 pt-1">

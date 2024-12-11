@@ -2,28 +2,27 @@
   <div>
     <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1">
       <div class="chat-leftsidebar minimal-border">
-        <div class="px-4 py-3 mb-0 border-bottom">
+        <div class="px-3 pt-3 pb-3 mb-0">
           <div class="d-flex align-items-center">
             <div class="flex-grow-1 overflow-hidden">
-              <h5 class="mb-0 text-truncate">Categories</h5>
+              <h5 class="mb-0 mt-1 text-truncate">Categories</h5>
             </div>
             <div style="height: 27.063px;">
-              <!-- <div class="flex-shrink-0">
-                <button type="button" class="btn btn-soft-info btn-icon btn-sm material-shadow-none">
+              <div class="flex-shrink-0">
+                <!-- <button type="button" class="btn btn-soft-success btn-sm material-shadow-none">
                   <i class="ri-add-line align-bottom"></i>
-                </button>
-              </div> -->
+                </button> -->
+              </div>
             </div>
           </div>
+          <form class="app-search d-md-block pt-4 mt-1 pb-0 ps-0">
+            <div class="position-relative">
+              <input type="text" class="form-control bg-light border-0" placeholder="Search here..." v-model="search" @input="onSearch">
+              <span class="ri-search-line search-icon search-widget-icon fs-14"></span>
+              <span class="mdi mdi-close-circle search-widget-icon search-widget-icon-close cursor-pointer d-none" id="search-close" @click="searchClear"></span>
+            </div>
+          </form>
         </div>
-
-        <form class="app-search d-md-block py-0 ps-0 border-bottom">
-          <div class="position-relative">
-            <input type="text" class="form-control border-0" placeholder="Search..." v-model="search" @input="onSearch">
-            <span class="ri-search-line search-icon search-widget-icon fs-14"></span>
-            <span class="mdi mdi-close-circle search-widget-icon search-widget-icon-close cursor-pointer d-none" id="search-close" @click="searchClear"></span>
-          </div>
-        </form>
 
         <div class="chat-room-list simplebar-scrollable-y" data-simplebar="init">
           <div class="simplebar-wrapper" style="margin: -16px 0px 0px;">
@@ -61,7 +60,7 @@
                 </div>
               </div>
             </div>
-            <div class="simplebar-placeholder" style="width: 300px; height: calc(100vh - 14rem);"></div>
+            <div class="simplebar-placeholder" style="width: 300px; height: calc(100vh - 18rem);"></div>
             <!-- <div class="simplebar-placeholder" style="width: 300px; height: calc(100vh - 13.125rem);"></div> -->
           </div>
         </div>
@@ -74,7 +73,7 @@
             <div class="position-relative">
 
               <div class="position-relative" id="channel-chat" style="display: block;">
-                <div class="p-3 user-chat-topbar border-bottom">
+                <div class="p-3 user-chat-topbar">
                   <div class="row align-items-center">
                     <div class="col-sm-4 col-8">
                       <div class="d-flex align-items-center">
@@ -101,14 +100,14 @@
                       <ul class="list-inline user-chat-nav text-end mb-0">
                         <li class="list-inline-item m-0">
 
-                          <div class="d-flex gap-sm-1 email-topbar-link">
-                            <button type="button" class="btn btn-ghost-secondary btn-icon btn-sm material-shadow-none" title="Add new code" @click="newCode">
+                          <div class="d-flex gap-sm-0 email-topbar-link">
+                            <button type="button" class="btn btn-ghost-secondary btn-icon  material-shadow-none" title="Add new code" @click="newCode">
                               <i class="bx bx-plus-circle align-bottom fs-18"></i>
                             </button>
-                            <button type="button" class="btn btn-ghost-secondary btn-icon btn-sm material-shadow-none" title="Edit code" @click="editCode">
+                            <button type="button" class="btn btn-ghost-secondary btn-icon  material-shadow-none" title="Edit code" @click="editCode">
                               <i class="bx bx-edit align-bottom fs-18"></i>
                             </button>
-                            <button type="button" class="btn btn-ghost-secondary btn-icon btn-sm material-shadow-none" title="Delete code" @click="delCode">
+                            <button type="button" class="btn btn-ghost-secondary btn-icon  material-shadow-none" title="Delete code" @click="delCode">
                               <i class="bx bx-trash align-bottom fs-18"></i>
                             </button>
                           </div>
@@ -120,9 +119,13 @@
 
                 </div>
 
-                <!-- <div class="chat-conversation p-3 p-lg-3"> -->
-                <div class="chat-conversation d-block">
-                  <ag-grid-vue style="height: calc(100vh - 13.125rem);" class="ag-theme-material" :columnDefs="columnDefs" :rowData="codeFilter" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="editCode"></ag-grid-vue>
+
+
+
+
+                <div class="chat-conversation d-block px-3 px-lg-3 mt-lg-0" style="margin-top: 12px;">
+                  <!-- <div class="chat-conversation d-block"> -->
+                  <ag-grid-vue style="height: calc(100vh - 15.0rem);" class="ag-theme-material" :columnDefs="columnDefs" :rowData="codeFilter" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="editCode"></ag-grid-vue>
                 </div>
               </div>
 
@@ -155,7 +158,7 @@
               <textarea type="text" class="form-control" placeholder="Enter description" v-model="codeForm.descr_lao"></textarea>
             </div>
             <div>
-              <label class="form-label">Active <span class="text-danger">*</span></label>
+              <label class="form-label">Use <span class="text-danger">*</span></label>
               <multiselect placeholder="Select" v-model="codeForm.active" :options="lkActive" />
             </div>
           </div>
@@ -276,7 +279,7 @@ export default {
         { headerName: 'Description', field: 'descr_eng', filter: 'agSetColumnFilter' },
         { headerName: 'ຄຳອະທິບາຍ', field: 'descr_lao', filter: 'agSetColumnFilter' },
         {
-          headerName: 'Active', field: 'active', maxWidth: 100, filter: 'agSetColumnFilter',
+          headerName: 'Use', field: 'active', maxWidth: 100, filter: 'agSetColumnFilter',
           cellRenderer: (p) => {
             if (p.value == false) {
               return 'No';
@@ -604,7 +607,7 @@ export default {
       };
     },
 
-    async onSearch() {
+    onSearch() {
       if (this.search.length > 0) {
         document.getElementById('search-close').classList.remove('d-none');
       } else {
@@ -612,7 +615,7 @@ export default {
       };
     },
 
-    async searchClear() {
+    searchClear() {
       this.search = '';
       document.getElementById('search-close').classList.add('d-none');
     },

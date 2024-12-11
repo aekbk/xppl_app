@@ -146,7 +146,6 @@
 
 
             <div class="col-lg-12">
-
               <div class="card-body p-4 border-top border-top-dashed d-print-none" v-if="fileFilter.length > 0">
                 <h6 class="text-muted text-uppercase fw-semibold">Attachments</h6>
                 <div class="table-responsive border">
@@ -171,10 +170,11 @@
                               <i v-else-if="item.file_type == 'xlsx'" class="ri-file-excel-fill text-success"></i>
                               <i v-else-if="item.file_type == 'pptx'" class="ri-file-ppt-fill text-danger"></i>
                               <i v-else-if="item.file_type == 'pdf'" class="ri-file-pdf-fill text-danger"></i>
-                              <i v-else-if="item.file_type == 'jpg'" class="ri-image-2-fill text-success"></i>
-                              <i v-else-if="item.file_type == 'jpeg'" class="ri-image-2-fill text-success"></i>
-                              <i v-else-if="item.file_type == 'png'" class="ri-image-2-fill text-success"></i>
+                              <i v-else-if="item.file_type == 'jpg'" class="ri-image-fill text-success"></i>
+                              <i v-else-if="item.file_type == 'jpeg'" class="ri-image-fill text-success"></i>
+                              <i v-else-if="item.file_type == 'png'" class="ri-image-fill text-success"></i>
                               <i v-else-if="item.file_type == 'zip'" class="ri-folder-zip-line"></i>
+                              <i v-else-if="item.file_type == 'mp4'" class="ri-video-line"></i>
                               <i v-else class="ri-file-unknow-fill text-warning"></i>
                             </div>
                             <div class="flex-grow-1 filelist-name">{{ item.file_name }}</div>
@@ -188,6 +188,7 @@
                               <a href="#" class="link-success text-decoration-none fs-16" @click="removeFile(index)"><i class="ri-delete-bin-5-line text-danger"></i></a>
                             </div>
                             <a v-if="item.note !== 'new' && (item.file_type == 'jpg' || item.file_type == 'txt' || item.file_type == 'pdf' || item.file_type == 'jpeg' || item.file_type == 'png')" href="#" class="link-success text-decoration-none fs-14 pt-1" @click="viewFile(item.new_name)" title="View"><i class="ri-eye-line"></i></a>
+                            <a v-else href="#" class="link-success text-decoration-none fs-14 pt-1" title="Not available to view" @click="notView"><i class="ri-eye-off-line"></i></a>
                             <a v-if="item.note !== 'new'" href="#" class="link-success text-decoration-none fs-16" @click="downloadFile(item.new_name)" title="Download"><i class="ri-download-2-line"></i></a>
                           </div>
                         </td>
@@ -254,7 +255,7 @@
                   <div class="col-xl-2 col-lg-3">
                     <div class="mb-3">
                       <label class="form-label">Incident No. <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" placeholder="Incident number" v-model="incForm.incident_no" readonly>
+                      <input type="text" class="form-control" placeholder="Incident number" v-model="incForm.incident_no">
                     </div>
                   </div>
                   <div class="col-xl-2 col-lg-3">
@@ -440,6 +441,7 @@
                               <i v-else-if="item.file_type == 'jpeg'" class="ri-image-2-fill text-success"></i>
                               <i v-else-if="item.file_type == 'png'" class="ri-image-2-fill text-success"></i>
                               <i v-else-if="item.file_type == 'zip'" class="ri-folder-zip-line"></i>
+                              <i v-else-if="item.file_type == 'mp4'" class="ri-video-line"></i>
                               <i v-else class="ri-file-unknow-fill text-warning"></i>
                             </div>
                             <div class="flex-grow-1 filelist-name">{{ item.file_name }}</div>
@@ -453,6 +455,7 @@
                               <a href="#" class="link-success text-decoration-none fs-16" @click="removeFile(index)"><i class="ri-delete-bin-5-line text-danger"></i></a>
                             </div>
                             <a v-if="item.note !== 'new' && (item.file_type == 'jpg' || item.file_type == 'txt' || item.file_type == 'pdf' || item.file_type == 'jpeg' || item.file_type == 'png')" href="#" class="link-success text-decoration-none fs-14 pt-1" @click="viewFile(item.new_name)" title="View"><i class="ri-eye-line"></i></a>
+                            <a v-else href="#" class="link-success text-decoration-none fs-14 pt-1" title="Not available to view" @click="notView"><i class="ri-eye-off-line"></i></a>
                             <a v-if="item.note !== 'new'" href="#" class="link-success text-decoration-none fs-16" @click="downloadFile(item.new_name)" title="Download"><i class="ri-download-2-line"></i></a>
                             <a v-if="item.note !== 'new'" href="#" class="link-success text-decoration-none fs-16" @click="delFile(item.file_id, item.new_name, index)" title="Delete"><i class="ri-delete-bin-5-line"></i></a>
                           </div>
@@ -723,10 +726,10 @@ export default {
       };
 
       // Department Code
-      const depts = await axios.get('/api/employee/departments', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
-      const items = depts.data.filter(e => e.company_code == 'XPPL' && e.active == 1);
+      const depts = await axios.get('/api/safety/departments', { headers: { Authorization: 'Bearer ' + this.authStore.getToken } });
+      const items = depts.data.filter(e => e.active == 1);
       items.forEach(e => {
-        this.lkDepartment.push(e.department_eng);
+        this.lkDepartment.push(e.code);
       });
 
 
@@ -1136,13 +1139,18 @@ export default {
     },
 
     downloadFile(file) {
-      const url = `/api/safety/download-incident-file/${file}`;
+      const url = `/api/downloads/incident-file/${file}`;
       window.location.href = url;
     },
 
     viewFile(file) {
       window.open(window.location.origin + '/assets/images/incidents/' + file, '_blank')
     },
+
+    notView() {
+      toastr.info("File isn't viewable; please download instead.");
+    },
+
 
 
     firstTabSelect() {

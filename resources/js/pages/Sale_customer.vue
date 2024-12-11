@@ -454,9 +454,10 @@ export default {
   name: 'XpplAppSaleCustomer',
   components: { AgGridVue },
   setup() {
-    const store = useStore();
-    const authStore = useAuthStore();
-    return { store, authStore };
+    return {
+      store: useStore(),
+      authStore: useAuthStore()
+    };
   },
 
   data() {
@@ -487,7 +488,7 @@ export default {
         popupParent: document.body,
         minWidth: 100,
         cellClassRules: { 'pointer': 'true' },
-        menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
+        // menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
       },
 
       customerData: [],
