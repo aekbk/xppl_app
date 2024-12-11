@@ -44,7 +44,6 @@
       </div>
 
       <div class="card-body">
-
         <div class="row">
           <div class="col-xxl-2">
             <div class="mt-4 pt-1">

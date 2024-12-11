@@ -211,8 +211,21 @@ Route::prefix('clinic')->middleware(['auth:api'])->group(function () {
     Route::post('/upd-medicine', [clinic_controller::class, 'updateMedicine']);
     Route::post('/del-medicine', [clinic_controller::class, 'deleteMedicine']);
 
-    // Route::get('/patients', [clinic_controller::class, 'patient']);
+    Route::get('/patients', [clinic_controller::class, 'patient']);
     Route::post('/add-patient', [clinic_controller::class, 'addPatient']);
+    Route::post('/upd-patient', [clinic_controller::class, 'updatePatient']);
+    Route::post('/del-patient', [clinic_controller::class, 'deletePatient']);
+
+    Route::get('/treatments/{patient_id}', [clinic_controller::class, 'treatment']);
+    Route::post('/add-treatment', [clinic_controller::class, 'addTreatment']);
+    Route::post('/upd-treatment', [clinic_controller::class, 'updateTreatment']);
+    Route::post('/del-treatment', [clinic_controller::class, 'deleteTreatment']);
+    
+    Route::get('/medications/{patient_id}', [clinic_controller::class, 'medication']);
+    Route::post('/add-medication', [clinic_controller::class, 'addMedication']);
+    Route::post('/upd-medication', [clinic_controller::class, 'updateMedication']);
+    Route::post('/del-medication', [clinic_controller::class, 'deleteMedication']);
+
 
 });
 
