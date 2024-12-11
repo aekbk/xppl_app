@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import moment from 'moment';
 
-const LAST_AVAILABLE_DATE_DATA = new Date('2024-12-09');
+const LAST_AVAILABLE_DATE_DATA = moment().subtract(1, 'days').toDate();
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 export const useGlobalParamStore = defineStore('globalParam', {
