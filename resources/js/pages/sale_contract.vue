@@ -5,7 +5,7 @@
     </div>
     <div v-else>
       <div class="card" id="main" v-if="viewMode == 'main'">
-        <div class="card-header">
+        <div class="card-header border-0 pb-0">
           <div class="row g-4 align-items-center">
             <div class="col-sm-3">
               <form class="app-search d-md-block py-0 ps-0">
@@ -34,8 +34,9 @@
             </div>
           </div>
         </div>
-        <ag-grid-vue style="height: calc(100vh - 15.80rem);" class="ag-theme-material" :columnDefs="columnDefs" :rowData="contractList" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewContract"></ag-grid-vue>
-        <div class="pb-1"></div>
+        <div class="custom-grid p-3">
+          <ag-grid-vue style="height: calc(100vh - 16.50rem);" class="ag-theme-quartz" :columnDefs="columnDefs" :rowData="contractList" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewContract"></ag-grid-vue>
+        </div>
       </div>
     </div>
 
@@ -768,9 +769,9 @@
 <script>
 import axios from "axios";
 import { AgGridVue } from 'ag-grid-vue3';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-material.css';
-import 'ag-grid-enterprise';
+// import 'ag-grid-community/styles/ag-grid.css';
+// import 'ag-grid-community/styles/ag-theme-material.css';
+// import 'ag-grid-enterprise';
 import { useToastr } from "../toastr.js";
 import { useStore } from '../stores/store.js';
 import { useAuthStore } from '../stores/auth.js';
@@ -891,15 +892,6 @@ export default {
         // },
       ],
 
-      defaultColDef: {
-        sortable: true,
-        resizable: true,
-        flex: 1,
-        filterParams: { buttons: ['reset'] },
-        minWidth: 100,
-        cellClassRules: { 'pointer': 'true' },
-        // menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
-      },
 
       contractData: [],
       orderData: [],

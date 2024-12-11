@@ -55,7 +55,7 @@
               </div>
               <div class="mb-3">
                 <label class="form-label">Position </label>
-                <input type="text" class="form-control" placeholder="Enter email" v-model="emailForm.position">
+                <input type="text" class="form-control" placeholder="Enter position" v-model="emailForm.position">
               </div>
               <div class="mb-3">
                 <label class="form-label">Department </label>

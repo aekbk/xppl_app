@@ -5,7 +5,7 @@
     </div>
     <div v-else>
       <div class="card" v-if="viewMode == 'name-list'">
-        <div class="card-header">
+        <div class="card-header border-0 pb-0">
           <div class="row g-4 align-items-center">
             <div class="col-sm-3">
               <form class="app-search d-md-block py-0 ps-0">
@@ -34,8 +34,10 @@
             </div>
           </div>
         </div>
-        <ag-grid-vue style="height: calc(100vh - 16rem);" class="ag-theme-material" :columnDefs="columnDefs" :rowData="patientList" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewTreatment"></ag-grid-vue>
-        <div class="pb-1"></div>
+
+        <div class="custom-grid p-3">
+          <ag-grid-vue style="height: calc(100vh - 16.5rem);" class="ag-theme-quartz" :columnDefs="columnDefs" :rowData="patientList" :defaultColDef="defaultColDef" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewTreatment"></ag-grid-vue>
+        </div>
       </div>
 
 
@@ -838,9 +840,9 @@
 <script>
 import axios from 'axios';
 import { AgGridVue } from 'ag-grid-vue3';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-material.css';
-import 'ag-grid-enterprise';
+// import 'ag-grid-community/styles/ag-grid.css';
+// import 'ag-grid-community/styles/ag-theme-material.css';
+// import 'ag-grid-enterprise';
 import { useStore } from '../stores/store.js';
 import { useAuthStore } from '../stores/auth.js';
 import { useToastr } from '../toastr.js';
@@ -930,7 +932,6 @@ export default {
         filterParams: { buttons: ['reset'] },
         minWidth: 100,
         cellClassRules: { 'pointer': 'true' },
-        // menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
       },
 
       auth: {},
