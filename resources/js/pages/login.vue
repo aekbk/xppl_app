@@ -100,9 +100,10 @@ const toastr = useToastr();
 export default {
   name: 'XpplAppLogin',
   setup() {
-    const store = useStore();
-    const authStore = useAuthStore();
-    return { store, authStore };
+    return {
+      store: useStore(),
+      authStore: useAuthStore(),
+    };
   },
 
   data() {

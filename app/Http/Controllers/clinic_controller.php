@@ -8,20 +8,25 @@ use Illuminate\Support\Str;
 
 class clinic_controller extends Controller
 {
-    public function codes() {
-        $codes = DB::select('select * from cn_codes order by category, code');
-        return $codes;
+    public function category() {
+        $category = DB::select('select * from clinic_category order by category');
+        return $category;
     }
 
-    public function medicines() {
-        $medicine = DB::select('select * from cn_medicines order by medicine_eng');
-        return $medicine;        
+    public function code() {
+        $code = DB::select('select * from clinic_codes order by category, code');
+        return $code;
+    }
+
+    public function patient() {
+        $patient = DB::select("select concat(name, ' ', surname) as fullname, * from clinic_patients order by name, surname");
+        return $patient;
     }
 
     public function addCode(Request $request){
-        $check = DB::table('cn_codes')
-                    ->where('category', $request->category)
-                    ->where('code', $request->code);
+        $check = DB::table('clinic_codes')
+                ->where('category', $request->category)
+                ->where('code', $request->code);
 
         if ($check->count()){
             $success = false;
@@ -31,7 +36,7 @@ class clinic_controller extends Controller
             $datetime = now('Asia/Bangkok')->toDateTimeString();
             $username = Str::lower(auth()->user()->username);
 
-            DB::table('cn_codes')
+            DB::table('clinic_codes')
                 ->insert([
                     'category' => $request->category,
                     'code' => $request->code,
@@ -53,11 +58,11 @@ class clinic_controller extends Controller
         return response()->json($response);
     }
 
-    public function updCode(Request $request){
+    public function updateCode(Request $request){
         $datetime = now('Asia/Bangkok')->toDateTimeString();
         $username = Str::lower(auth()->user()->username);
         
-        DB::table('cn_codes')
+        DB::table('clinic_codes')
             ->where('code_id', $request->code_id)
             ->update([
                 'code' => $request->code,
@@ -66,104 +71,27 @@ class clinic_controller extends Controller
                 'active' => $request->active,
                 'updated_at' => $datetime,
                 'updated_by' => $username
-            ]);
+        ]);
+
+        // Update other related tables
+        if ($request->code !== $request->code_old && $request->tbl_name) {
+            DB::table($request->tbl_name)
+                ->where($request->col_name, $request->code_old)
+                ->update([$request->col_name => $request->code]);
+        }
     }
 
-    public function delCode(Request $request){
-        // $check = DB::table("cs_codes")
-        //             ->where("code", $request->code);
-
-        // if ($check->count()){
-        //     $success = false;
-        //     $message = 'ລາຍການນີ້ໄດ້ຖືກນຳໃຊ້ແລ້ວ ທ່ານບໍ່ສາມາດລົບໄດ້!';
-        // } else {
-      
-            DB::table('cn_codes')
-                ->where('code_id', $request->code_id)
-                ->delete();
-
-        //     $success = true;
-        //     $message = "Delete completed!";
-        // }
-        // $response = [
-        //     'success' => $success,
-        //     'message' => $message
-        // ];
-        // return response()->json($response);
-    }
-
-    public function addPatient(Request $request){
-
-        $check = DB::table('cn_patients')->where('patient_name', $request->patient_name);
-
-        if ($check->count()){
+    public function deleteCode(Request $request){
+        $check = DB::table($request->tbl_name)->where($request->col_name, $request->code);
+        if ($check->count()) {
             $success = false;
-            $message = 'This name already exists in the database!';
+            $message = 'This code has already been used; it cannot be deleted.';
         } else {
 
-            $datetime = now("Asia/Bangkok")->toDateTimeString();
-            $username = Str::lower(auth()->user()->username);
-
-            $pMax = DB::table('cn_patients')->max('patient_id');
-            $pId = $pMax + 1;
-
-            // DB::table('cs_contracts')
-            //     ->insert([
-            //         'contract_id' => $newId,
-            //         'customer_id' => $request->customer_id,
-            //         'contract_no' => $request->contract_no,
-            //         'contract_quantity' => $request->contract_quantity,
-            //         'contract_grade_id' => $request->contract_grade_id,
-            //         'contract_appendix' => $request->contract_appendix,
-            //         'signed_date' => $request->signed_date,
-            //         'loading_place' => $request->loading_place,
-            //         'delivery_place' => $request->delivery_place,
-            //         'contract_status' => $request->contract_status,
-            //         'contract_remark' => $request->contract_remark,
-            //         'created_at' => $datetime,
-            //         'created_by' => $username
-            //     ]);
-
-            //Order list
-            // DB::table('cs_orders')
-            // ->insert([
-            //     'contract_id' => $newId,
-            //     'order_date' => $request->signed_date,
-            //     'grade_id' => $request->grade_id,
-            //     'quantity' => $request->quantity,
-            //     'initial_price' => $request->initial_price,
-            //     'currency' => $request->currency,
-            //     'vat_remark' => $request->vat_remark,
-            //     'price_term' => $request->price_term,
-            //     'order_appendix' => $request->order_appendix,
-            //     'co_number' => $request->co_number,
-            //     'order_status' => $request->order_status,
-            //     'order_remark' => $request->order_remark,
-            //     'created_at' => $datetime,
-            //     'created_by' => $username
-            // ]);
-
-            //Attachments
-            // if ($request->hasFile('files')) {
-            //     foreach ($request->file('files') as $file) {
-            //         $fileName = $newId.'-'.$file->getClientOriginalName();
-            //         $file->move(public_path('assets/images/contracts/'), $fileName);
-            //         $fileSize = (round(filesize(public_path('assets/images/contracts/'.$fileName))/1024,0)).' KB';
-
-            //         DB::table('cs_contract_files')
-            //         ->insert([
-            //             'contract_id' => $newId,
-            //             'file_name' => $file->getClientOriginalName(),
-            //             'file_type' => strtolower($file->getClientOriginalExtension()),
-            //             'new_name' => $fileName,
-            //             'size' => $fileSize
-            //         ]); 
-            //     }
-            // }
+            DB::table('clinic_codes')->where('code_id', $request->code_id)->delete();
 
             $success = true;
-            $message = "Insert completed!";
-
+            $message = "Delete completed.";
         }
         $response = [
             'success' => $success,
@@ -171,6 +99,301 @@ class clinic_controller extends Controller
         ];
         return response()->json($response);
     }
+
+    public function medicine() {
+        $medicine = DB::select('select a.*, b.descr_eng as unit_eng, b.descr_lao as unit_lao from clinic_medicines a, clinic_codes b where b.code_id = a.unit_id order by a.medicine_eng');
+        return $medicine;        
+    }
+
+    public function addMedicine(Request $request){
+        $check = DB::table('clinic_medicines')->where('medicine_eng', $request->medicine_eng);
+        if ($check->count()){
+            $success = false;
+            $message = 'This medicine already exists in the database!';
+        } else {
+
+            DB::table('clinic_medicines')
+                ->insert([
+                    'medicine_eng' => $request->medicine_eng,
+                    'medicine_lao' => $request->medicine_lao,
+                    'descr' => $request->descr,
+                    'unit_id' => $request->unit_id,
+                    'unit_price' => $request->unit_price,
+                    'min_remind' => $request->min_remind,
+                    'created_at' => now('Asia/Bangkok')->toDateTimeString(),
+                    'created_by' => auth()->user()->username,
+                ]);
+
+            $success = true;
+            $message = "Insert completed!";
+        }
+
+        $response = [
+            'success' => $success,
+            'message' => $message
+        ];
+        return response()->json($response);
+    }
+
+    public function updateMedicine(Request $request){
+        DB::table('clinic_medicines')
+            ->where('medicine_id', $request->medicine_id)
+            ->update([
+                'medicine_eng' => $request->medicine_eng,
+                'medicine_lao' => $request->medicine_lao,
+                'descr' => $request->descr,
+                'unit_id' => $request->unit_id,
+                'unit_price' => $request->unit_price,
+                'min_remind' => $request->min_remind,
+                'updated_at' => now('Asia/Bangkok')->toDateTimeString(),
+                'updated_by' => auth()->user()->username,
+        ]);
+    }
+
+    public function deleteMedicine(Request $request){
+        $check = DB::table('clinic_medications')->where('medicine_id', $request->medicine_id);
+        if ($check->count()) {
+            $success = false;
+            $message = 'This medicine has already been used; it cannot be deleted.';
+        } else {
+
+            DB::table('clinic_medicines')->where('medicine_id', $request->medicine_id)->delete();
+
+            $success = true;
+            $message = "Delete completed.";
+        }
+        $response = [
+            'success' => $success,
+            'message' => $message
+        ];
+        return response()->json($response);
+    }
+
+    public function addPatient(Request $request){
+        $p = $request->patient;
+        $t = $request->treatment;
+
+        $check = DB::table('clinic_patients')
+                    ->where('name', $p['name'])
+                    ->where('surname', $p['surname']);
+
+        if ($check->count()){
+            $success = false;
+            $message = 'This name and surname already exists in the database.';
+        } else {
+
+            $datetime = now("Asia/Bangkok")->toDateTimeString();
+            $username = Str::lower(auth()->user()->username);
+
+            // Patient
+            $patientId = DB::table('clinic_patients')->max('patient_id') + 1;
+            DB::table('clinic_patients')
+                ->insert([
+                    'patient_id' => $patientId,
+                    'sex' => $p['sex'],
+                    'name' => $p['name'],
+                    'surname' => $p['surname'],
+                    'company' => $p['company'],
+                    'department' => $p['department'],
+                    'position' => $p['position'],
+                    'employee_id' => $p['employee_id'],
+                    'age' => $p['age'],
+                    'blood_group' => $p['blood_group'],
+                    'phone' => $p['phone'],
+                    'disease' => $p['disease'],
+                    'drug_allergy' => $p['drug_allergy'],
+                    'note' => $p['note'],
+                    'created_at' => $datetime,
+                    'created_by' => $username
+                ]);
+            
+            
+            // Treatment
+            $treatmentId = DB::table('clinic_treatments')->max('treatment_id') + 1;
+            DB::table('clinic_treatments')
+                ->insert([
+                    'treatment_id' => $treatmentId,
+                    'patient_id' => $patientId,
+                    'date_time' => $t['date_time'],
+                    'medical_type' => $t['medical_type'],
+                    'injury_type' => $t['injury_type'],
+                    'injury_part' => $t['injury_part'] ? implode(', ', $t['injury_part']) : null,
+                    'work_related' => $t['work_related'],
+                    'temp_c' => $t['temp_c'],
+                    'blood_press' => $t['blood_press'],
+                    'puls' => $t['puls'],
+                    'oxigen' => $t['oxigen'],
+                    'weight' => $t['weight'],
+                    'syndrome' => $t['syndrome'],
+                    'diagnosis' => $t['diagnosis'],
+                    'patient_type' => $t['patient_type'],
+                    'transfer' => $t['transfer'],
+                    'hospital' => $t['hospital'],
+                    'medic' => $t['medic'],              
+                    'created_at' => $datetime,                    
+                    'created_by' => $username   
+                ]);
+
+            // Medication
+            foreach($request->medicationList as $m) {
+                DB::table('clinic_medications')
+                ->insert([
+                    'treatment_id' => $treatmentId,
+                    'medicine_id' => $m['medicine_id'],  
+                    'qty' => $m['qty'],          
+                    'unit_eng' => $m['unit_eng'],
+                    'created_at' => $datetime,                    
+                    'created_by' => $username  
+                ]);
+            }
+        
+            $success = true;
+            $message = "Insert completed!";
+        }
+        $response = [
+            'success' => $success,
+            'message' => $message
+        ];
+        return response()->json($response);
+    }
+
+    public function updatePatient(Request $request){
+        DB::table('clinic_patients')
+            ->where('patient_id', $request->patient_id)
+            ->update([
+                'sex' => $request->sex,
+                'name' => $request->name,
+                'surname' => $request->surname,
+                'company' => $request->company,
+                'department' => $request->department,
+                'position' => $request->position,
+                'employee_id' => $request->employee_id,
+                'age' => $request->age,
+                'blood_group' => $request->blood_group,
+                'phone' => $request->phone,
+                'disease' => $request->disease,
+                'drug_allergy' => $request->drug_allergy,
+                'note' => $request->note,
+                'updated_at' => now('Asia/Bangkok')->toDateTimeString(),
+                'updated_by' => auth()->user()->username,
+        ]);        
+    }
+
+    public function deletePatient(Request $request){
+        $check = DB::table('clinic_patients as p')
+                    ->join('clinic_treatments as t', 'p.patient_id', 't.patient_id')
+                    ->join('clinic_medications as m', 't.treatment_id', 'm.treatment_id')
+                    ->where('p.patient_id', $request->patient_id);
+
+        if ($check->count()) {
+            $success = false;
+            $message = 'This patient name has already been used; it cannot be deleted.';
+        } else {
+            DB::table('clinic_patients')
+                ->where('patient_id', $request->patient_id)
+                ->delete();
+            $success = true;
+            $message = "Delete completed!";
+        }
+        $response = [
+            'success' => $success,
+            'message' => $message
+        ];
+        return response()->json($response);
+    }
+
+    public function treatment($patient_id){
+        $treatment = DB::table('clinic_treatments')->where('patient_id', $patient_id)->orderBy('treatment_id', 'desc')->get();
+        return $treatment;
+    }
+
+    public function addTreatment(Request $request){
+        $t = $request->treatment;
+        $check = DB::table('clinic_treatments')
+                    ->where('patient_id', $request->patient_id)
+                    ->where('date_time', $t['date_time']);
+
+        if ($check->count()){
+            $success = false;
+            $message = 'Duplicated data.';
+        } else {
+
+            $treatmentId = DB::table('clinic_treatments')->max('treatment_id') + 1;
+            DB::table('clinic_treatments')
+                ->insert([
+                    'treatment_id' => $treatmentId,
+                    'patient_id' => $request->patient_id,
+                    'date_time' => $t['date_time'],
+                    'medical_type' => $t['medical_type'],
+                    'injury_type' => $t['injury_type'],
+                    'injury_part' => $t['injury_part'] ? implode(', ', $t['injury_part']) : null,
+                    'work_related' => $t['work_related'],
+                    'temp_c' => $t['temp_c'],
+                    'blood_press' => $t['blood_press'],
+                    'puls' => $t['puls'],
+                    'oxigen' => $t['oxigen'],
+                    'weight' => $t['weight'],
+                    'syndrome' => $t['syndrome'],
+                    'diagnosis' => $t['diagnosis'],
+                    'patient_type' => $t['patient_type'],
+                    'transfer' => $t['transfer'],
+                    'hospital' => $t['hospital'],
+                    'medic' => $t['medic'],              
+                    'created_at' => now("Asia/Bangkok")->toDateTimeString(),                    
+                    'created_by' => Str::lower(auth()->user()->username)   
+                ]);
+
+            $success = true;
+            $message = "Insert completed!";
+        }
+        $response = [
+            'success' => $success,
+            'message' => $message
+        ];
+        return response()->json($response);
+    }
+
+    public function updateTreatment(Request $request){
+        DB::table('clinic_treatments')
+            ->where('treatment_id', $request->treatment_id)
+            ->update([
+                'treatment_id' => $treatmentId,
+                'patient_id' => $request->patient_id,
+                'date_time' => $t['date_time'],
+                'medical_type' => $t['medical_type'],
+                'injury_type' => $t['injury_type'],
+                'injury_part' => $t['injury_part'] ? implode(', ', $t['injury_part']) : null,
+                'work_related' => $t['work_related'],
+                'temp_c' => $t['temp_c'],
+                'blood_press' => $t['blood_press'],
+                'puls' => $t['puls'],
+                'oxigen' => $t['oxigen'],
+                'weight' => $t['weight'],
+                'syndrome' => $t['syndrome'],
+                'diagnosis' => $t['diagnosis'],
+                'patient_type' => $t['patient_type'],
+                'transfer' => $t['transfer'],
+                'hospital' => $t['hospital'],
+                'medic' => $t['medic'],              
+                'updated_at' => now("Asia/Bangkok")->toDateTimeString(),                    
+                'updated_by' => Str::lower(auth()->user()->username)
+            ]);
+    }
+
+    public function medication($patient_id){
+        $medication = DB::table('clinic_treatments as t')
+                        ->join('clinic_medications as m', 't.treatment_id', 'm.treatment_id')
+                        ->join('clinic_medicines as n', 'm.medicine_id', 'n.medicine_id')
+                        ->where('t.patient_id', $patient_id)
+                        ->select('t.treatment_id', 'n.medicine_eng', 'n.medicine_lao', 'm.*')
+                        ->orderBy('n.medicine_eng', 'asc')
+                        ->get();
+        return $medication;
+    }
+
+
+
+
 
 
 }

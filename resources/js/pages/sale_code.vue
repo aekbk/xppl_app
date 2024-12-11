@@ -313,7 +313,7 @@ export default {
         filterParams: { buttons: ['reset'] },
         minWidth: 100,
         cellClassRules: { 'pointer': 'true' },
-        menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
+        // menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
       },
 
       category: ['Country', 'Currency', 'Destination', 'Price Term', 'Status', 'VAT Remark', 'Coal Grade'],
@@ -356,12 +356,9 @@ export default {
       }
     },
 
+
     addLKGradeDis() {
-      if (this.gradeForm.grade == '' || this.gradeForm.grade_type == null || this.grade_gar == '' || this.gradeForm.active == null) {
-        return 'disabled';
-      } else {
-        return '';
-      }
+      return (this.gradeForm.grade && this.gradeForm.grade_type && this.gradeForm.grade_gar && this.gradeForm.active) ? '' : 'disabled';
     },
 
     calcGAR() {

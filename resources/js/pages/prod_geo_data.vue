@@ -121,6 +121,7 @@ export default {
         { headerName: 'Bench', field: 'bench', filter: 'agSetColumnFilter' },
         { headerName: 'Coal Block ID', field: 'coal_block_id', minWidth: 130, filter: 'agSetColumnFilter' },
         { headerName: 'Coal Category', field: 'coal_category', filter: 'agSetColumnFilter' },
+        { headerName: 'Grade Range', field: 'grade_range', minWidth: 120, filter: 'agSetColumnFilter' },
         {
           headerName: 'GCV_ar', field: 'gcv_ar', minWidth: 80, filter: 'agNumberColumnFilter',
           valueGetter: p => Number(p.data.gcv_ar),
@@ -151,7 +152,6 @@ export default {
           valueFormatter: p => p.value ? p.value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : ''
         },
         { headerName: 'Weight Type', field: 'weight_type', filter: 'agSetColumnFilter' },
-        { headerName: 'Grade Range', field: 'grade_range', minWidth: 120, filter: 'agSetColumnFilter' },
         { headerName: 'Notes', field: 'notes', filter: 'agSetColumnFilter' },
         { headerName: 'Mining ID', field: 'mining_id', hide: true },
       ],
@@ -164,7 +164,7 @@ export default {
         popupParent: document.body,
         minWidth: 80,
         cellClassRules: { 'pointer': 'true' },
-        menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
+        // menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
       },
 
       lkYear: [],
@@ -353,12 +353,9 @@ export default {
 
     disableDropdown(id) {
       const elements = document.querySelectorAll('[id^="get-prod-"]');
-      elements.forEach((e) => {
-        e.classList.remove('disabled');
-      });
+      elements.forEach(e => e.classList.remove('disabled'));
       document.getElementById(id).classList.add('disabled');
     },
-
 
     async onSearch() {
       if (this.search.length > 0) {

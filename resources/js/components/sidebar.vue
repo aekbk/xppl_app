@@ -6,7 +6,7 @@
         <!-- Dark Logo-->
         <a href="index.html" class="logo logo-dark">
           <span class="logo-sm">
-            <img src="/public/assets/images/logo-sm.png" alt="" height="22" />
+            <img src="/public/assets/images/logo-dark-sm.png" alt="" height="22" />
           </span>
           <span class="logo-lg">
             <img src="/public/assets/images/logo-dark.png" alt="" height="45" />
@@ -15,7 +15,7 @@
         <!-- Light Logo-->
         <a href="index.html" class="logo logo-light">
           <span class="logo-sm">
-            <img src="/public/assets/images/logo-sm.png" alt="" height="22" />
+            <img src="/public/assets/images/logo-light-sm.png" alt="" height="22" />
           </span>
           <span class="logo-lg">
             <img src="/public/assets/images/logo-light.png" alt="" height="45" />
@@ -68,7 +68,6 @@
             <li class="menu-title">
               <span data-key="t-menu">{{ $t('menu') }}</span>
             </li>
-
             <li class="nav-item">
               <router-link class="nav-link menu-link active" id="m-menu-1" to="/" @click="singleMenu('m-menu-1')">
                 <i class="ri-home-4-line"></i><span>Home</span>
@@ -147,7 +146,7 @@
               </a>
               <div class="collapse menu-dropdown" id="fuels">
                 <ul class="nav nav-sm flex-column">
-                  <li v-if="auth.M03S01" class="nav-item" @click="mobileMode('m-menu-4')"><router-link class="nav-link" to="/">Reservations</router-link></li>
+                  <li v-if="auth.M03S01" class="nav-item" @click="mobileMode('m-menu-4')"><router-link class="nav-link" to="/">Reservation</router-link></li>
                   <li v-if="auth.M03S02" class="nav-item" @click="mobileMode('m-menu-4')"><router-link class="nav-link" to="/">Code</router-link></li>
                 </ul>
               </div>
@@ -162,10 +161,10 @@
               <div class="collapse menu-dropdown" id="geology">
                 <ul class="nav nav-sm flex-column">
                   <li class="nav-item">
-                    <a v-if="auth.M04S01" class="nav-link" href="#generals" data-bs-toggle="collapse" role="button" aria-expanded="false" @click="onMenuClick()">Generals</a>
+                    <a v-if="auth.M04S01" class="nav-link" href="#generals" data-bs-toggle="collapse" role="button" aria-expanded="false" @click="onMenuClick()">General</a>
                     <div class="collapse menu-dropdown" id="generals">
                       <ul class="nav nav-sm flex-column">
-                        <li v-if="auth.M04S02" class="nav-item" @click="mobileMode('m-menu-5')"><router-link class="nav-link" to="/sample-ticket">Sample Tickets</router-link></li>
+                        <li v-if="auth.M04S02" class="nav-item" @click="mobileMode('m-menu-5')"><router-link class="nav-link" to="/sample-ticket">Sample Ticket</router-link></li>
                       </ul>
                     </div>
                   </li>
@@ -215,7 +214,7 @@
                     <div class="collapse menu-dropdown" id="prod-geology">
                       <ul class="nav nav-sm flex-column">
                         <li v-if="auth.M05S02" class="nav-item" @click="mobileMode('m-menu-6')"><router-link class="nav-link" to="/production-geodata">Data</router-link></li>
-                        <li v-if="auth.M05S03" class="nav-item" @click="mobileMode('m-menu-6')"><router-link class="nav-link" to="/production-georeport">Reports</router-link></li>
+                        <li v-if="auth.M05S03" class="nav-item" @click="mobileMode('m-menu-6')"><router-link class="nav-link" to="/production-georeport">Report</router-link></li>
                       </ul>
                     </div>
                   </li>
@@ -240,8 +239,8 @@
               <div class="collapse menu-dropdown" id="accounting">
                 <ul class="nav nav-sm flex-column">
                   <li v-if="auth.M06S01" class="nav-item" @click="mobileMode('m-menu-7')"><router-link class="nav-link" to="/sale-data">Sales Data</router-link></li>
-                  <li v-if="auth.M06S02" class="nav-item" @click="mobileMode('m-menu-7')"><router-link class="nav-link" to="/sale-customer">Customers</router-link></li>
-                  <li v-if="auth.M06S03" class="nav-item" @click="mobileMode('m-menu-7')"><router-link class="nav-link" to="/sale-contract">Contracts</router-link></li>
+                  <li v-if="auth.M06S02" class="nav-item" @click="mobileMode('m-menu-7')"><router-link class="nav-link" to="/sale-customer">Customer</router-link></li>
+                  <li v-if="auth.M06S03" class="nav-item" @click="mobileMode('m-menu-7')"><router-link class="nav-link" to="/sale-contract">Contract</router-link></li>
                   <li v-if="auth.M06S04" class="nav-item" @click="mobileMode('m-menu-7')"><router-link class="nav-link" to="/sale-code">Code</router-link></li>
                 </ul>
               </div>
@@ -258,8 +257,8 @@
                   <li v-if="auth.M07S02" class="nav-item" @click="mobileMode('m-menu-8')"><router-link class="nav-link" to="/sale-customer">Customers</router-link></li>
                   <li v-if="auth.M07S03" class="nav-item" @click="mobileMode('m-menu-8')"><router-link class="nav-link" to="/sale-contract">Contracts</router-link></li>
                   <li v-if="auth.M07S01" class="nav-item" @click="mobileMode('m-menu-8')"><router-link class="nav-link" to="/sale-data">Sales Data</router-link></li>
-                  <!-- <li class="nav-item" @click="mobileMode"><router-link class="nav-link" to="/sale-filemanagers">File Manager</router-link></li> -->
-                  <li v-if="auth.M07S04" class="nav-item" @click="mobileMode('m-menu-8')"><router-link class="nav-link" to="/sale-code">Codes</router-link></li>
+                  <li v-if="auth.M07S05" class="nav-item" @click="mobileMode('m-menu-8')"><router-link class="nav-link" to="/sale-filemanager">File Manager</router-link></li>
+                  <li v-if="auth.M07S04" class="nav-item" @click="mobileMode('m-menu-8')"><router-link class="nav-link" to="/sale-code">Code</router-link></li>
                 </ul>
               </div>
             </li>
@@ -287,8 +286,8 @@
                 <ul class="nav nav-sm flex-column">
                   <li v-if="auth.M09S01" class="nav-item" @click="mobileMode('m-menu-10')"><router-link class="nav-link" to="/clinic-treatment">Treatments</router-link></li>
                   <li v-if="auth.M09S02" class="nav-item" @click="mobileMode('m-menu-10')"><router-link class="nav-link" to="/clinic-medicine">Medicines</router-link></li>
-                  <li v-if="auth.M09S04" class="nav-item" @click="mobileMode('m-menu-10')"><router-link class="nav-link" to="/clinic-store">Medicine Stores</router-link></li>
-                  <li v-if="auth.M09S03" class="nav-item" @click="mobileMode('m-menu-10')"><router-link class="nav-link" to="/clinic-code">Codes</router-link></li>
+                  <li v-if="auth.M09S04" class="nav-item" @click="mobileMode('m-menu-10')"><router-link class="nav-link" to="/clinic-store">Medicine Store</router-link></li>
+                  <li v-if="auth.M09S03" class="nav-item" @click="mobileMode('m-menu-10')"><router-link class="nav-link" to="/clinic-code">Code</router-link></li>
                 </ul>
               </div>
             </li>
@@ -315,7 +314,7 @@
                 <ul class="nav nav-sm flex-column">
                   <li v-if="auth.M11S01" class="nav-item" @click="mobileMode('m-menu-12')"><router-link class="nav-link" to="/admin-menu">Menu</router-link></li>
                   <li v-if="auth.M11S02" class="nav-item" @click="mobileMode('m-menu-12')"><router-link class="nav-link" to="/">Code</router-link></li>
-                  <li v-if="auth.M11S03" class="nav-item" @click="mobileMode('m-menu-12')"><router-link class="nav-link" to="/admin-email-register">Emails</router-link></li>
+                  <li v-if="auth.M11S03" class="nav-item" @click="mobileMode('m-menu-12')"><router-link class="nav-link" to="/admin-email-register">Email</router-link></li>
                 </ul>
               </div>
             </li>

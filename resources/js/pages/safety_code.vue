@@ -202,7 +202,7 @@ export default {
   data() {
     return {
       columnDefs: [
-        { headerName: '#', maxWidth: 50, sortable: false, resizable: false, suppressMovable: true, suppressMenu: true, valueGetter: (params) => { return params.node.rowIndex + 1 } },
+        { headerName: '#', maxWidth: 50, valueGetter: 'node.rowIndex + 1', sortable: false, resizable: false, suppressMovable: true, suppressMenu: true },
         { headerName: 'Code ID', field: 'code_id', minWidth: 80, maxWidth: 100, hide: true },
         { headerName: 'Category', field: 'category', hide: true },
         { headerName: 'Code', field: 'code', filter: 'agSetColumnFilter' },
@@ -210,13 +210,7 @@ export default {
         { headerName: 'ຄຳອະທິບາຍ', field: 'descr_lao', filter: 'agSetColumnFilter' },
         {
           headerName: 'Active', field: 'active', maxWidth: 100, filter: 'agSetColumnFilter',
-          cellRenderer: (p) => {
-            if (p.value == false) {
-              return 'No';
-            } else {
-              return 'Yes';
-            }
-          }
+          cellRenderer: p => p.value ? 'Yes' : 'No'
         },
         { headerName: 'Created at', field: 'created_at', maxWidth: 145, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
         { headerName: 'Created by', field: 'created_by', maxWidth: 150, filter: 'agSetColumnFilter' },

@@ -9,17 +9,22 @@ use Illuminate\Support\Str;
 class safety_controller extends Controller
 {
     public function category() {
-        $category = DB::select('select * from st_category order by category');
+        $category = DB::select('select * from safety_category order by category');
         return $category;        
     }
 
     public function code() {
-        $code = DB::select('select * from st_codes order by category, code');
+        $code = DB::select('select * from safety_codes order by category, code');
+        return $code;        
+    }
+
+    public function department() {
+        $code = DB::select("select * from emp_codes where category = 'department' order by category, code");
         return $code;        
     }
 
     public function addCode(Request $request){
-        $check = DB::table('st_codes')
+        $check = DB::table('safety_codes')
                     ->where('category', $request->category)
                     ->where('code', $request->code);
 
@@ -30,7 +35,7 @@ class safety_controller extends Controller
             $datetime = now('Asia/Bangkok')->toDateTimeString();
             $username = Str::lower(auth()->user()->username);
 
-            DB::table('st_codes')
+            DB::table('safety_codes')
             ->insert([
                 'category' => $request->category,
                 'code' => $request->code,
@@ -55,7 +60,7 @@ class safety_controller extends Controller
         $datetime = now('Asia/Bangkok')->toDateTimeString();
         $username = Str::lower(auth()->user()->username);
         
-        DB::table('st_codes')
+        DB::table('safety_codes')
             ->where('code_id', $request->code_id)
             ->update([
                 'code' => $request->code,
@@ -106,7 +111,7 @@ class safety_controller extends Controller
             $message = 'This code has already been used; it cannot be deleted.';
         } else {
 
-            DB::table('st_codes')->where('code_id', $request->code_id)->delete();
+            DB::table('safety_codes')->where('code_id', $request->code_id)->delete();
 
             $success = true;
             $message = "Delete completed.";
@@ -119,7 +124,7 @@ class safety_controller extends Controller
     }
 
     public function year() {
-        $year = DB::select('select distinct year(date_time) as value, year(date_time) as label from st_incidents order by 1 desc');
+        $year = DB::select('select distinct year(date_time) as value, year(date_time) as label from safety_incidents order by 1 desc');
         return $year;
     }
 
@@ -127,29 +132,29 @@ class safety_controller extends Controller
         $mode = $request->requestMode;
         $value = $request->requestValue;
         if ($mode == 'Month') {
-            $incident = DB::select("select * from st_incidents where format(date_time,'yyyy-MM') = ? order by incident_id", [$value]);
+            $incident = DB::select("select * from safety_incidents where format(date_time,'yyyy-MM') = ? order by incident_id", [$value]);
             return $incident;
         } elseif ($mode == 'Year') {
-            $incident = DB::select("select * from st_incidents where year(date_time) = ? order by incident_id", [$value]);
+            $incident = DB::select("select * from safety_incidents where year(date_time) = ? order by incident_id", [$value]);
             return $incident;
         } else {
-            $incident = DB::select("select * from st_incidents where convert(date, date_time, 121) between ? and ? order by incident_id", [$request->dateFr, $request->dateTo]);
+            $incident = DB::select("select * from safety_incidents where convert(date, date_time, 121) between ? and ? order by incident_id", [$request->dateFr, $request->dateTo]);
             return $incident;
         };
     }
 
     public function incidentFile() {
-        $file = DB::select('select * from st_incident_files order by incident_id, file_name');
+        $file = DB::select('select * from safety_incident_files order by incident_id, file_name');
         return $file;
     }
 
     public function incidentNextNo() {
-        $nextNo = DB::select('select max(cast(incident_no as int)) + 1 as next from st_incidents where year(date_time) = year(getdate())');
+        $nextNo = DB::select('select max(cast(incident_no as int)) + 1 as next from safety_incidents where year(date_time) = year(getdate())');
         return $nextNo;
     }
 
     public function addIncident(Request $request){
-        $check = DB::table('st_incidents')
+        $check = DB::table('safety_incidents')
                 ->where('date_time', $request->date_time)
                 ->where('incident_title', $request->incident_title);
 
@@ -161,13 +166,14 @@ class safety_controller extends Controller
             $datetime = now('Asia/Bangkok')->toDateTimeString();
             $username = Str::lower(auth()->user()->username);
 
-            $max = DB::table('st_incidents')->max('incident_id');
+            $max = DB::table('safety_incidents')->max('incident_id');
             $newId = $max + 1;
             $id = substr(str_repeat(0, 4).$newId, - 4);
 
-            DB::table('st_incidents')
+            DB::table('safety_incidents')
             ->insert([
                 'incident_id' => $id,
+                'incident_no' => $request->incident_no,
                 'incident_title' => $request->incident_title,
                 'date_time' => $request->date_time,
                 'location' => $request->location,
@@ -202,7 +208,7 @@ class safety_controller extends Controller
                     $file->move('assets/images/incidents/', $fileName);
                     $fileSize = (round(filesize('assets/images/incidents/'.$fileName)/1024,0)).' KB';
 
-                    DB::table('st_incident_files')
+                    DB::table('safety_incident_files')
                     ->insert([
                         'incident_id' => $id,
                         'file_name' => $file->getClientOriginalName(),
@@ -227,10 +233,11 @@ class safety_controller extends Controller
         $datetime = now('Asia/Bangkok')->toDateTimeString();
         $username = Str::lower(auth()->user()->username);
 
-        DB::table('st_incidents')
+        DB::table('safety_incidents')
         ->where('data_id', $request->data_id)
         ->update([
             'incident_title' => $request->incident_title,
+            'incident_no' => $request->incident_no,
             'date_time' => $request->date_time,
             'location' => $request->location,
             'company' => $request->company,
@@ -264,7 +271,7 @@ class safety_controller extends Controller
                 $file->move(('assets/images/incidents/'), $fileName);
                 $fileSize = (round(filesize('assets/images/incidents/'.$fileName)/1024,0)).' KB';
 
-                DB::table('st_incident_files')
+                DB::table('safety_incident_files')
                 ->insert([
                     'incident_id' => $request->incident_id,
                     'file_name' => $file->getClientOriginalName(),
@@ -277,8 +284,8 @@ class safety_controller extends Controller
     }
 
     public function delIncident(Request $request){
-        DB::table('st_incidents')->where('incident_id', $request->incident_id)->delete();
-        DB::table('st_incident_files')->where('incident_id', $request->incident_id)->delete();
+        DB::table('safety_incidents')->where('incident_id', $request->incident_id)->delete();
+        DB::table('safety_incident_files')->where('incident_id', $request->incident_id)->delete();
 
         foreach($request->fileList as $list) {
             if(file_exists('assets/images/incidents/'.$list['new_name'])){
@@ -287,12 +294,8 @@ class safety_controller extends Controller
         };   
     }
 
-    public function downloadIncidentFile($file){
-        return response()->download('assets/images/incidents/'.$file);
-    }
-
     public function delFile(Request $request){
-        DB::table('st_incident_files')->where('file_id', $request->file_id)->delete();
+        DB::table('safety_incident_files')->where('file_id', $request->file_id)->delete();
 
         if(file_exists('assets/images/incidents/'.$request->new_name)){
             unlink('assets/images/incidents/'.$request->new_name);

@@ -26,8 +26,8 @@ class employee_controller extends Controller
     // =========== GENERAL CODE =============================================================
     public function addCode(Request $request){
         $check = DB::table('emp_codes')
-                    ->where('category', $request->category)
-                    ->where('code', $request->code);
+                ->where('category', $request->category)
+                ->where('code', $request->code);
 
         if ($check->count()){
             $success = false;
