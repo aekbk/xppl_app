@@ -65,7 +65,7 @@
             <div class="position-relative">
 
               <div class="position-relative" id="channel-chat" style="display: block;">
-                <div class="p-3 user-chat-topbar border-bottom">
+                <div class="p-3 user-chat-topbar pb-0">
                   <div class="row align-items-center">
                     <div class="col-sm-4 col-8">
                       <div class="d-flex align-items-center">
@@ -123,10 +123,14 @@
                 <!-- <div class="chat-conversation p-3 p-lg-3"> -->
                 <div class="chat-conversation">
                   <div v-if="viewMode == 'general'">
-                    <ag-grid-vue style="height: calc(100vh - 13.125rem);" class="ag-theme-material" :columnDefs="columnDefs" :rowData="filtered" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="editCode"></ag-grid-vue>
+                    <div class="custom-grid p-3">
+                      <ag-grid-vue style="height: calc(100vh - 14.2rem);" class="ag-theme-quartz" :columnDefs="columnDefs" :rowData="filtered" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="editCode"></ag-grid-vue>
+                    </div>
                   </div>
                   <div v-if="viewMode == 'grade'">
-                    <ag-grid-vue style="height: calc(100vh - 13.125rem);" class="ag-theme-material" :columnDefs="columnDefs2" :rowData="grade" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked2" @cell-double-clicked="editGrade"></ag-grid-vue>
+                    <div class="custom-grid p-3">
+                      <ag-grid-vue style="height: calc(100vh - 14.2rem);" class="ag-theme-quartz" :columnDefs="columnDefs2" :rowData="grade" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked2" @cell-double-clicked="editGrade"></ag-grid-vue>
+                    </div>
                   </div>
 
                 </div>
@@ -306,15 +310,6 @@ export default {
         { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, filter: 'agSetColumnFilter' },
       ],
 
-      defaultColDef: {
-        sortable: true,
-        resizable: true,
-        flex: 1,
-        filterParams: { buttons: ['reset'] },
-        minWidth: 100,
-        cellClassRules: { 'pointer': 'true' },
-        // menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
-      },
 
       category: ['Country', 'Currency', 'Destination', 'Price Term', 'Status', 'VAT Remark', 'Coal Grade'],
       lkActive: [

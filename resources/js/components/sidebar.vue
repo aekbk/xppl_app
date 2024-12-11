@@ -82,7 +82,7 @@
               <div class="collapse menu-dropdown" id="dashboard">
                 <ul class="nav nav-sm flex-column">
                   <li v-if="auth.M01S01 == 1" class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/dashboard-sale">Coal Sales</router-link></li>
-                  <li v-if="auth.M01S02" class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/dashboard-production">Productions</router-link></li>
+                  <li v-if="auth.M01S02 == 1" class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/dashboard-production">Productions</router-link></li>
                   <!-- <li v-if="auth.M01S01" class="nav-item" @click="mobileMode"><router-link class="nav-link" to="/">Ecommerce</router-link></li> -->
                   <!-- <li v-if="auth.M01S01" class="nav-item" @click="mobileMode"><router-link class="nav-link" to="/">Crypto</router-link></li> -->
                   <li v-if="auth.M01S05" class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/dashboard-sale-ldb">Coal Sales-LDB</router-link></li>
@@ -92,23 +92,23 @@
 
             <!-- New Dashboard -->
             <li v-if="auth.M01" class="nav-item">
-              <a class="nav-link menu-link" id="m-menu-2" href="#dashboard2" data-bs-toggle="collapse" role="button" aria-expanded="false" @click="onMenuClick()">
+              <a class="nav-link menu-link" id="m-menu-13" href="#dashboard2" data-bs-toggle="collapse" role="button" aria-expanded="false" @click="onMenuClick()">
                 <i class="ri-dashboard-line"></i><span>{{ $t('dashboard') }}</span>
               </a>
-              <div class="collapse menu-dropdown" id="dashboard">
+              <div class="collapse menu-dropdown" id="dashboard2">
                 <div class="ms-3 fs-6 fw-bold text-white">Overview</div>
                 <ul class="nav nav-sm flex-column">
-                  <li v-if="auth.M01S01 == 1" class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/control-tower">Control Tower</router-link></li>
-                  <li v-if="auth.M01S01 == 1" class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/value-chain">Value Chain</router-link></li>
+                  <li v-if="auth.M01S06 == 1" class="nav-item" @click="mobileMode('m-menu-13')"><router-link class="nav-link" to="/control-tower">Control Tower</router-link></li>
+                  <li v-if="auth.M01S06 == 1" class="nav-item" @click="mobileMode('m-menu-13')"><router-link class="nav-link" to="/value-chain">Value Chain</router-link></li>
                 </ul>
 
                 <div class="ms-3 mt-4 fs-6 fw-bold text-white">Drill Down</div>
                 <ul class="nav nav-sm flex-column">
-                  <li v-if="auth.M01S01 == 1" class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/drilldown-mining">Mining</router-link></li>
-                  <li v-if="auth.M01S01 == 1" class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/drilldown-processing">Processing</router-link></li>
+                  <li v-if="auth.M01S06 == 1" class="nav-item" @click="mobileMode('m-menu-13')"><router-link class="nav-link" to="/drilldown-mining">Mining</router-link></li>
+                  <li v-if="auth.M01S06 == 1" class="nav-item" @click="mobileMode('m-menu-13')"><router-link class="nav-link" to="/drilldown-processing">Processing</router-link></li>
                 </ul>
               </div>
-              
+
             </li>
 
             <!-- Admin tasks -->
