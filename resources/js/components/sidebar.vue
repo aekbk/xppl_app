@@ -90,22 +90,22 @@
               </div>
             </li>
 
-            <!-- New Dashboard -->
-            <li v-if="auth.M01" class="nav-item">
+            <!-- Control Tower -->
+            <li v-if="auth.M13" class="nav-item">
               <a class="nav-link menu-link" id="m-menu-2" href="#control-tower" data-bs-toggle="collapse" role="button" aria-expanded="false" @click="onMenuClick()">
-                <i class="ri-dashboard-line"></i><span>{{ $t('dashboard') }}</span>
+                <i class="ri-bar-chart-2-line"></i><span>{{ $t('control-tower') }}</span>
               </a>
               <div class="collapse menu-dropdown" id="dashboard2">
                 <div class="ms-3 fs-6 fw-bold text-white">Overview</div>
                 <ul class="nav nav-sm flex-column">
-                  <li v-if="auth.M01S06 == 1" class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/control-tower">Control Tower</router-link></li>
-                  <li v-if="auth.M01S06 == 1" class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/value-chain">Value Chain</router-link></li>
+                  <li class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/control-tower">Control Tower</router-link></li>
+                  <!-- <li class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/value-chain">Value Chain</router-link></li> -->
                 </ul>
 
                 <div class="ms-3 mt-4 fs-6 fw-bold text-white">Drill Down</div>
                 <ul class="nav nav-sm flex-column">
-                  <li v-if="auth.M01S06 == 1" class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/drilldown-mining">Mining</router-link></li>
-                  <li v-if="auth.M01S06 == 1" class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/drilldown-processing">Processing</router-link></li>
+                  <li class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/drilldown-mining">Mining</router-link></li>
+                  <li class="nav-item" @click="mobileMode('m-menu-2')"><router-link class="nav-link" to="/drilldown-processing">Processing</router-link></li>
                 </ul>
               </div>
 
