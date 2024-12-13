@@ -1,17 +1,6 @@
 <template>
     <div class="custom-grid">
-        <ag-grid-vue
-            style="height: 500px"
-            class="ag-theme-quartz"
-            :columnDefs="columnDefs"
-            :suppressMenuHide="false"
-            :suppressCellFocus="true"
-            :rowData="toDateData"
-            animateRows="false"
-            :defaultColDef="defaultColDef"
-            :suppressAggFuncInHeader="true"
-            :grandTotalRow="'bottom'"
-        ></ag-grid-vue>
+        <ag-grid-vue style="height: 500px" class="ag-theme-quartz" :columnDefs="columnDefs" :suppressMenuHide="false" :suppressCellFocus="true" :rowData="toDateData" animateRows="false" :defaultColDef="defaultColDef" :suppressAggFuncInHeader="true" :grandTotalRow="'bottom'"></ag-grid-vue>
     </div>
 </template>
 
@@ -128,10 +117,10 @@ export default {
                                 return totalPlan ? (totalActual / totalPlan) : 0;
                             },
                             cellClass: (params) => {
-                                if (params.value > 1.10) {
-                                    return "bg-warning text-end"; // Apply this class if value > 100
-                                } else if (params.value < .90) {
-                                    return "bg-danger text-end"; // Apply this class if value < 100
+                                if (params.value > .70 && params.value <= .90) {
+                                    return "bg-warning text-end"; // Apply this class if value between 71% and 90%
+                                } else if (params.value <= .70) {
+                                    return "bg-danger text-end"; // Apply this class if value < 70 %
                                 }
                                 return 'bg-success text-end'; // No class for other cases
                             },
@@ -188,10 +177,10 @@ export default {
                                 return totalPlan ? (totalActual / totalPlan) : 0;
                             },
                             cellClass: (params) => {
-                                if (params.value > 1.10) {
-                                    return "bg-warning text-end"; // Apply this class if value > 100
-                                } else if (params.value < .90) {
-                                    return "bg-danger text-end"; // Apply this class if value < 100
+                                if (params.value > .70 && params.value <= .90) {
+                                    return "bg-warning text-end"; // Apply this class if value between 71% and 90%
+                                } else if (params.value <= .70) {
+                                    return "bg-danger text-end"; // Apply this class if value < 70 %
                                 }
                                 return 'bg-success text-end'; // No class for other cases
                             },
@@ -256,10 +245,10 @@ export default {
                                 return totalPlan ? (totalActual / totalPlan) : 0;
                             },
                             cellClass: (params) => {
-                                if (params.value > 1.10) {
-                                    return "bg-warning text-end"; // Apply this class if value > 100
-                                } else if (params.value < .90) {
-                                    return "bg-danger text-end"; // Apply this class if value < 100
+                                if (params.value > .70 && params.value <= .90) {
+                                    return "bg-warning text-end"; // Apply this class if value between 71% and 90%
+                                } else if (params.value <= .70) {
+                                    return "bg-danger text-end"; // Apply this class if value < 70 %
                                 }
                                 return 'bg-success text-end'; // No class for other cases
                             },
