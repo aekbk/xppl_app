@@ -701,7 +701,7 @@
 
             <div class="col-xl-12">
               <div class="card">
-                <div class="card-header align-items-center d-flex email-topbar-link">
+                <div class="card-header align-items-center d-flex email-topbar-link border-0 pb-0">
                   <h4 class="card-title mb-0 flex-grow-1">Contract implementation {{ store.yyyy(selectDate) }}</h4>
                   <!-- <div class="flex-shrink-0 ms-2" @click="exportData4">
                     <a href="javascript:void(0)" class="link-primary">Export <i class=" ri-file-excel-2-line"></i></a>
@@ -713,8 +713,10 @@
                     <i class="ri-file-excel-2-line align-bottom fs-15"></i>
                   </button>
                 </div>
-                <ag-grid-vue style="height: 500px" class="ag-theme-material" :columnDefs="columnDefs" :rowData="dash2Data" :defaultColDef="defaultColDef" :rowHeight="30" :headerHeight="31.99" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked"></ag-grid-vue>
-                <div class="pb-2"></div>
+                <div class="custom-grid p-3">
+                  <ag-grid-vue style="height: 500px" class="ag-theme-quartz" :columnDefs="columnDefs" :rowData="dash2Data" :defaultColDef="defaultColDef" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked"></ag-grid-vue>
+                </div>
+
               </div>
             </div>
 
@@ -1095,9 +1097,9 @@ import axios from 'axios';
 import { useStore } from '../stores/store.js';
 import { useAuthStore } from '../stores/auth.js';
 import { AgGridVue } from 'ag-grid-vue3';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-material.css';
-import 'ag-grid-enterprise';
+
+const NUMBER_FORMAT = "0,0.00"
+const PERCENT_FORMAT = "0.00%"
 
 export default {
   name: 'XpplAppDashSale',
@@ -1162,62 +1164,34 @@ export default {
       loading: false,
 
       columnDefs: [{
-        headerName: '#', maxWidth: 47, sortable: false, resizable: false, suppressMovable: true, suppressMenu: true, valueGetter: (params) => { return params.node.rowIndex + 1 },
-        cellStyle: (params) => {
+        headerName: '#', maxWidth: 50, sortable: false, resizable: false, suppressMovable: true, suppressMenu: true, valueGetter: (params) => { return params.node.rowIndex + 1 },
+        cellClass: (params) => {
           if (params.data.contract_status == 'Active') {
-            return { backgroundColor: 'lightblue' };
+            return "bg-danger";
           } else if (params.data.contract_status == 'Waiting') {
-            return { backgroundColor: 'lightgray' };
+            return "bg-warning";
           }
-          return {};
+          return 'bg-success';
         },
       },
       {
         headerName: 'Destination', field: 'destination', filter: 'agSetColumnFilter',
-        cellStyle: (params) => {
-          if (params.data.contract_status == 'Active') {
-            return { backgroundColor: 'lightblue' };
-          } else if (params.data.contract_status == 'Waiting') {
-            return { backgroundColor: 'lightgray' };
-          }
-          return {};
-        },
+        // cellStyle: (params) => {
+        //   if (params.data.contract_status == 'Active') {
+        //     return { backgroundColor: 'lightblue' };
+        //   } else if (params.data.contract_status == 'Waiting') {
+        //     return { backgroundColor: 'lightgray' };
+        //   }
+        //   return {};
+        // },
       },
-      {
-        headerName: 'Customer Name', field: 'customer_name', minWidth: 180, filter: 'agSetColumnFilter',
-        cellStyle: (params) => {
-          if (params.data.contract_status == 'Active') {
-            return { backgroundColor: 'lightblue' };
-          } else if (params.data.contract_status == 'Waiting') {
-            return { backgroundColor: 'lightgray' };
-          }
-          return {};
-        },
-      },
-      {
-        headerName: 'Contract Number', field: 'contract_no', minWidth: 210, filter: 'agSetColumnFilter',
-        cellStyle: (params) => {
-          if (params.data.contract_status == 'Active') {
-            return { backgroundColor: 'lightblue' };
-          } else if (params.data.contract_status == 'Waiting') {
-            return { backgroundColor: 'lightgray' };
-          }
-          return {};
-        },
-      },
+      { headerName: 'Customer Name', field: 'customer_name', minWidth: 180, filter: 'agSetColumnFilter' },
+      { headerName: 'Contract Number', field: 'contract_no', minWidth: 210, filter: 'agSetColumnFilter', },
       {
         headerName: 'Signed Date', minWidth: 120, maxWidth: 120, valueGetter: p => {
           if (p.data.signed_date) {
             return moment(p.data.signed_date).format('DD-MM-YYYY')
           }
-        },
-        cellStyle: (params) => {
-          if (params.data.contract_status == 'Active') {
-            return { backgroundColor: 'lightblue' };
-          } else if (params.data.contract_status == 'Waiting') {
-            return { backgroundColor: 'lightgray' };
-          }
-          return {};
         },
         filter: 'agMultiColumnFilter',
         filterParams: {
@@ -1244,14 +1218,6 @@ export default {
       },
       {
         headerName: 'Grade', field: 'grade_gar', filter: 'agSetColumnFilter',
-        cellStyle: (params) => {
-          if (params.data.contract_status == 'Active') {
-            return { backgroundColor: 'lightblue' };
-          } else if (params.data.contract_status == 'Waiting') {
-            return { backgroundColor: 'lightgray' };
-          }
-          return {};
-        },
       },
       {
         headerName: 'Quantity', field: 'contract_quantity',
@@ -1260,14 +1226,6 @@ export default {
         //     textAlign: 'right',
         //   };
         // },
-        cellStyle: (params) => {
-          if (params.data.contract_status == 'Active') {
-            return { backgroundColor: 'lightblue' };
-          } else if (params.data.contract_status == 'Waiting') {
-            return { backgroundColor: 'lightgray' };
-          }
-          return {};
-        },
         valueGetter: p => Number(p.data.contract_quantity),
         valueFormatter: p => p.value ? p.value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '-',
         filter: 'agMultiColumnFilter',
@@ -1280,131 +1238,89 @@ export default {
       },
       {
         headerName: '2023', field: 'c2023',
-        cellStyle: (params) => {
-          if (params.data.contract_status == 'Active') {
-            return { backgroundColor: 'lightblue' };
-          } else if (params.data.contract_status == 'Waiting') {
-            return { backgroundColor: 'lightgray' };
-          }
-          return {};
-        },
         valueGetter: p => Number(p.data.c2023),
+        cellClass: 'text-end',
         valueFormatter: p => p.value ? p.value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '-',
       },
       {
         headerName: '2024', field: 'c2024',
-        cellStyle: (params) => {
-          if (params.data.contract_status == 'Active') {
-            return { backgroundColor: 'lightblue' };
-          } else if (params.data.contract_status == 'Waiting') {
-            return { backgroundColor: 'lightgray' };
-          }
-          return {};
-        },
         valueGetter: p => Number(p.data.c2024),
+        cellClass: 'text-end',
         valueFormatter: p => p.value ? p.value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '-',
       },
       {
         headerName: 'Today', field: 'date',
-        cellStyle: (params) => {
-          if (params.data.contract_status == 'Active') {
-            return { backgroundColor: 'lightblue' };
-          } else if (params.data.contract_status == 'Waiting') {
-            return { backgroundColor: 'lightgray' };
-          }
-          return {};
-        },
         valueGetter: p => Number(p.data.date),
+        cellClass: 'text-end',
         valueFormatter: p => p.value ? p.value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '-',
       },
       {
         headerName: 'Loading', field: 'loaded',
-        cellStyle: (params) => {
-          if (params.data.contract_status == 'Active') {
-            return { backgroundColor: 'lightblue' };
-          } else if (params.data.contract_status == 'Waiting') {
-            return { backgroundColor: 'lightgray' };
-          }
-          return {};
-        },
         valueGetter: p => Number(p.data.loaded),
+        cellClass: 'text-end',
         valueFormatter: p => p.value ? p.value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '-',
       },
       {
         headerName: 'Remaining', field: 'reamin',
-        cellStyle: (params) => {
-          if (params.data.contract_status == 'Active') {
-            return { backgroundColor: 'lightblue' };
-          } else if (params.data.contract_status == 'Waiting') {
-            return { backgroundColor: 'lightgray' };
-          }
-          return {};
-        },
         valueGetter: p => Number(p.data.remain),
+        cellClass: 'text-end',
         valueFormatter: p => p.value ? p.value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '-',
       },
       {
         headerName: 'Complete', field: 'pct',
-        cellStyle: (params) => {
-          if (params.data.contract_status == 'Active') {
-            return { backgroundColor: 'lightblue' };
-          } else if (params.data.contract_status == 'Waiting') {
-            return { backgroundColor: 'lightgray' };
-          }
-          return {};
-        },
         valueGetter: p => Number(p.data.pct),
+        cellClass: 'text-end',
         valueFormatter: p => p.value ? p.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%' : '-',
       },
       {
-        headerName: 'Remark', field: 'remark', filter: 'agSetColumnFilter',
-        cellStyle: (params) => {
-          if (params.data.contract_status == 'Active') {
-            return { backgroundColor: 'lightblue' };
-          } else if (params.data.contract_status == 'Waiting') {
-            return { backgroundColor: 'lightgray' };
+        headerName: 'Status', field: 'contract_status', filter: 'agSetColumnFilter',
+        cellClass: (params) => {
+          if (params.value == 'Active') {
+            return "bg-danger";
+          } else if (params.value == 'Waiting') {
+            return "bg-warning";
           }
-          return {};
+          return 'bg-success';
         },
-        cellRenderer: p => {
-          if (p.value == 'Under') {
-            return p.value
-          } else if (p.value == 'Over') {
-            return '<span class="text-danger">' + p.value + '</span>'
-          } else {
-            return '-'
-          }
-        }
+        // cellRenderer: p => {
+        //   if (p.value == 'Active') {
+        //     return '<span class="bg-danger fw-medium">' + p.value + '</span>'
+        //   } else if (p.value == 'Waiting') {
+        //     return '<span class="bg-warning fw-medium">' + p.value + '</span>'
+        //   }
+        //   return '<span class="bg-warning fw-medium">' + p.value + '</span>'
+        // }
       },
       {
-        headerName: 'Status', field: 'contract_status', filter: 'agSetColumnFilter',
-        cellStyle: (params) => {
-          if (params.data.contract_status == 'Active') {
-            return { backgroundColor: 'lightblue' };
-          } else if (params.data.contract_status == 'Waiting') {
-            return { backgroundColor: 'lightgray' };
+        headerName: 'Remark', field: 'remark', filter: 'agSetColumnFilter',
+
+        cellClass: (params) => {
+          if (params.value == 'Under') {
+            return "bg-success";
+          } else if (params.value == 'Over') {
+            return "bg-danger";
           }
-          return {};
+          return params.value ? params.value : '-';
         },
-        cellRenderer: p => {
-          if (p.value == 'Active') {
-            return '<span class="text-danger fw-medium">' + p.value + '</span>'
-          } else if (p.value == 'Waiting') {
-            return '<span class="text-secondary fw-medium">' + p.value + '</span>'
-          }
-          return p.value
-        }
-      },],
+
+        // cellRenderer: p => {
+        //   if (p.value == 'Under') {
+        //     return p.value
+        //   } else if (p.value == 'Over') {
+        //     return '<span class="text-danger">' + p.value + '</span>'
+        //   } else {
+        //     return '-'
+        //   }
+        // }
+      },
+      ],
 
       defaultColDef: {
         sortable: true,
         resizable: true,
         flex: 1,
         filterParams: { buttons: ['reset'] },
-        popupParent: document.body,
-        minWidth: 80,
-        cellClassRules: { 'pointer': 'true' },
-        menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
+        minWidth: 120,
       },
     };
   },

@@ -1,11 +1,24 @@
 <template>
   <div>
+    <div class="row">
+      <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
+          <h4 class="mb-sm-0">Customers</h4>
+          <div class="page-title-right">
+            <ol class="breadcrumb m-0">
+              <li class="breadcrumb-item"><a href="javascript: void(0);">Marketing</a></li>
+              <li class="breadcrumb-item active">Customers</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
     <div v-if="loading">
       <loading />
     </div>
     <div v-else>
       <div class="card" id="main" v-if="viewMode == 'main'">
-        <div class="card-header">
+        <div class="card-header border-0 pb-0">
           <div class="row g-4 align-items-center">
             <div class="col-sm-3">
               <form class="app-search d-md-block py-0 ps-0">
@@ -33,8 +46,9 @@
             </div>
           </div>
         </div>
-        <ag-grid-vue style="height: calc(100vh - 15.80rem);" class="ag-theme-material" :columnDefs="columnDefs" :rowData="customerList" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :popupParent="popupParent" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewMode = 'view'"></ag-grid-vue>
-        <div class="pb-1"></div>
+        <div class="custom-grid p-3">
+          <ag-grid-vue style="height: calc(100vh - 15.5rem);" class="ag-theme-quartz" :columnDefs="columnDefs" :rowData="customerList" :defaultColDef="defaultColDef" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewMode = 'view'"></ag-grid-vue>
+        </div>
       </div>
 
       <!-- View Customer -->
@@ -442,9 +456,6 @@
 <script>
 import axios from "axios";
 import { AgGridVue } from "ag-grid-vue3";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-material.css";
-import "ag-grid-enterprise";
 import { useToastr } from "../toastr.js";
 import { useStore } from '../stores/store.js';
 import { useAuthStore } from '../stores/auth.js';
@@ -485,10 +496,7 @@ export default {
         resizable: true,
         flex: 1,
         filterParams: { buttons: ['reset'] },
-        popupParent: document.body,
-        minWidth: 100,
-        cellClassRules: { 'pointer': 'true' },
-        // menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
+        minWidth: 130,
       },
 
       customerData: [],

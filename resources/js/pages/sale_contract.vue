@@ -1,5 +1,18 @@
 <template>
   <div>
+    <div class="row">
+      <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
+          <h4 class="mb-sm-0">Contracts</h4>
+          <div class="page-title-right">
+            <ol class="breadcrumb m-0">
+              <li class="breadcrumb-item"><a href="javascript: void(0);">Marketing</a></li>
+              <li class="breadcrumb-item active">Contracts</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
     <div v-if="loading">
       <loading />
     </div>
@@ -35,7 +48,7 @@
           </div>
         </div>
         <div class="custom-grid p-3">
-          <ag-grid-vue style="height: calc(100vh - 16.50rem);" class="ag-theme-quartz" :columnDefs="columnDefs" :rowData="contractList" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewContract"></ag-grid-vue>
+          <ag-grid-vue style="height: calc(100vh - 15.5rem);" class="ag-theme-quartz" :columnDefs="columnDefs" :rowData="contractList" :defaultColDef="defaultColDef" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewContract"></ag-grid-vue>
         </div>
       </div>
     </div>
@@ -769,9 +782,6 @@
 <script>
 import axios from "axios";
 import { AgGridVue } from 'ag-grid-vue3';
-// import 'ag-grid-community/styles/ag-grid.css';
-// import 'ag-grid-community/styles/ag-theme-material.css';
-// import 'ag-grid-enterprise';
 import { useToastr } from "../toastr.js";
 import { useStore } from '../stores/store.js';
 import { useAuthStore } from '../stores/auth.js';
@@ -795,7 +805,7 @@ export default {
   data() {
     return {
       columnDefs: [
-        { headerName: '#', maxWidth: 50, sortable: false, resizable: false, suppressMovable: true, suppressMenu: true, valueGetter: (params) => { return params.node.rowIndex + 1 } },
+        { headerName: '#', maxWidth: 80, sortable: false, resizable: false, suppressMovable: true, suppressMenu: true, valueGetter: (params) => { return params.node.rowIndex + 1 } },
         { headerName: 'Customer ID', field: 'customer_id', hide: true },
         // {
         //   headerName: 'Customer Name', field: 'customer_name', minWidth: 250,
@@ -810,7 +820,7 @@ export default {
         { headerName: 'Customer Name', field: 'customer_name', minWidth: 250, filter: 'agSetColumnFilter' },
         { headerName: 'Contract Number', field: 'contract_no', minWidth: 220, filter: 'agSetColumnFilter' },
         {
-          headerName: 'Signed Date', minWidth: 120, maxWidth: 120, valueGetter: p => {
+          headerName: 'Signed Date', minWidth: 120, maxWidth: 180, valueGetter: p => {
             if (p.data.signed_date) {
               return moment(p.data.signed_date).format('DD-MM-YYYY')
             }
@@ -873,14 +883,7 @@ export default {
         { headerName: 'Remarks', field: 'contract_remarks', filter: 'agSetColumnFilter' },
         {
           headerName: 'Dashboard', field: 'hide', hide: true, filter: 'agSetColumnFilter',
-          cellRenderer: p => {
-            if (p.value == false) {
-              return 'Show';
-            } else {
-              return 'Hide';
-            }
-          }
-
+          cellRenderer: p => p.value ? 'Hide' : 'Show'
         },
         { headerName: 'Created at', field: 'created_at', hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD/MM/YYYY HH:mm:ss') : '' },
         { headerName: 'Created by', field: 'created_by', filter: 'agSetColumnFilter', hide: true },
@@ -892,6 +895,13 @@ export default {
         // },
       ],
 
+      defaultColDef: {
+        sortable: true,
+        resizable: true,
+        flex: 1,
+        filterParams: { buttons: ['reset'] },
+        minWidth: 130,
+      },
 
       contractData: [],
       orderData: [],

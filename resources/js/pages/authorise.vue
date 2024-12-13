@@ -100,9 +100,12 @@
                     <!-- <div class="col-auto">
                       <button type="button" class="btn btn-soft-info material-shadow-none" @click="authSave()"><i class="ri-save-3-line me-1 align-bottom"></i> Save</button>
                     </div> -->
-                    <div class="col-auto">
+                    <!-- <div class="col-auto">
                       <button type="button" class="btn btn-soft-success btn-icon waves-effect material-shadow-none waves-light layout-rightside-btn" @click="display = 'users'" title="Back to users"><i class="ri-arrow-go-back-line fs-16"></i></button>
-                    </div>
+                    </div> -->
+                    <button type="button" class="btn btn-soft-info material-shadow-none" @click="display = 'users'">
+                      <i class="ri-arrow-left-s-line me-1 align-bottom"></i>Back to List
+                    </button>
                   </div>
                 </form>
               </div>

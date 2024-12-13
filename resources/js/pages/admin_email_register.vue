@@ -1,7 +1,20 @@
 <template>
   <div>
+    <div class="row">
+      <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
+          <h4 class="mb-sm-0">Email Registration</h4>
+          <div class="page-title-right">
+            <ol class="breadcrumb m-0">
+              <li class="breadcrumb-item"><a href="javascript: void(0);">Administrator</a></li>
+              <li class="breadcrumb-item active">Email</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="card">
-      <div class="card-header">
+      <div class="card-header border-0 pb-0">
         <div class="row g-4 align-items-center">
           <div class="col-sm-3">
             <form class="app-search d-md-block py-0 ps-0">
@@ -26,8 +39,9 @@
           </div>
         </div>
       </div>
-      <ag-grid-vue style="height: calc(100vh - 16.2rem);" class="ag-theme-material" :columnDefs="columnDefs" :rowData="emailList" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="editEmail"></ag-grid-vue>
-      <div class="pt-2"></div>
+      <div class="custom-grid p-3">
+        <ag-grid-vue style="height: calc(100vh - 15.5rem);" class="ag-theme-quartz" :columnDefs="columnDefs" :rowData="emailList" :defaultColDef="defaultColDef" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="editEmail"></ag-grid-vue>
+      </div>
     </div>
 
     <!-- Email Form Modal -->
@@ -108,9 +122,6 @@
 <script>
 import axios from 'axios';
 import { AgGridVue } from 'ag-grid-vue3';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-material.css';
-import 'ag-grid-enterprise';
 import { useAuthStore } from '../stores/auth.js';
 import { useToastr } from '../toastr.js';
 const toastr = useToastr();
@@ -126,7 +137,7 @@ export default {
   data() {
     return {
       columnDefs: [
-        { headerName: '#', maxWidth: 50, valueGetter: (params) => { return params.node.rowIndex + 1 } },
+        { headerName: '#', maxWidth: 80, valueGetter: (params) => { return params.node.rowIndex + 1 } },
         { headerName: 'ID', field: 'id', maxWidth: 50, filter: 'agSetColumnFilter', hide: true },
         { headerName: 'Name', field: 'name', filter: 'agSetColumnFilter' },
         { headerName: 'Surname', field: 'surname', filter: 'agSetColumnFilter' },
@@ -143,9 +154,7 @@ export default {
         resizable: true,
         flex: 1,
         filterParams: { buttons: ['reset'] },
-        minWidth: 100,
-        cellClassRules: { 'pointer': 'true' },
-        menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
+        minWidth: 120,
       },
 
       emailForm: { id: '', email: '', name: '', surname: '', position: '', dept: '', office: '', phone: '', email_ori: '' },
@@ -161,14 +170,12 @@ export default {
 
   computed: {
     emailList() {
-      if (this.search.trim().length > 0) {
-        return this.emails.filter((i) =>
-          i.email.substring(0, this.search.trim().length).toLowerCase() === this.search.trim().toLowerCase() ||
-          i.name.substring(0, this.search.trim().length).toLowerCase() === this.search.trim().toLowerCase() ||
-          i.username.substring(0, this.search.trim().length).toLowerCase() === this.search.trim().toLowerCase()
-        );
-      };
-      return this.emails;
+      const searchTerm = this.search.trim().toLowerCase();
+      if (!searchTerm) return this.emails;
+      const searchFields = ['email', 'name', 'username'];
+      return this.emails.filter(e =>
+        searchFields.some(field => e[field]?.toLowerCase().includes(searchTerm))
+      );
     },
 
     emailFormDis() {
@@ -257,17 +264,13 @@ export default {
       };
     },
 
-    async onSearch() {
-      if (this.search.length > 0) {
-        document.getElementById('search-close').classList.remove('d-none');
-      } else {
-        document.getElementById('search-close').classList.add('d-none');
-      }
+    onSearch() {
+      this.search ? document.getElementById('search-close').classList.remove('d-none') : document.getElementById('search-close').classList.add('d-none');
     },
 
-    async searchClear() {
-      this.search = '';
+    searchClear() {
       document.getElementById('search-close').classList.add('d-none');
+      this.search = '';
     },
 
     enableTool() {

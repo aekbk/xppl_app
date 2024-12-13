@@ -2,7 +2,7 @@
   <div>
     <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1">
       <div class="chat-leftsidebar minimal-border">
-        <div class="px-4 py-3 mb-0 border-bottom">
+        <div class="px-4 py-3 mb-4">
           <div class="d-flex align-items-center">
             <div class="flex-grow-1 overflow-hidden">
               <h5 class="mb-0 text-truncate">Categories</h5>
@@ -65,7 +65,7 @@
             <div class="position-relative">
 
               <div class="position-relative" id="channel-chat" style="display: block;">
-                <div class="p-3 user-chat-topbar border-bottom">
+                <div class="p-3 user-chat-topbar pb-0">
                   <div class="row align-items-center">
                     <div class="col-sm-4 col-8">
                       <div class="d-flex align-items-center">
@@ -111,7 +111,9 @@
 
                 <!-- <div class="chat-conversation p-3 p-lg-3"> -->
                 <div class="chat-conversation d-block">
-                  <ag-grid-vue style="height: calc(100vh - 13.125rem);" class="ag-theme-material" :columnDefs="columnDefs" :rowData="codeFilter" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="editCode"></ag-grid-vue>
+                  <div class="custom-grid p-3">
+                    <ag-grid-vue style="height: calc(100vh - 14.1rem);" class="ag-theme-quartz" :columnDefs="columnDefs" :rowData="codeFilter" :defaultColDef="defaultColDef" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="editCode"></ag-grid-vue>
+                  </div>
                 </div>
               </div>
 
@@ -184,9 +186,6 @@
 <script>
 import axios from 'axios';
 import { AgGridVue } from 'ag-grid-vue3';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-material.css';
-import 'ag-grid-enterprise';
 import { useAuthStore } from '../stores/auth.js';
 import { useToastr } from '../toastr.js';
 const toastr = useToastr();
@@ -208,10 +207,7 @@ export default {
         { headerName: 'Code', field: 'code', filter: 'agSetColumnFilter' },
         { headerName: 'Description', field: 'descr_eng', filter: 'agSetColumnFilter' },
         { headerName: 'ຄຳອະທິບາຍ', field: 'descr_lao', filter: 'agSetColumnFilter' },
-        {
-          headerName: 'Active', field: 'active', maxWidth: 100, filter: 'agSetColumnFilter',
-          cellRenderer: p => p.value ? 'Yes' : 'No'
-        },
+        { headerName: 'Active', field: 'active', maxWidth: 150, filter: 'agSetColumnFilter', cellRenderer: p => p.value ? 'Yes' : 'No' },
         { headerName: 'Created at', field: 'created_at', maxWidth: 145, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
         { headerName: 'Created by', field: 'created_by', maxWidth: 150, filter: 'agSetColumnFilter' },
         { headerName: 'Updated at', field: 'updated_at', maxWidth: 145, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
@@ -224,8 +220,6 @@ export default {
         flex: 1,
         filterParams: { buttons: ['reset'] },
         minWidth: 100,
-        cellClassRules: { 'pointer': 'true' },
-        menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
       },
 
       lkActive: [{ value: 1, label: 'Yes' }, { value: 0, label: 'No' }],

@@ -11,12 +11,16 @@ use JWTAuth;
 class authorise_controller extends Controller
 {
     public function user(Request $request) {
-        $username = $request->search.'%';
-        $name = $request->search.'%';
+        $username = '%'.$request->search.'%';
+        $name = '%'.$request->search.'%';
+        $email = '%'.$request->search.'%';
+        $company = '%'.$request->search.'%';
 
         $users = DB::table('users')
                 ->orWhere('username', 'like', $username)
                 ->orWhere('name', 'like', $name)
+                ->orWhere('email', 'like', $email)
+                ->orWhere('company', 'like', $company)
                 ->orderBy('username')
                 ->select('*')
                 ->paginate(10);

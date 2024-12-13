@@ -3,7 +3,7 @@
 
     <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1" v-if="sampleTemp.length == 0">
       <div class="chat-leftsidebar minimal-border">
-        <div class="px-4 py-3 mb-0 border-bottom">
+        <div class="px-4 py-3 mb-0 border-0 pb-4">
           <div class="d-flex align-items-center">
             <div class="flex-grow-1 overflow-hidden">
               <h5 class="mb-0 text-truncate">Categories</h5>
@@ -64,7 +64,7 @@
             <div class="position-relative">
 
               <div class="position-relative" id="channel-chat" style="display: block;">
-                <div class="p-3 user-chat-topbar border-bottom">
+                <div class="p-3 user-chat-topbar border-0 pb-0">
                   <div class="row align-items-center">
                     <div class="col-sm-4 col-8">
                       <div class="d-flex align-items-center">
@@ -183,7 +183,9 @@
                       </tbody>
                     </table>
                   </div> -->
-                  <ag-grid-vue style="height: calc(100vh - 13.125rem);" class="ag-theme-material" :columnDefs="columnDefs" :rowData="filtered" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single"></ag-grid-vue>
+                  <div class="custom-grid p-3">
+                    <ag-grid-vue style="height: calc(100vh - 14.2rem);" class="ag-theme-quartz" :columnDefs="columnDefs" :rowData="filtered" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single"></ag-grid-vue>
+                  </div>
 
 
                 </div>

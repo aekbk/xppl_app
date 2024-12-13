@@ -1,9 +1,21 @@
 <template>
   <div>
+    <div class="row">
+      <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
+          <h4 class="mb-sm-0">Mine Productions</h4>
+          <div class="page-title-right">
+            <ol class="breadcrumb m-0">
+              <li class="breadcrumb-item"><a href="javascript: void(0);">Geology Dept.</a></li>
+              <li class="breadcrumb-item active">Data</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="card">
-      <div class="card-header">
+      <div class="card-header border-0 pb-0">
         <div class="row g-2 align-items-center">
-
           <div class="col-sm-3">
             <form class="app-search d-md-block py-0 ps-0">
               <div class="position-relative">
@@ -13,7 +25,6 @@
               </div>
             </form>
           </div>
-
           <div class="col-sm-auto ms-auto">
             <div class="gap-2 d-sm-flex">
               <div class="input-group" style="width: 300px;">
@@ -53,7 +64,10 @@
         <loading />
       </div>
       <div v-else>
-        <ag-grid-vue style="height: calc(100vh - 15.65rem);" id="ag-sales-data" class="ag-theme-material" :columnDefs="columnDefs" :rowData="prodGeoList" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :popupParent="popupParent" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewContract"></ag-grid-vue>
+        <div class="custom-grid p-3">
+          <ag-grid-vue style="height: calc(100vh - 15.5rem);" class="ag-theme-quartz" :columnDefs="columnDefs" :rowData="prodGeoList" :defaultColDef="defaultColDef" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewContract">
+          </ag-grid-vue>
+        </div>
       </div>
     </div>
 
@@ -62,9 +76,6 @@
 
 <script>
 import { AgGridVue } from "ag-grid-vue3";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-material.css";
-import "ag-grid-enterprise";
 import { useAuthStore } from '../stores/auth.js';
 import { useToastr } from '../toastr.js';
 const toastr = useToastr();
@@ -81,11 +92,11 @@ export default {
   data() {
     return {
       columnDefs: [
-        { headerName: '#', maxWidth: 50, sortable: false, resizable: false, suppressMovable: true, suppressMenu: true, valueGetter: (params) => { return params.node.rowIndex + 1 } },
+        { headerName: '#', maxWidth: 80, sortable: false, resizable: false, suppressMovable: true, suppressMenu: true, valueGetter: (params) => { return params.node.rowIndex + 1 } },
         { headerName: 'Data ID', field: 'data_id', hide: true },
         { headerName: 'Company', field: 'company', filter: 'agSetColumnFilter', hide: true },
         {
-          headerName: "Date", minWidth: 100, maxWidth: 120, valueGetter: p => {
+          headerName: "Date", maxWidth: 120, valueGetter: p => {
             if (p.data.mined_date) {
               return moment(p.data.mined_date).format("DD-MM-YYYY")
             }
@@ -161,10 +172,7 @@ export default {
         resizable: true,
         flex: 1,
         filterParams: { buttons: ['reset'] },
-        popupParent: document.body,
-        minWidth: 80,
-        cellClassRules: { 'pointer': 'true' },
-        // menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
+        minWidth: 120,
       },
 
       lkYear: [],
@@ -197,19 +205,12 @@ export default {
 
   computed: {
     prodGeoList() {
-      if (this.search.trim().length > 0) {
-        return this.prodGeoData.filter((i) =>
-          i.company.substring(0, this.search.trim().length).toLowerCase() == this.search.trim().toLowerCase() ||
-          i.pit.substring(0, this.search.trim().length).toLowerCase() == this.search.trim().toLowerCase() ||
-          i.mining_block.substring(0, this.search.trim().length).toLowerCase() == this.search.trim().toLowerCase() ||
-          i.bench.substring(0, this.search.trim().length).toLowerCase() == this.search.trim().toLowerCase() ||
-          i.coal_block_id.substring(0, this.search.trim().length).toLowerCase() == this.search.trim().toLowerCase() ||
-          i.coal_category.substring(0, this.search.trim().length).toLowerCase() == this.search.trim().toLowerCase() ||
-          i.mined_contractor.substring(0, this.search.trim().length).toLowerCase() == this.search.trim().toLowerCase() ||
-          i.stockpile.substring(0, this.search.trim().length).toLowerCase() == this.search.trim().toLowerCase()
-        );
-      };
-      return this.prodGeoData;
+      const searchTerm = this.search.trim().toLowerCase();
+      if (!searchTerm) return this.prodGeoData;
+      const searchFields = ['company', 'pit', 'mining_block', 'bench', 'coal_block_id', 'coal_category', 'mined_contractor', 'stockpile'];
+      return this.prodGeoData.filter(e =>
+        searchFields.some(field => e[field]?.toLowerCase().startsWith(searchTerm))
+      );
     },
   },
 
@@ -357,18 +358,15 @@ export default {
       document.getElementById(id).classList.add('disabled');
     },
 
-    async onSearch() {
-      if (this.search.length > 0) {
-        document.getElementById('search-close').classList.remove('d-none');
-      } else {
-        document.getElementById('search-close').classList.add('d-none');
-      }
+    onSearch() {
+      this.search ? document.getElementById('search-close').classList.remove('d-none') : document.getElementById('search-close').classList.add('d-none');
     },
 
-    async searchClear() {
-      this.search = '';
+    searchClear() {
       document.getElementById('search-close').classList.add('d-none');
+      this.search = '';
     },
+
   },
 
   created() {

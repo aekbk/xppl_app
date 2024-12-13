@@ -1,7 +1,20 @@
 <template>
   <div>
+    <div class="row">
+      <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
+          <h4 class="mb-sm-0">Sales Data</h4>
+          <div class="page-title-right">
+            <ol class="breadcrumb m-0">
+              <li class="breadcrumb-item"><a href="javascript: void(0);">Marketing</a></li>
+              <li class="breadcrumb-item active">Sales Data</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="card" v-if="viewMode == 'main'">
-      <div class="card-header">
+      <div class="card-header border-0 pb-0">
         <div class="row g-2 align-items-center">
           <div class="col-sm-3">
             <form class="app-search d-md-block py-0 ps-0">
@@ -55,9 +68,10 @@
         <loading />
       </div>
       <div v-else>
-        <ag-grid-vue style="height: calc(100vh - 15.80rem);" id="ag-sales-data" class="ag-theme-material" :columnDefs="columnDefs" :rowData="salesList" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :popupParent="popupParent" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewContract"></ag-grid-vue>
+        <div class="custom-grid p-3">
+          <ag-grid-vue style="height: calc(100vh - 15.5rem);" id="ag-sales-data" class="ag-theme-quartz" :columnDefs="columnDefs" :rowData="salesList" :defaultColDef="defaultColDef" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewContract"></ag-grid-vue>
+        </div>
       </div>
-      <div class="pb-1"></div>
     </div>
 
     <!-- View -->
@@ -292,10 +306,7 @@ export default {
         resizable: true,
         flex: 1,
         filterParams: { buttons: ['reset'] },
-        popupParent: document.body,
-        minWidth: 80,
-        cellClassRules: { 'pointer': 'true' },
-        // menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']
+        minWidth: 130,
       },
 
       salesData: [],

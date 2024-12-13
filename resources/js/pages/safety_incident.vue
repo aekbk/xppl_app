@@ -1,7 +1,20 @@
 <template>
   <div>
+    <div class="row">
+      <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between bg-galaxy-transparent">
+          <h4 class="mb-sm-0">Incidents</h4>
+          <div class="page-title-right">
+            <ol class="breadcrumb m-0">
+              <li class="breadcrumb-item"><a href="javascript: void(0);">Safety</a></li>
+              <li class="breadcrumb-item active">Incidents</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="card" v-if="viewMode == 'main'">
-      <div class="card-header">
+      <div class="card-header border-0 pb-0">
         <div class="row g-2 align-items-center">
           <div class="col-sm-3">
             <form class="app-search d-md-block py-0 ps-0">
@@ -48,9 +61,10 @@
         <loading />
       </div>
       <div v-else>
-        <ag-grid-vue style="height: calc(100vh - 15.80rem);" id="ag-sales-data" class="ag-theme-material" :columnDefs="columnDefs" :rowData="incidentList" :defaultColDef="defaultColDef" :rowHeight="36" :headerHeight="44" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewIncident"></ag-grid-vue>
+        <div class="custom-grid p-3">
+          <ag-grid-vue style="height: calc(100vh - 15.5rem);" class="ag-theme-quartz" :columnDefs="columnDefs" :rowData="incidentList" :defaultColDef="defaultColDef" :suppressMenuHide="false" :suppressCellFocus="true" animateRows="false" rowSelection="single" @rowClicked="cellCicked" @cell-double-clicked="viewIncident"></ag-grid-vue>
+        </div>
       </div>
-      <div class="pb-1"></div>
     </div>
 
     <!-- View Details -->
@@ -508,9 +522,6 @@
 <script>
 import axios from 'axios';
 import { AgGridVue } from 'ag-grid-vue3';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-material.css';
-import 'ag-grid-enterprise';
 import { useAuthStore } from '../stores/auth.js';
 import { useStore } from '../stores/store.js';
 import { useToastr } from '../toastr.js';
@@ -548,7 +559,7 @@ export default {
           },
         },
         { headerName: 'Incident ID', field: 'incident_id', filter: 'agSetColumnFilter', hide: true },
-        { headerName: 'No', field: 'incident_no', maxWidth: 60, filter: 'agSetColumnFilter', valueGetter: p => Number(p.data.incident_no) },
+        { headerName: 'No', field: 'incident_no', maxWidth: 100, filter: 'agSetColumnFilter', valueGetter: p => Number(p.data.incident_no) },
         { headerName: 'Incident Title', field: 'incident_title', minWidth: 250, filter: 'agSetColumnFilter', },
         { headerName: 'Date Time', field: 'date_time', minWidth: 140, filter: 'agSetColumnFilter', valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm') : '' },
         { headerName: 'Location', field: 'location', filter: 'agSetColumnFilter' },
@@ -567,14 +578,13 @@ export default {
         { headerName: 'Invest Status', field: 'invest_status', filter: 'agSetColumnFilter' },
         { headerName: 'Invest Lead', field: 'invest_lead', filter: 'agSetColumnFilter' },
         { headerName: 'Action Status', field: 'action_status', filter: 'agSetColumnFilter' },
-        { headerName: 'Action Due Date', field: 'action_duedate', filter: 'agSetColumnFilter' },
+        { headerName: 'Action Due Date', field: 'action_duedate', valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY') : '' },
         { headerName: 'Incident Manager', field: 'incident_manager', filter: 'agSetColumnFilter' },
         { headerName: 'Followup By', field: 'followup_by', filter: 'agSetColumnFilter' },
-        { headerName: 'Corrective Action', field: 'corrective_action', filter: 'agSetColumnFilter' },
-        { headerName: 'Incident Description', field: 'incident_descr', filter: 'agSetColumnFilter' },
-
-        { headerName: 'Created at', field: 'created_at', maxWidth: 145, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
-        { headerName: 'Created by', field: 'created_by', maxWidth: 150, filter: 'agSetColumnFilter' },
+        { headerName: 'Corrective Action', field: 'corrective_action' },
+        { headerName: 'Incident Description', field: 'incident_descr' },
+        { headerName: 'Created at', field: 'created_at', maxWidth: 145, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
+        { headerName: 'Created by', field: 'created_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
         { headerName: 'Updated at', field: 'updated_at', maxWidth: 145, hide: true, valueFormatter: p => p.value ? moment(p.value).format('DD-MM-YYYY HH:mm:ss') : '' },
         { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
 
@@ -585,8 +595,7 @@ export default {
         resizable: true,
         flex: 1,
         filterParams: { buttons: ['reset'] },
-        minWidth: 100,
-        cellClassRules: { 'pointer': 'true' },
+        minWidth: 130,
       },
 
       incForm: { data_id: '', incident_id: '', incident_no: '', incident_title: '', date_time: '', location: '', company: null, department: null, incident_group: null, incident_type: null, injury_type: null, injury_group: null, injury_part: '', significant: null, flash_alert: null, actual_severity: null, potential_severity: null, risk_rating: '', invest_status: null, invest_lead: '', action_status: null, action_duedate: '', incident_manager: '', followup_by: '', incident_descr: '', corrective_action: '' },
@@ -636,18 +645,12 @@ export default {
 
   computed: {
     incidentList() {
-      if (this.search.trim().length > 0) {
-        return this.incidents.filter(i =>
-          i.incident_title.substring(0, this.search.trim().length).toLowerCase() == this.search.trim().toLowerCase() ||
-          i.company.substring(0, this.search.trim().length).toLowerCase() == this.search.trim().toLowerCase() ||
-          i.incident_no.substring(0, this.search.trim().length).toLowerCase() == this.search.trim().toLowerCase() ||
-          i.invest_status.substring(0, this.search.trim().length).toLowerCase() == this.search.trim().toLowerCase() ||
-          i.injury_type.substring(0, this.search.trim().length).toLowerCase() == this.search.trim().toLowerCase() ||
-          i.injury_group.substring(0, this.search.trim().length).toLowerCase() == this.search.trim().toLowerCase() ||
-          i.risk_rating.substring(0, this.search.trim().length).toLowerCase() == this.search.trim().toLowerCase()
-        );
-      };
-      return this.incidents;
+      const searchTerm = this.search.trim().toLowerCase();
+      if (!searchTerm) return this.incidents;
+      const searchFields = ['incident_title', 'company', 'incident_no', 'invest_status', 'injury_type', 'injury_group', 'risk_rating'];
+      return this.incidents.filter(e =>
+        searchFields.some(field => e[field]?.toLowerCase().startsWith(searchTerm))
+      );
     },
 
     incFormDis() {
@@ -1190,17 +1193,13 @@ export default {
       document.getElementById('menu-1').classList.remove('disabled');
     },
 
-    async onSearch() {
-      if (this.search.length > 0) {
-        document.getElementById('search-close').classList.remove('d-none');
-      } else {
-        document.getElementById('search-close').classList.add('d-none');
-      }
+    onSearch() {
+      this.search ? document.getElementById('search-close').classList.remove('d-none') : document.getElementById('search-close').classList.add('d-none');
     },
 
-    async searchClear() {
-      this.search = '';
+    searchClear() {
       document.getElementById('search-close').classList.add('d-none');
+      this.search = '';
     },
   },
 

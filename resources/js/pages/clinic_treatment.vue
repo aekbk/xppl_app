@@ -925,15 +925,6 @@ export default {
         { headerName: 'Updated by', field: 'updated_by', maxWidth: 150, hide: true, filter: 'agSetColumnFilter' },
       ],
 
-      defaultColDef: {
-        sortable: true,
-        resizable: true,
-        flex: 1,
-        filterParams: { buttons: ['reset'] },
-        minWidth: 100,
-        cellClassRules: { 'pointer': 'true' },
-      },
-
       auth: {},
       lkCompany: [],
       lkDepartment: [],

@@ -854,7 +854,7 @@
               </div>
               <div class="col-sm-6">
                 <div class="text-sm-end d-none d-sm-block">
-                  Design &amp; Develop by Chamlong.K
+                  Design &amp; Develop by XPPL & BCG Team
                 </div>
               </div>
             </div>
