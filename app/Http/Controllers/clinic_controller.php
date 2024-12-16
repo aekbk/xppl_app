@@ -309,6 +309,8 @@ class clinic_controller extends Controller
 
     public function addTreatment(Request $request){
         $t = $request->treatment;
+
+        // Check duplicate
         $check = DB::table('clinic_treatments')
                     ->where('patient_id', $request->patient_id)
                     ->where('date_time', $t['date_time']);
@@ -318,6 +320,10 @@ class clinic_controller extends Controller
             $message = 'Duplicated data.';
         } else {
 
+            $datetime = now("Asia/Bangkok")->toDateTimeString();
+            $username = Str::lower(auth()->user()->username);
+
+            // Treatment
             $treatmentId = DB::table('clinic_treatments')->max('treatment_id') + 1;
             DB::table('clinic_treatments')
                 ->insert([
@@ -339,9 +345,22 @@ class clinic_controller extends Controller
                     'transfer' => $t['transfer'],
                     'hospital' => $t['hospital'],
                     'medic' => $t['medic'],              
-                    'created_at' => now("Asia/Bangkok")->toDateTimeString(),                    
-                    'created_by' => Str::lower(auth()->user()->username)   
+                    'created_at' => $datetime,                    
+                    'created_by' => $username   
                 ]);
+
+            // Medications
+            foreach($request->medicationList as $m) {
+                DB::table('clinic_medications')
+                ->insert([
+                    'treatment_id' => $treatmentId,
+                    'medicine_id' => $m['medicine_id'],  
+                    'qty' => $m['qty'],          
+                    'unit_eng' => $m['unit_eng'],
+                    'created_at' => $datetime,                    
+                    'created_by' => $username  
+                ]);
+            }
 
             $success = true;
             $message = "Insert completed!";
@@ -357,28 +376,50 @@ class clinic_controller extends Controller
         DB::table('clinic_treatments')
             ->where('treatment_id', $request->treatment_id)
             ->update([
-                'treatment_id' => $treatmentId,
-                'patient_id' => $request->patient_id,
-                'date_time' => $t['date_time'],
-                'medical_type' => $t['medical_type'],
-                'injury_type' => $t['injury_type'],
-                'injury_part' => $t['injury_part'] ? implode(', ', $t['injury_part']) : null,
-                'work_related' => $t['work_related'],
-                'temp_c' => $t['temp_c'],
-                'blood_press' => $t['blood_press'],
-                'puls' => $t['puls'],
-                'oxigen' => $t['oxigen'],
-                'weight' => $t['weight'],
-                'syndrome' => $t['syndrome'],
-                'diagnosis' => $t['diagnosis'],
-                'patient_type' => $t['patient_type'],
-                'transfer' => $t['transfer'],
-                'hospital' => $t['hospital'],
-                'medic' => $t['medic'],              
+                'date_time' => $request->date_time,
+                'medical_type' => $request->medical_type,
+                'injury_type' => $request->injury_type,
+                'injury_part' => $request->injury_part ? implode(', ', $request->injury_part) : null,
+                'work_related' => $request->work_related,
+                'temp_c' => $request->temp_c,
+                'blood_press' => $request->blood_press,
+                'puls' => $request->puls,
+                'oxigen' => $request->oxigen,
+                'weight' => $request->weight,
+                'syndrome' => $request->syndrome,
+                'diagnosis' => $request->diagnosis,
+                'patient_type' => $request->patient_type,
+                'transfer' => $request->transfer,
+                'hospital' => $request->hospital,
+                'medic' => $request->medic,              
                 'updated_at' => now("Asia/Bangkok")->toDateTimeString(),                    
                 'updated_by' => Str::lower(auth()->user()->username)
             ]);
     }
+
+    public function deleteTreatment(Request $request){
+        $check = DB::table('clinic_treatments as t')
+                    ->join('clinic_medications as m', 't.treatment_id', 'm.treatment_id')
+                    ->where('t.treatment_id', $request->treatment_id);
+
+        if ($check->count()) {
+            $success = false;
+            $message = 'This treatment id has already been used; it cannot be deleted.';
+        } else {
+            DB::table('clinic_treatments')
+                ->where('treatment_id', $request->treatment_id)
+                ->delete();
+
+            $success = true;
+            $message = "Delete completed!";
+        }
+        $response = [
+            'success' => $success,
+            'message' => $message
+        ];
+        return response()->json($response);
+    }
+
 
     public function medication($patient_id){
         $medication = DB::table('clinic_treatments as t')
@@ -390,6 +431,56 @@ class clinic_controller extends Controller
                         ->get();
         return $medication;
     }
+
+    public function addMedication(Request $request){
+        foreach($request->medicationList as $m) {
+            DB::table('clinic_medications')
+                ->insert([
+                    'treatment_id' => $request->treatment_id,   
+                    'medicine_id' => $m['medicine_id'],  
+                    'qty' => $m['qty'],          
+                    'unit_eng' => $m['unit_eng'],
+                    'created_at' => now("Asia/Bangkok")->toDateTimeString(),                    
+                    'created_by' => Str::lower(auth()->user()->username)  
+                ]);
+
+            $success = true;
+            $message = "Insert completed!";
+        }
+        $response = [
+            'success' => $success,
+            'message' => $message
+        ];
+        return response()->json($response);
+    }
+
+    public function updateMedication(Request $request){
+        DB::table('clinic_medications')
+            ->where('medication_id', $request->medication_id)
+            ->update([
+                'medicine_id' => $request->medicine_id,
+                'qty' => $request->qty,
+                'unit_eng' => $request->unit_eng,
+                'updated_at' => now("Asia/Bangkok")->toDateTimeString(),                    
+                'updated_by' => Str::lower(auth()->user()->username)
+            ]);
+    }   
+
+    public function deleteMedication(Request $request){
+        DB::table('clinic_medications')
+            ->where('medication_id', $request->medication_id)
+            ->delete();
+            
+        $success = true;
+        $message = "Delete completed!";
+
+        $response = [
+            'success' => $success,
+            'message' => $message
+        ];
+        return response()->json($response);
+    }
+
 
 
 
