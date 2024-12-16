@@ -130,12 +130,14 @@
       <!-- Treatment Details -->
       <div v-if="viewMode == 'detail'">
         <div class="row">
-          <div class="col-xxl-3">
+          <div class="col-xxl-3 col-xl-4 col-lg-5">
             <div class="card card-height-100">
               <div class="card-body pb-0">
                 <div class="d-flex align-items-center mb-5">
                   <div class="flex-grow-1">
-                    <h5 class="card-title mb-0">Patient Info.</h5>
+                    <h5 class="card-title mb-0">
+                      {{ patientForm.fullname }}
+                    </h5>
                   </div>
                   <div class="flex-shrink-0">
                     <button
@@ -252,31 +254,19 @@
                   </div>
                 </div>
               </div> -->
-
               <!-- <div class="card-body pt-0"> -->
               <!-- <h6 class="text-muted text-uppercase fw-semibold mb-3">Personal Information</h6> -->
-
               <!-- </div> -->
             </div>
           </div>
 
-          <div class="col-xxl-9">
+          <div class="col-xxl-9 col-xl-8 col-lg-7">
             <div class="card">
-              <!-- <div class="card-header align-items-center d-flex">
-                <h4 class="card-title mb-0 flex-grow-1">{{ patientForm.fullname }}</h4>
-                <div>
-                  <button class="btn btn-soft-info" id="btn-new" @click="newMenusub"><i class="ri-add-fill me-1 align-bottom"></i>Add Submenu</button>
-                  <button type="button" class="btn btn-soft-secondary btn-icon material-shadow-none ms-2" @click="newMenusub">
-                    <i class="ri-add-line align-bottom"></i>
-                  </button>
-                </div>
-              </div> -->
-
               <div class="card-header border-0">
                 <div class="row g-4 align-items-center">
-                  <div class="col-sm-3">
+                  <div class="col-sm-6">
                     <h5 class="card-title mb-0 flex-grow-1">
-                      {{ patientForm.fullname }}
+                      Treatment & Medication Details
                     </h5>
                   </div>
                   <div class="col-sm-auto ms-auto">
@@ -452,7 +442,7 @@
                 >
                   <div class="custom-grid p-3">
                     <ag-grid-vue
-                      style="height: calc(100vh - 19rem)"
+                      style="height: calc(100vh - 18.8rem)"
                       class="ag-theme-quartz"
                       :columnDefs="columnTreatment"
                       :rowData="treatments"
@@ -469,7 +459,7 @@
                 <div class="tab-pane" id="medication" role="tabpanel">
                   <div class="custom-grid p-3">
                     <ag-grid-vue
-                      style="height: calc(100vh - 19rem)"
+                      style="height: calc(100vh - 18.8rem)"
                       class="ag-theme-quartz"
                       :columnDefs="columnMedication"
                       :rowData="medicationFilter"
@@ -1404,22 +1394,37 @@ export default {
         {
           headerName: "Temp",
           field: "temp_c",
+          maxWidth: 70,
+          sortable: false,
+          suppressMenu: true,
         },
         {
           headerName: "BP",
           field: "blood_press",
+          maxWidth: 80,
+          sortable: false,
+          suppressMenu: true,
         },
         {
           headerName: "Puls",
           field: "puls",
+          maxWidth: 80,
+          sortable: false,
+          suppressMenu: true,
         },
         {
           headerName: "Oxigen",
           field: "oxigen",
+          maxWidth: 80,
+          sortable: false,
+          suppressMenu: true,
         },
         {
           headerName: "Weight",
           field: "weight",
+          maxWidth: 80,
+          sortable: false,
+          suppressMenu: true,
         },
         {
           headerName: "Patient Type",
@@ -1990,14 +1995,18 @@ export default {
       this.loading = true;
       this.viewMode = "detail";
       this.activeTab = "treatment";
+
       await this.getTreatments();
       await this.getMedications();
+
       const maxId = Math.max(
         ...this.medications.map((obj) => obj.treatment_id)
       );
+
       this.medicationFilter = this.medications.filter(
         (m) => m.treatment_id == maxId
       );
+
       document.getElementById("starter").textContent = "Treatment Details";
       this.loading = false;
     },
